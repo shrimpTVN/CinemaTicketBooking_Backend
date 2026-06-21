@@ -1,12 +1,9 @@
-INSERT INTO movie (title, duration, avatar, trailer, description, country,
-                  `age-limit`, `premiere-date`, actors, director, genres, created_by)
-VALUES("Ma xó", 102, "link-avatar", "link-trailer", " Trong cái nghèo cùng cực và nỗi sợ mất con sau một lần sảy thai, cuộc sống của vợ chồng Phú và Thảo (đang mang thai) trở nên tăm tối hơn bao giờ hết khi bà Thuận (mẹ Phú) qua đời vì không có tiền chữa bệnh.
-Giữa lúc tuyệt vọng, Thảo nghe lời bà Tánh – một người hàng xóm làm nghề cúng – quyết định thực hiện nghi thức thỉnh
-“vong cô hồn” về làm ma xó để trấn giữ ngôi nhà và bảo vệ thai nhi. Khi thực thể trong xó nhà bắt đầu đòi nợ,
-Thảo mới bàng hoàng nhận ra: thứ cô rước về để bảo vệ gia đình, thực chất là một cơn ác mộng không có đường lui. ",
-"Vietnam", 16, '2026-06-05',"Lê Khánh, Tín Nguyễn, Avin Lu, NSƯT Hạnh Thúy, Nguyễn Sỹ Hậu, Gi A Nguyễn, Leona Khánh Tiên. ","Phan Bá Hỷ", "Kinh dị", "System");
-
-INSERT INTO movie (title, duration, avatar, trailer, description, country,
-                   `age-limit`, `premiere-date`, actors, director, genres, created_by)
-VALUES("Phim Điện Ảnh Doraemon: Nobita và Lâu Đài Dưới Đáy Biển (Phiên bản mới) ", 101, "link-avatar", "link-trailer", " Bước vào kì nghỉ hè, Nobita và các bạn tranh cãi chí chóe về địa điểm cắm trại. Theo đề xuất của Doraemon, cả nhóm quyết định cắm trại giữa lòng đại dương! Sử dụng bảo bối thần kì “xe Buggy chạy dưới nước” và “đèn pin thích nghi”, 5 bạn nhỏ tận hưởng chuyến cắm trại dưới đáy biển, gặp gỡ vô vàn sinh vật lí thú trên đường đi. Sau khi phát hiện một chiếc tàu đắm, nhóm bạn đã gặp chàng thanh niên bí ẩn El. Thật bất ngờ, anh ta lại là cư dân đáy biển, sống tại “liên bang Mu”, một vùng biển rộng lớn! Vốn căm ghét người mặt đất, cư dân đáy biển không thể nào tin tưởng Nobita và các bạn. Đúng lúc đó, lời thông báo “lâu đài quỷ... đã bắt đầu phục sinh!!” được truyền tới. “Lâu đài quỷ” khiến cư dân đáy biển khiếp sợ, rốt cuộc là gì? Đặt trọn niềm tin vào bè bạn trong lồng ngực, chuyến phiêu lưu vĩ đại quyết định số phận của trái đất, bắt đầu!  ",
-       "Nhật Bản", 0, '2026-06-06',"Wasabi Mizuta, Megumi Oohara, Yumi Kakazu, Subaru Kimura, Tomokazu Seki,...  ","Tetsuo Yajima", "Hoạt Hình, Phiêu Lưu", "System");
+insert into genre(name, description, created_by)
+value ('Hành động', 'Phim hành động là thể loại phim tập trung vào những cảnh quay kịch tính, thường có nhiều pha hành động, chiến đấu, và mạo hiểm. Những bộ phim này thường mang đến cho khán giả cảm giác hồi hộp và kích thích.', 'admin'),
+    ('Phiêu lưu', 'Phim phiêu lưu là thể loại phim tập trung vào những cuộc hành trình, khám phá, và trải nghiệm mới. Những bộ phim này thường có cốt truyện hấp dẫn, với những tình tiết ly kỳ và những cảnh quay đẹp mắt.', 'admin'),
+    ('Hài hước', 'Phim hài hước là thể loại phim tập trung vào việc tạo ra tiếng cười và giải trí cho khán giả. Những bộ phim này thường có những tình huống hài hước, những nhân vật vui nhộn, và những câu thoại dí dỏm.', 'admin'),
+    ('Kinh dị', 'Phim kinh dị là thể loại phim tập trung vào việc tạo ra sự sợ hãi và căng thẳng cho khán giả. Những bộ phim này thường có những cảnh quay đáng sợ, những tình tiết ly kỳ, và những nhân vật đáng sợ.', 'admin'),
+    ('Lãng mạng','Phim lãng mạng là thể loại phim tập trung vào việc kể chuyện về những mối quan hệ tình cảm, tình yêu và các vấn đề liên quan đến đời sống hôn nhân, gia đình.', 'admin'),
+    ('Khoa học viễn tưởng', 'Phim khoa học viễn tưởng là thể loại phim tập trung vào những câu chuyện về công nghệ, không gian, thời gian, và các hiện tượng siêu nhiên. Những bộ phim này thường có những cảnh quay đẹp mắt và những tình tiết ly kỳ.', 'admin'),
+    ('Tâm lý', 'Phim tâm lý là thể loại phim tập trung vào việc khám phá tâm lý của nhân vật và các mối quan hệ giữa họ. Những bộ phim này thường có những tình tiết phức tạp và những nhân vật sâu sắc.', 'admin'),
+    ('Hoạt hình', 'Phim hoạt hình là thể loại phim sử dụng kỹ thuật hoạt hình để tạo ra hình ảnh và chuyển động. Những bộ phim này thường có những câu chuyện hấp dẫn và những nhân vật đáng yêu, phù hợp với mọi lứa tuổi.', 'admin');

@@ -1,4 +1,4 @@
-package com.cinema.ticketbooking.config;
+package com.cinema.ticketbooking.core.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;

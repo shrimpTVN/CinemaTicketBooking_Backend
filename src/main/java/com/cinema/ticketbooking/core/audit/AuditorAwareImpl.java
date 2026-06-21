@@ -1,4 +1,4 @@
-package com.cinema.ticketbooking.audit;
+package com.cinema.ticketbooking.core.audit;
 
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;

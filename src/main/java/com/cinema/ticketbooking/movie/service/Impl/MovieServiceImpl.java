@@ -1,7 +1,8 @@
-package com.cinema.ticketbooking.movie.service;
+package com.cinema.ticketbooking.movie.service.Impl;
 
 import com.cinema.ticketbooking.dto.MovieDto;
 import com.cinema.ticketbooking.entity.Movie;
+import com.cinema.ticketbooking.movie.service.IMovieService;
 import com.cinema.ticketbooking.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MovieServiceImpl implements IMovieService{
+public class MovieServiceImpl implements IMovieService {
 
     private final MovieRepository movieRespository;
 
