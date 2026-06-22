@@ -4,10 +4,7 @@ import com.cinema.ticketbooking.dto.MovieDto;
 import com.cinema.ticketbooking.movie.service.IMovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,9 +21,22 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getMovieById(@PathVariable String id){
-
-        return ResponseEntity.ok().body("Get movie by id: " + id);
+    public ResponseEntity<MovieDto> getMovieById(@PathVariable Long id){
+        MovieDto movieDto = movieService.getMovieById(id);
+        return ResponseEntity.ok().body(movieDto);
     }
 
+    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
+    public ResponseEntity<MovieDto> updateMovie(@PathVariable Long id, @RequestBody MovieDto movieDto){
+        System.out.println(id + "  " +movieDto);
+        MovieDto  updatedMovieDto = movieService.updateMovie(id, movieDto);
+        return ResponseEntity.ok().body(updatedMovieDto);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<MovieDto> createMovie(@RequestBody MovieDto movieDto){
+        MovieDto  createdMovieDto = movieService.createMovie(movieDto);
+        return  ResponseEntity.ok().body(createdMovieDto);
+    }
 }

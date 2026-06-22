@@ -4,12 +4,17 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="genre")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Genre extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,5 +29,10 @@ public class Genre extends BaseEntity {
     @Lob
     @NotBlank
     private String description;
+
+    // 'mappedBy' flags this as the inverse/non-owning side.
+    // It points to the 'genres' field in the Movie entity.
+    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY)
+    private Set<Movie> movies = new HashSet<>();
 
 }

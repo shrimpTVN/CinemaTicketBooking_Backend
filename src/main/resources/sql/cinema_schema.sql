@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS genre
 CREATE TABLE IF NOT EXISTS movie
 (
     id            INT AUTO_INCREMENT PRIMARY KEY,
-    title         varchar(100)                          NOT NULL unique ,
+    title         varchar(100)                          NOT NULL unique,
     duration      int                                   NOT NULL check (duration > 0),
     avatar        varchar(500)                          NOT NULL,
     trailer       varchar(500)                          NOT NULL,
@@ -35,14 +35,11 @@ CREATE TABLE IF NOT EXISTS movie_genre
 (
     movie_id INT NOT NULL,
     genre_id INT NOT NULL,
-    created_at      TIMESTAMP                                            DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_by      VARCHAR(20)    NOT NULL,
-    updated_at      TIMESTAMP                                            DEFAULT NULL,
-    updated_by      VARCHAR(20)                                          DEFAULT NULL,
     PRIMARY KEY (movie_id, genre_id),
     FOREIGN KEY (movie_id) REFERENCES movie (id) ON DELETE CASCADE,
     FOREIGN KEY (genre_id) REFERENCES genre (id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE IF NOT exists movie_record
 (
@@ -60,7 +57,7 @@ CREATE TABLE IF NOT exists movie_record
 create table if not exists hall
 (
     id          int auto_increment primary key,
-    name        varchar(100)                          not null unique ,
+    name        varchar(100)                          not null unique,
     width       int                                   not null check (width > 0),
     height      int                                   not null check (height > 0),
     images      JSON                                  not null,
@@ -77,15 +74,18 @@ create table if not exists hall
 create table if not exists seat_type
 (
     id              int auto_increment primary key,
-    name            varchar(100)   not null unique ,
+    name            varchar(100)   not null unique,
     price_surcharge decimal(10, 2) not null check (price_surcharge >= 0) default 0,
     description     text           not null,
     image           varchar(500)   not null,
+    status          varchar(50)                                          default 'ON',
     created_at      TIMESTAMP                                            DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by      VARCHAR(20)    NOT NULL,
     updated_at      TIMESTAMP                                            DEFAULT NULL,
     updated_by      VARCHAR(20)                                          DEFAULT NULL
 );
+
+
 
 create table if not exists seat
 (
