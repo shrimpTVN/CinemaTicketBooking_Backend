@@ -111,6 +111,7 @@ create table if not exists showtime
     hall_id    int                                   not null,
     date       datetime                              not null,
     start_time TIME                                  not null,
+    type       varchar(50)                           not null,
     created_at TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by VARCHAR(20)                           NOT NULL,
     updated_at TIMESTAMP   DEFAULT NULL,

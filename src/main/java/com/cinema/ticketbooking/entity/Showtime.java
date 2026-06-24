@@ -14,7 +14,7 @@ import java.time.LocalTime;
 @Setter
 @Entity
 @Table(name = "showtime", schema = "cinema")
-public class Showtime {
+public class Showtime extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -33,22 +33,9 @@ public class Showtime {
     @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
 
+
     @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
-
-    @Size(max = 20)
-    @NotNull
-    @Column(name = "created_by", nullable = false, length = 20)
-    private String createdBy;
-
-    @Column(name = "updated_at")
-    private Instant updatedAt;
-
-    @Size(max = 20)
-    @Column(name = "updated_by", length = 20)
-    private String updatedBy;
-
+    @Column(name="type", nullable=false)
+    private String type;
 
 }

@@ -8,44 +8,45 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "price_list", schema = "cinema")
-public class PriceList extends BaseEntity {
+@Table(name = "product", schema = "cinema")
+public class Product extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "hall_id", nullable = false)
-    private Hall hall;
-
     @Size(max = 100)
     @NotNull
-    @Column(name = "type", nullable = false, length = 100)
-    private String type;
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
+
+    @NotNull
+    @Lob
+    @Column(name = "description", nullable = false)
+    private String description;
 
     @NotNull
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Size(max = 20)
+    @Size(max = 500)
     @NotNull
-    @Column(name = "days", nullable = false, length = 20)
-    private String days;
+    @Column(name = "image", nullable = false, length = 500)
+    private String image;
 
     @Size(max = 50)
     @ColumnDefault("'ON'")
     @Column(name = "status", length = 50)
     private String status;
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "seat_type_id", nullable = false)
-    private SeatType seatType;
+
+    @OneToMany(mappedBy = "product")
+    private Set<InvoiceDetail> invoiceDetails = new LinkedHashSet<>();
+
 
 }

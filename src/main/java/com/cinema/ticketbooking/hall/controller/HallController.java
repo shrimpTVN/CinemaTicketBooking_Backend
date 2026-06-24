@@ -1,6 +1,7 @@
 package com.cinema.ticketbooking.hall.controller;
 
 import com.cinema.ticketbooking.dto.HallDto;
+import com.cinema.ticketbooking.dto.SeatDto;
 import com.cinema.ticketbooking.entity.Hall;
 import com.cinema.ticketbooking.hall.service.IHallService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,21 @@ public class HallController {
         return ResponseEntity.ok(hallDtos);
     }
 
+    @GetMapping("/{id}/seat-map")
+    public ResponseEntity<List<SeatDto>> getHallSeatMap(@PathVariable Integer id) {
+        return ResponseEntity.ok(hallService.getHallSeatMap(id));
+    }
+
+    @PostMapping("/{id}/seat-map")
+    public ResponseEntity<List<SeatDto>> generateHallSeatMap(@PathVariable("id") Integer id, @RequestBody List<SeatDto> seatDtos){
+        return ResponseEntity.ok(hallService.generateHallSeatMap(id, seatDtos));
+    }
+
+    @PatchMapping("/{id}/seat-map")
+    public ResponseEntity<List<SeatDto>> updateHallSeatMap(@PathVariable("id") Integer id,  @RequestBody List<SeatDto> seatDtos){
+        return ResponseEntity.ok(hallService.updateHallSeatMap(id, seatDtos));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<HallDto> getHallById(@PathVariable Integer id) {
         HallDto hallDto = hallService.getHallById(id);
@@ -40,4 +56,6 @@ public class HallController {
         HallDto newHallDto = hallService.createHall(hallDto);
         return ResponseEntity.ok(newHallDto);
     }
+
+
 }

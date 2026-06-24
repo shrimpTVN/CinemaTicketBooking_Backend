@@ -13,8 +13,8 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "price_list", schema = "cinema")
-public class PriceList extends BaseEntity {
+@Table(name = "ticket", schema = "cinema")
+public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -22,30 +22,34 @@ public class PriceList extends BaseEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "hall_id", nullable = false)
-    private Hall hall;
-
-    @Size(max = 100)
-    @NotNull
-    @Column(name = "type", nullable = false, length = 100)
-    private String type;
+    @JoinColumn(name = "invoice_id", nullable = false)
+    private Invoice invoice;
 
     @NotNull
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
+    @Size(max = 500)
+    @NotNull
+    @Column(name = "qr", nullable = false, length = 500)
+    private String qr;
+
+    @NotNull
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
     @Size(max = 20)
     @NotNull
-    @Column(name = "days", nullable = false, length = 20)
-    private String days;
+    @Column(name = "created_by", nullable = false, length = 20)
+    private String createdBy;
 
-    @Size(max = 50)
-    @ColumnDefault("'ON'")
-    @Column(name = "status", length = 50)
-    private String status;
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "seat_type_id", nullable = false)
-    private SeatType seatType;
+    @Column(name = "updated_at")
+    private Instant updatedAt;
+
+    @Size(max = 20)
+    @Column(name = "updated_by", length = 20)
+    private String updatedBy;
+
 
 }

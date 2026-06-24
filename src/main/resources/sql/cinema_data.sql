@@ -70,7 +70,8 @@ insert into seat_type(name, description, image, created_by)
      'https://example.com/couple_seat.jpg', 'admin'),
     ('Bean Bag',
      'Ghế Bean Bag là loại ghế có thiết kế mềm mại, thường được sử dụng trong các phòng chiếu phim hiện đại để mang lại sự thoải mái cho khán giả.',
-     'https://example.com/bean_bag_seat.jpg', 'admin');
+     'https://example.com/bean_bag_seat.jpg', 'admin'),
+    ("Lối đi", "Nơi không được đặt ghế", "no-link   ", 'admin');
 
 ###INSERT HALL#####
 insert into hall(name, width, height, images, description, convenience, created_by)
