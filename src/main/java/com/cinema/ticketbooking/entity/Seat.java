@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
 
@@ -26,11 +28,13 @@ public class Seat  extends BaseEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "hall_id", nullable = false)
+    @OnDelete(action=OnDeleteAction.RESTRICT)
     private Hall hall;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name="seat_type_id", nullable = false)
+    @OnDelete(action= OnDeleteAction.RESTRICT)
     private SeatType seatType;
 
     @Size(max = 5)

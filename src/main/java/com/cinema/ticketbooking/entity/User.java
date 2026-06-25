@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -27,11 +28,6 @@ public class User extends BaseEntity {
     @NotNull
     @Column(name = "DoB", nullable = false)
     private LocalDate doB;
-
-    @Size(max = 10)
-    @NotNull
-    @Column(name = "gender", nullable = false, length = 10)
-    private String gender;
 
     @NotNull
     @ColumnDefault("0")
@@ -64,5 +60,6 @@ public class User extends BaseEntity {
     @Column(name = "status", length = 50)
     private String status;
 
-
+    @OneToMany(mappedBy = "user",  fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
+    private Set<Invoice> invoices;
 }

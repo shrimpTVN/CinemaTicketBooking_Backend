@@ -11,6 +11,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -18,6 +19,9 @@ import java.util.Set;
 @Getter @Setter
 @NoArgsConstructor
 public class Movie extends BaseEntity {
+    @OneToMany(mappedBy = "movie", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<Showtime> showtimes = new LinkedHashSet<>();
+
     public Movie(@Size(max = 100) @NotBlank String title, Integer duration, @Size(max = 500) @NotBlank String avatar,
                  @Size(max = 500) @NotBlank String trailer, String description, @Size(max = 100) @NotBlank String country,
                  Integer ageLimit, Instant premiereDate, Float rating, @Size(max = 500) @NotBlank String actors,
@@ -44,9 +48,10 @@ public class Movie extends BaseEntity {
             this.genres = genres;
         }
     }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Size(max = 100)
     @NotBlank

@@ -21,14 +21,14 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MovieDto> getMovieById(@PathVariable Long id){
+    public ResponseEntity<MovieDto> getMovieById(@PathVariable Integer id){
         MovieDto movieDto = movieService.getMovieById(id);
         return ResponseEntity.ok().body(movieDto);
     }
 
     @PatchMapping("/{id}")
     @PutMapping("/{id}")
-    public ResponseEntity<MovieDto> updateMovie(@PathVariable Long id, @RequestBody MovieDto movieDto){
+    public ResponseEntity<MovieDto> updateMovie(@PathVariable Integer id, @RequestBody MovieDto movieDto){
         System.out.println(id + "  " +movieDto);
         MovieDto  updatedMovieDto = movieService.updateMovie(id, movieDto);
         return ResponseEntity.ok().body(updatedMovieDto);

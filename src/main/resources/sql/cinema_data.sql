@@ -81,3 +81,100 @@ VALUES ('Phòng chiếu 2D 2', 25, 20,
        ('Phòng chiếu 2D 1', 20, 15,
         JSON_ARRAY('https://example.com/hall1.jpg', 'https://example.com/hall2.jpg', 'https://example.com/hall3.jpg'),
         'Phòng chiếu 1...', 'Hệ thống âm thanh vòm', 'admin');
+
+
+####INSERT SHOWTIME#####
+insert into showtime(movie_id, hall_id, date, start_time, type, created_by)
+    value (1, 1, '2026-06-28', '18:00:00', 'Phụ đề tiếng Việt', 'admin'),
+    (2, 1, '2026-06-28', '20:00:00', 'Phụ đề tiếng Việt', 'admin'),
+    (5, 1, '2026-06-29', '17:00:00', 'Phụ đề tiếng Việt', 'admin'),
+    (6, 1, '2026-06-29', '19:30:00', 'Phụ đề tiếng Việt', 'admin'),
+    (3, 2, '2026-07-02', '19:00:00', 'Phụ đề tiếng Việt', 'admin'),
+    (4, 2, '2026-07-02', '21:00:00', 'Phụ đề tiếng Việt', 'admin');
+
+
+####INSERT SEAT MAP###- using postman
+# [
+#     {
+#         "seatTypeId":1 ,
+#         "rowLabel": "A",
+#         "colNumber": 1
+#     },
+#     {
+#         "seatTypeId": 1,
+#         "rowLabel": "A",
+#         "colNumber": 2
+#     },
+#         {
+#         "seatTypeId": 1,
+#         "rowLabel": "A",
+#         "colNumber": 3
+#     },
+#     {
+#         "seatTypeId": 1,
+#         "rowLabel": "A",
+#         "colNumber": 4
+#     },
+#     {
+#         "seatTypeId": 1,
+#         "rowLabel": "B",
+#         "colNumber": 1
+#     },
+#     {
+#         "seatTypeId": 2,
+#         "rowLabel": "B",
+#         "colNumber": 2
+#     },
+#     {
+#         "seatTypeId": 2,
+#         "rowLabel": "B",
+#         "colNumber": 3
+#     },
+#     {
+#         "seatTypeId": 1,
+#         "rowLabel": "B",
+#         "colNumber": 4
+#     },
+#     {
+#         "seatTypeId": 1,
+#         "rowLabel": "C",
+#         "colNumber": 1
+#     },
+#     {
+#         "seatTypeId": 1,
+#         "rowLabel": "C",
+#         "colNumber": 2
+#     },
+#     {
+#         "seatTypeId": 1,
+#         "rowLabel": "C",
+#         "colNumber": 3
+#     },
+#     {
+#         "seatTypeId": 1,
+#         "rowLabel": "C",
+#         "colNumber": 4
+#     },
+#     {
+#         "seatTypeId": 3,
+#         "rowLabel": "D",
+#         "colNumber": 1
+#     },
+#     {
+#         "seatTypeId": 3,
+#         "rowLabel": "D",
+#         "colNumber": 2
+#     },
+#     {
+#         "seatTypeId": 3,
+#         "rowLabel": "D",
+#         "colNumber": 3
+#     },
+#     {
+#         "seatTypeId": 3,
+#         "rowLabel": "D",
+#         "colNumber": 4
+#     }
+# ]
+
+###

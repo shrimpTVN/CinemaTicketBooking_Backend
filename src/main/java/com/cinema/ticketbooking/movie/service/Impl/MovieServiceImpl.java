@@ -1,5 +1,6 @@
 package com.cinema.ticketbooking.movie.service.Impl;
 
+import com.cinema.ticketbooking.core.exception.ResourceNotFoundException;
 import com.cinema.ticketbooking.dto.GenreDto;
 import com.cinema.ticketbooking.dto.MovieDto;
 import com.cinema.ticketbooking.entity.Genre;
@@ -31,13 +32,14 @@ public class MovieServiceImpl implements IMovieService {
         List<Movie> movieList = movieRespository.findAll();
         List<MovieDto> movieDtoList = new ArrayList<>();
         movieList.forEach(movie -> {
-            movieDtoList.add(transformToDto(movie));});
+            movieDtoList.add(transformToDto(movie));
+        });
         return movieDtoList;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public MovieDto getMovieById(Long id) {
+    public MovieDto getMovieById(Integer id) {
         if (movieRespository.existsById(id)) {
             Movie movie = movieRespository.getReferenceById(id);
             return transformToDto(movie);
@@ -49,72 +51,66 @@ public class MovieServiceImpl implements IMovieService {
     public MovieDto createMovie(MovieDto movieDto) {
         // Basic validation to avoid persisting invalid rows that violate DB constraints
         if (movieDto == null) throw new IllegalArgumentException("Movie payload is required");
-        if (movieDto.title() == null || movieDto.title().isBlank()) throw new IllegalArgumentException("title is required");
-        if (movieDto.duration() == null || movieDto.duration() <= 0) throw new IllegalArgumentException("duration must be > 0");
-        if (movieDto.avatar() == null || movieDto.avatar().isBlank()) throw new IllegalArgumentException("avatar is required");
-        if (movieDto.trailer() == null || movieDto.trailer().isBlank()) throw new IllegalArgumentException("trailer is required");
-        if (movieDto.country() == null || movieDto.country().isBlank()) throw new IllegalArgumentException("country is required");
-        if (movieDto.actors() == null || movieDto.actors().isBlank()) throw new IllegalArgumentException("actors is required");
-        if (movieDto.director() == null || movieDto.director().isBlank()) throw new IllegalArgumentException("director is required");
+        if (movieDto.title() == null || movieDto.title().isBlank())
+            throw new IllegalArgumentException("title is required");
+        if (movieDto.duration() == null || movieDto.duration() <= 0)
+            throw new IllegalArgumentException("duration must be > 0");
+        if (movieDto.avatar() == null || movieDto.avatar().isBlank())
+            throw new IllegalArgumentException("avatar is required");
+        if (movieDto.trailer() == null || movieDto.trailer().isBlank())
+            throw new IllegalArgumentException("trailer is required");
+        if (movieDto.country() == null || movieDto.country().isBlank())
+            throw new IllegalArgumentException("country is required");
+        if (movieDto.actors() == null || movieDto.actors().isBlank())
+            throw new IllegalArgumentException("actors is required");
+        if (movieDto.director() == null || movieDto.director().isBlank())
+            throw new IllegalArgumentException("director is required");
 
         Set<Genre> genres = new HashSet<>();
         movieDto.genres().forEach(genreDto -> {
             genres.add(genreRepository.findById(genreDto.id()).orElse(null));
         });
-        Movie movie = new Movie(movieDto.title(), movieDto.duration(), movieDto.avatar(), movieDto.trailer(),
-                movieDto.description(), movieDto.country(), movieDto.ageLimit(),
-                movieDto.premiereDate(), movieDto.rating(), movieDto.actors(),
-                movieDto.director(),  movieDto.status(), genres);
+        Movie movie = new Movie(movieDto.title(), movieDto.duration(), movieDto.avatar(), movieDto.trailer(), movieDto.description(), movieDto.country(), movieDto.ageLimit(), movieDto.premiereDate(), movieDto.rating(), movieDto.actors(), movieDto.director(), movieDto.status(), genres);
 
         Movie savedMovie = movieRespository.save(movie);
         return transformToDto(savedMovie);
     }
 
     @Override
-    public MovieDto updateMovie(Long id, MovieDto movieDto) {
+    public MovieDto updateMovie(Integer id, MovieDto movieDto) {
+        Movie movie = movieRespository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + id));
+
         if (movieRespository.existsById(id)) {
-            Movie movie = movieRespository.getReferenceById(id);
-            if (movieDto.title() != null) {
-                movie.setTitle(movieDto.title());
-            }
-            if (movieDto.duration() != null) {
-                movie.setDuration(movieDto.duration());
-            }
-            if (movieDto.avatar() != null) {
-                movie.setAvatar(movieDto.avatar());
-            }
-            if (movieDto.trailer() != null) {
-                movie.setTrailer(movieDto.trailer());
-            }
-            if (movieDto.description() != null) {
-                movie.setDescription(movieDto.description());
-            }
-            if (movieDto.country() != null) {
-                movie.setCountry(movieDto.country());
-            }
-            if (movieDto.ageLimit() != null) {
-                movie.setAgeLimit(movieDto.ageLimit());
-            }
-            if (movieDto.premiereDate() != null) {
-                movie.setPremiereDate(movieDto.premiereDate());
-            }
-            if (movieDto.rating() != null) {
-                movie.setRating(movieDto.rating());
-            }
-            if (movieDto.actors() != null) {
-                movie.setActors(movieDto.actors());
-            }
-            if (movieDto.director() != null) {
-                movie.setDirector(movieDto.director());
-            }
-            if (movieDto.status() != null) {
-                movie.setStatus(movieDto.status());
-            }
+
+            if (movieDto.title() != null) movie.setTitle(movieDto.title());
+
+            if (movieDto.duration() != null) movie.setDuration(movieDto.duration());
+
+            if (movieDto.avatar() != null) movie.setAvatar(movieDto.avatar());
+
+            if (movieDto.trailer() != null) movie.setTrailer(movieDto.trailer());
+
+            if (movieDto.description() != null) movie.setDescription(movieDto.description());
+
+            if (movieDto.country() != null) movie.setCountry(movieDto.country());
+
+            if (movieDto.ageLimit() != null) movie.setAgeLimit(movieDto.ageLimit());
+
+            if (movieDto.premiereDate() != null) movie.setPremiereDate(movieDto.premiereDate());
+
+            if (movieDto.rating() != null) movie.setRating(movieDto.rating());
+
+            if (movieDto.actors() != null) movie.setActors(movieDto.actors());
+
+            if (movieDto.director() != null) movie.setDirector(movieDto.director());
+
+            if (movieDto.status() != null) movie.setStatus(movieDto.status());
+
             if (movieDto.genres() != null) {
-               Set<Genre> genres = new HashSet<>();
-               movieDto.genres().forEach(genreDto -> {
-                   genres.add(genreRepository.findById(genreDto.id()).orElse(null));
-               });
+                Set<Genre> genres = new HashSet<>();
+                movieDto.genres().forEach(genreDto -> {
+                    genres.add(genreRepository.findById(genreDto.id()).orElse(null));
+                });
                 movie.setGenres(genres);
             }
             movieRespository.save(movie);
@@ -140,10 +136,7 @@ public class MovieServiceImpl implements IMovieService {
         if (movie.getGenres() != null) {
             movie.getGenres().forEach(genre -> genreDtos.add(transformToDto(genre)));
         }
-        return new MovieDto(movie.getId(), movie.getTitle(), movie.getDuration(),
-                movie.getAvatar(), movie.getTrailer(), movie.getDescription(), movie.getCountry(),
-                movie.getAgeLimit(), movie.getPremiereDate(), movie.getRating(), movie.getActors(),
-                movie.getDirector(),  movie.getStatus(), genreDtos);
+        return new MovieDto(movie.getId(), movie.getTitle(), movie.getDuration(), movie.getAvatar(), movie.getTrailer(), movie.getDescription(), movie.getCountry(), movie.getAgeLimit(), movie.getPremiereDate(), movie.getRating(), movie.getActors(), movie.getDirector(), movie.getStatus(), genreDtos);
     }
 
     private GenreDto transformToDto(Genre genre) {

@@ -163,6 +163,11 @@ create table if not exists invoice
     updated_at     TIMESTAMP   DEFAULT NULL,
     updated_by     VARCHAR(20) DEFAULT NULL
 );
+ALTER TABLE invoice
+    ADD COLUMN user_id int,
+    ADD CONSTRAINT fk_user_id
+    FOREIGN KEY (user_id)
+    REFERENCES user(id);
 
 create table if not exists product
 (

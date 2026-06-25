@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * DTO for {@link Movie}
  */
-public record MovieDto(Long id, @Size(max = 100) @NotBlank String title, Integer duration,
+public record MovieDto(Integer id, @Size(max = 100) @NotBlank String title, Integer duration,
                        @Size(max = 500) @NotBlank String avatar, @Size(max = 500) @NotBlank String trailer,
                        String description, @Size(max = 100) @NotBlank String country, Integer ageLimit,
                        Instant premiereDate, Float rating, @Size(max = 500) @NotBlank String actors,
