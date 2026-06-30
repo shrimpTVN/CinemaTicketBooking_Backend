@@ -166,8 +166,8 @@ create table if not exists invoice
 ALTER TABLE invoice
     ADD COLUMN user_id int,
     ADD CONSTRAINT fk_user_id
-    FOREIGN KEY (user_id)
-    REFERENCES user(id);
+        FOREIGN KEY (user_id)
+            REFERENCES user (id);
 
 create table if not exists product
 (
@@ -217,17 +217,34 @@ create table if not exists price_list
 create table if not exists user
 (
     id           int auto_increment primary key,
-    name         varchar(100) not null,
-    DoB          date         not null,
-    gender       varchar(10)  not null,
-    point        int          not null default 0 check (point >= 0),
-    phone_number varchar(10)  not null unique,
-    email        varchar(50)  not null unique,
-    password     varchar(50)  not null,
-    role         varchar(20)  not null default 'USER',
-    status       varchar(50)           default 'ON',
-    created_at   TIMESTAMP             DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_by   VARCHAR(20)  NOT NULL,
-    updated_at   TIMESTAMP             DEFAULT NULL,
-    updated_by   VARCHAR(20)           DEFAULT NULL
+    name         varchar(100)                          not null,
+    DoB          date                                  not null,
+    gender       varchar(10)                           not null,
+    point        int         default 0 check (point >= 0),
+    phone_number varchar(10)                           not null unique,
+    email        varchar(255)                          not null unique,
+    password     varchar(255)                          not null,
+    status       varchar(50) default 'ON',
+    created_at   TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by   VARCHAR(20)                           NOT NULL,
+    updated_at   TIMESTAMP   DEFAULT NULL,
+    updated_by   VARCHAR(20) DEFAULT NULL
+);
+
+ALTER TABLE user
+    ADD COLUMN role_id INT DEFAULT 2;
+ALTER TABLE user
+    ADD CONSTRAINT fk_user_role
+        FOREIGN KEY (role_id) REFERENCES role (id);
+
+create table if not exists role
+(
+    id          int auto_increment primary key,
+    name        varchar(100)                          not null unique,
+    description text                                  not null,
+    status      varchar(50) default 'ON',
+    created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by  VARCHAR(20)                           NOT NULL,
+    updated_at  TIMESTAMP   DEFAULT NULL,
+    updated_by  VARCHAR(20) DEFAULT NULL
 );

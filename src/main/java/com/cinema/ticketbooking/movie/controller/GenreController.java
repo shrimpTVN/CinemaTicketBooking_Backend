@@ -16,12 +16,12 @@ public class GenreController {
 
     private final IGenreService genreService;
 
-    @GetMapping(path={"","/"})
+    @GetMapping(path="/public")
     public ResponseEntity<List<GenreDto>> getAllGenres(){
         return ResponseEntity.ok().body(genreService.getAllGenres());
     }
 
-    @GetMapping(path="/{id}")
+    @GetMapping(path="/public/{id}")
     public ResponseEntity<GenreDto> getGenreById(@PathVariable Long id){
         return ResponseEntity.ok().body(genreService.getGenreById(id));
     }

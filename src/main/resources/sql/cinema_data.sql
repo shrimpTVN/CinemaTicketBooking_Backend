@@ -93,6 +93,11 @@ insert into showtime(movie_id, hall_id, date, start_time, type, created_by)
     (4, 2, '2026-07-02', '21:00:00', 'Phụ đề tiếng Việt', 'admin');
 
 
+######INSERT ROLE#####
+insert into role(name, description, created_by)
+    value ('Admin', 'Quản trị viên có quyền truy cập đầy đủ vào hệ thống và có thể quản lý tất cả các chức năng.', 'admin'),
+    ("User", "Người dùng có quyền truy cập hạn chế, chủ yếu để xem phim và đặt vé.", 'admin');
+
 ####INSERT SEAT MAP###- using postman
 # [
 #     {

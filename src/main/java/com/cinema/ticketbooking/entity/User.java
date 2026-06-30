@@ -29,37 +29,36 @@ public class User extends BaseEntity {
     @Column(name = "DoB", nullable = false)
     private LocalDate doB;
 
-    @NotNull
     @ColumnDefault("0")
     @Column(name = "point", nullable = false)
-    private Integer point;
+    private Integer point=0;
 
     @Size(max = 10)
     @NotNull
     @Column(name = "phone_number", nullable = false, length = 10)
     private String phoneNumber;
 
-    @Size(max = 50)
+    @Size(max = 255)
     @NotNull
-    @Column(name = "email", nullable = false, length = 50)
+    @Column(name = "email", nullable = false, length = 255)
     private String email;
 
-    @Size(max = 50)
+    @Size(max = 255)
     @NotNull
-    @Column(name = "password", nullable = false, length = 50)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Size(max = 20)
-    @NotNull
-    @ColumnDefault("'USER'")
-    @Column(name = "role", nullable = false, length = 20)
-    private String role;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
 
     @Size(max = 50)
     @ColumnDefault("'ON'")
     @Column(name = "status", length = 50)
-    private String status;
+    private String status="ON";
 
     @OneToMany(mappedBy = "user",  fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
     private Set<Invoice> invoices;
+
+
 }
