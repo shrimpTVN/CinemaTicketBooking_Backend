@@ -1,4 +1,4 @@
-package com.cinema.ticketbooking.dto;
+package com.cinema.ticketbooking.dto.responseDto;
 
 import org.springframework.http.HttpStatus;
 

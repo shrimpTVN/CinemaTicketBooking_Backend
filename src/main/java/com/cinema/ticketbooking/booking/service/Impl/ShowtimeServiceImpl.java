@@ -2,7 +2,6 @@ package com.cinema.ticketbooking.booking.service.Impl;
 
 import com.cinema.ticketbooking.booking.service.IShowtimeService;
 import com.cinema.ticketbooking.core.exception.ResourceNotFoundException;
-import com.cinema.ticketbooking.dto.MovieDto;
 import com.cinema.ticketbooking.dto.requestDto.ShowtimeRequestDto;
 import com.cinema.ticketbooking.dto.responseDto.ShowtimeResponseDto;
 import com.cinema.ticketbooking.entity.Hall;
@@ -14,7 +13,6 @@ import com.cinema.ticketbooking.repository.ShowtimeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 

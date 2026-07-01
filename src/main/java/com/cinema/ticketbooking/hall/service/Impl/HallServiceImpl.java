@@ -1,19 +1,19 @@
 package com.cinema.ticketbooking.hall.service.Impl;
 
 import com.cinema.ticketbooking.core.exception.ResourceNotFoundException;
-import com.cinema.ticketbooking.dto.HallDto;
+import com.cinema.ticketbooking.dto.requestDto.HallRequestDto;
+import com.cinema.ticketbooking.dto.responseDto.HallResponseDto;
 import com.cinema.ticketbooking.dto.SeatDto;
 import com.cinema.ticketbooking.entity.Hall;
+import com.cinema.ticketbooking.entity.HallType;
 import com.cinema.ticketbooking.entity.Seat;
 import com.cinema.ticketbooking.entity.SeatType;
 import com.cinema.ticketbooking.hall.service.IHallService;
 import com.cinema.ticketbooking.repository.HallRepository;
+import com.cinema.ticketbooking.repository.HallTypeRepository;
 import com.cinema.ticketbooking.repository.SeatRepository;
 import com.cinema.ticketbooking.repository.SeatTypeRepository;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,38 +24,41 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HallServiceImpl  implements IHallService {
     private final HallRepository hallRepository;
+    private final HallTypeRepository hallTypeRepository;
     private final SeatTypeRepository seatTypeRepository;
     private final SeatRepository seatRepository;
 
     @Override
-    public List<HallDto> getAllHalls() {
+    public List<HallResponseDto> getAllHalls() {
         List<Hall> halls = hallRepository.findAll();
         return halls.stream().map(this::transformToDto).toList();
     }
 
     @Override
-    public HallDto getHallById(int id) {
+    public HallResponseDto getHallById(int id) {
         Hall hall = hallRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hall not found with id: " + id));
         return transformToDto(hall);
     }
 
     @Override
-    public HallDto createHall(HallDto hallDto) {
+    public HallResponseDto createHall(HallRequestDto hallDto) {
         Hall hall = new Hall();
         hall.setName(hallDto.name());
         hall.setWidth(hallDto.width());
         hall.setHeight(hallDto.height());
-        hall.setImages(hallDto.images());
-        hall.setDescription(hallDto.description());
-        hall.setConvenience(hallDto.convenience());
+
+        HallType hallType = hallTypeRepository.findById(hallDto.hallTypeId())
+                .orElseThrow(() -> new ResourceNotFoundException("Hall type not found with id: " + hallDto.hallTypeId()));
+        hall.setHallType(hallType);
+
         hallRepository.save(hall);
 
         return transformToDto(hall);
     }
 
     @Override
-    public HallDto updateHall(int id, HallDto hallDto) {
+    public HallResponseDto updateHall(int id, HallRequestDto hallDto) {
         Hall hall = hallRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hall not found with id: " + id));
         if (hallDto.name() != null) {
@@ -67,22 +70,18 @@ public class HallServiceImpl  implements IHallService {
         if (hallDto.height() != null) {
             hall.setHeight(hallDto.height());
         }
-        if (hallDto.images() != null) {
-            hall.setImages(hallDto.images());
-        }
-        if (hallDto.description() != null) {
-            hall.setDescription(hallDto.description());
-        }
-        if (hallDto.convenience() != null) {
-            hall.setConvenience(hallDto.convenience());
-        }
-
-        if (hallDto.status() != null) {
-            hall.setStatus(hallDto.status());
-        }
 
         hallRepository.save(hall);
         return transformToDto(hall);
+    }
+
+    @Override
+    public String updateHallStatus(int id, String status) {
+        Hall hall = hallRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Hall not found with id: " + id));
+        hall.setStatus(status);
+        hallRepository.save(hall);
+        return "Hall status updated successfully";
     }
 
 //    You fetch the Hall entity just to access its getSeats() collection.
@@ -244,10 +243,9 @@ public class HallServiceImpl  implements IHallService {
 
         return updatedSeats.stream().map(this::transformToDto).toList();
     }
-    private HallDto transformToDto(Hall hall){
-        return new HallDto(hall.getId(), hall.getName(), hall.getWidth(),
-                hall.getHeight(), hall.getImages(), hall.getDescription(),
-                hall.getConvenience(), hall.getStatus());
+    private HallResponseDto transformToDto(Hall hall){
+        return new HallResponseDto(hall.getId(), hall.getName(), hall.getWidth(),
+                hall.getHeight(),hall.getHallType().getName(), hall.getStatus());
     }
 
     private SeatDto transformToDto(Seat seat){

@@ -6,12 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import org.jspecify.annotations.NonNull;
 
+import java.time.Instant;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -37,36 +34,26 @@ public class Hall extends BaseEntity {
     @Column(name = "height", nullable = false)
     private Integer height;
 
-    @NotNull
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "images", nullable = false)
-    private List<String> images;
-
-    @NotNull
-    @Lob
-    @Column(name = "description", nullable = false)
-    private String description;
-
-    @NotNull
-    @Lob
-    @Column(name = "convenience", nullable = false)
-    private String convenience;
-
     @Size(max = 50)
     @ColumnDefault("'ON'")
     @Column(name = "status", length = 50)
     private String status="ON";
 
-    @NonNull
-    @OneToMany(mappedBy = "hall", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Seat> seats = new LinkedHashSet<>();
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "hall_type_id", nullable = false)
+    private HallType hallType;
 
-    @NonNull
-    @OneToMany(mappedBy = "hall", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany
+    @JoinColumn(name = "hall_id")
     private Set<PriceList> priceLists = new LinkedHashSet<>();
 
-    @NonNull
-    @OneToMany(mappedBy = "hall", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany
+    @JoinColumn(name = "hall_id")
+    private Set<Seat> seats = new LinkedHashSet<>();
+
+    @OneToMany
+    @JoinColumn(name = "hall_id")
     private Set<Showtime> showtimes = new LinkedHashSet<>();
 
 

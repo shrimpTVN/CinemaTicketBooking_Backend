@@ -31,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User.builder()
                 .username(mySqlUser.getEmail())
                 .password(mySqlUser.getPassword()) // This is the BCrypt hash we made earlier!
-                .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + mySqlUser.getRole().getName())))
+                .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + mySqlUser.getRole().getName().toUpperCase())))
                 .build();
     }
 }

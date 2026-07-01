@@ -1,3 +1,9 @@
+######INSERT ROLE#####
+insert into role(name, description, created_by)
+    value ('Admin', 'Quản trị viên có quyền truy cập đầy đủ vào hệ thống và có thể quản lý tất cả các chức năng.',
+           'admin'),
+    ('User', 'Người dùng có quyền truy cập hạn chế, chủ yếu để xem phim và đặt vé.', 'admin');
+
 ###INSERT GENRE#######
 insert into genre(name, description, created_by)
     value ('Hành động',
@@ -71,16 +77,95 @@ insert into seat_type(name, description, image, created_by)
     ('Bean Bag',
      'Ghế Bean Bag là loại ghế có thiết kế mềm mại, thường được sử dụng trong các phòng chiếu phim hiện đại để mang lại sự thoải mái cho khán giả.',
      'https://example.com/bean_bag_seat.jpg', 'admin'),
-    ("Lối đi", "Nơi không được đặt ghế", "no-link   ", 'admin');
+    ('Lối đi', 'Nơi không được đặt ghế', 'no-link', 'admin');
+insert into seat_type(name, description, image, created_by)
+    value ('Ghế IMAX',
+           'Ghế bọc da sang trọng được bố trí dạng bậc thang với khoảng cách giữa các dãy ghế cực kỳ thoải mái, đảm bảo tầm nhìn tối ưu và sự thư giãn tuyệt đối suốt hành trình điện ảnh.',
+           'https://res.cloudinary.com/depaiphq0/image/upload/v1782914838/imax_kkbnrf.jpg', 'admin');
+insert into seat_type(name, description, image, created_by)
+    value ('Ghế Lagom thường',
+           'Ghế da cao cấp từ BoConcept nâng đỡ hoàn hảo, quyền lợi check-in ưu tiên, chăn lông mềm mại và ẩm thực phục vụ tận nơi, kiến tạo sự thư thái cho mọi khoảnh khắc trải nghiệm điện ảnh.',
+           'https://res.cloudinary.com/depaiphq0/image/upload/v1782915094/Lagom-2_agplky.jpg', 'admin'),
+    ('Ghế Lagom Đôi',
+     'Ghế da cao cấp từ BoConcept nâng đỡ hoàn hảo, quyền lợi check-in ưu tiên, chăn lông mềm mại và ẩm thực phục vụ tận nơi, kiến tạo sự thư thái cho mọi khoảnh khắc trải nghiệm điện ảnh.',
+     'https://res.cloudinary.com/depaiphq0/image/upload/v1782915097/Lagom03_uegedj.jpg', 'admin');
+insert into seat_type(name, description, image, created_by)
+    value ('Lối đi',
+           'Nơi không được đặt ghế',
+           'no-link', 'admin');
+####INSERT HALL_TYPE#####
+insert into hall_type(name, description, convenience, style, images, created_by)
+    value
+    ('Phòng chiếu 2D',
+     'Phòng chiếu 2D là loại phòng chiếu phim truyền thống, sử dụng công nghệ chiếu phim 2D để hiển thị hình ảnh trên màn hình. Phòng chiếu 2D thường có chất lượng hình ảnh và âm thanh tốt, phù hợp cho các bộ phim không yêu cầu hiệu ứng 3D.',
+     'Hệ thống âm thanh vòm, Ghế ngồi thoải mái, Màn hình chất lượng cao',
+     'Thông thường',
+     JSON_ARRAY('https://example.com/hall_type_2d_1.jpg', 'https://example.com/hall_type_2d_2.jpg'), 'admin'),
+    ('IMAX',
+     'IMAX là công nghệ chiếu phim tiên tiến nhất trên thế giới hiện nay, từ thiết kế phòng chiếu vô cùng choáng ngợp đến hiệu ứng âm thanh và hình ảnh đỉnh cao.',
+     'Công nghệ IMAX with Laser tiên phong
+     Mang đến hình ảnh 4K sắc nét vượt trội với tỷ lệ màn hình mở rộng 1.43:1 hoặc 1.90:1, tốc độ khung hình lên đến 120fps, độ tương phản sâu và màu sắc sống động, khiến khán giả như bước vào bên trong bộ phim.
+     Âm thanh IMAX thế hệ mới – nhập vai toàn diện
+     Hệ thống âm thanh đa kênh chính xác, dải động lớn và được tinh chỉnh đồng đều khắp không gian rạp, tạo trải nghiệm âm thanh sống động, bao trùm và chân thực đồng hành cùng hình ảnh đỉnh cao.
+     Ghế da cao cấp & thiết kế bậc thang rộng rãi
+     Ghế bọc da sang trọng được bố trí dạng bậc thang với khoảng cách giữa các dãy ghế cực kỳ thoải mái, đảm bảo tầm nhìn tối ưu và sự thư giãn tuyệt đối suốt hành trình điện ảnh.',
+     'Công nghệ',
+     JSON_ARRAY('https://res.cloudinary.com/depaiphq0/image/upload/v1782914513/imax-1_xp6oh6.webp',
+                'https://res.cloudinary.com/depaiphq0/image/upload/v1782914513/imax-2_zzuipz.jpg',
+                'https://res.cloudinary.com/depaiphq0/image/upload/v1782914514/imax-3_etcojt.jpg',
+                'https://res.cloudinary.com/depaiphq0/image/upload/v1782914514/imax-5_blwdtd.jpg',
+                'https://res.cloudinary.com/depaiphq0/image/upload/v1782914514/imax-4_g3wnyg.jpg'), 'admin');
+insert into hall_type(name, description, convenience, style, images, created_by)
+    value ('Lagom',
+           'Bước vào LAGOM là bước vào một thế giới nơi công nghệ hòa quyện tinh tế cùng nghệ thuật cảm xúc. Lấy cảm hứng từ triết lý LAGOM của Thụy Điển - Vừa đủ, Cân bằng và trọn vẹn, không gian phòng chiếu được bao phủ bởi những gam màu be nhẹ nhàng, ấm áp, tạo nên một không khí thanh lịch, trầm ổn, nơi mọi ồn ào của cuộc sống dường như được bỏ lại phía sau cánh cửa. Công nghệ trình chiếu sử dụng hệ thống máy chiếu tiên tiến cùng âm thanh Dolby 7.1 sống động nhưng hòa quyện tuyệt vời để không phá vỡ sự tĩnh tại của thiết kế phòng chiếu.
+             Ghế da tại LAGOM được cung cấp bởi BoConcept, hỗ trợ ôm sát và nâng đỡ cơ thể hoàn hảo, đi kèm với chất lượng dịch vụ chuyên biệt cho các phòng chiếu cao cấp:
+             Quyền lợi check in ưu tiên và tận hưởng tiện nghi riêng biệt trong khi chờ đợi
+             Ghế da cao cấp đa chế độ từ ngồi đến nằm, thoải mái tận hưởng suốt thời gian xem phim
+             Ấm áp với chăn lông mềm mại tại ghế ngồi
+             Ẩm thực được phục vụ tận nơi ',
+           'Không gian cân bằng theo triết lý sống vừa đủ
+             LAGOM được bao phủ bởi gam màu be nâu ấm áp, trầm ổn và tinh tế, nơi mọi ồn ào cuộc sống dường như bỏ lại phía sau.
+             Công nghệ trình chiếu đỉnh cao
+             Hệ thống máy chiếu Laser tiên tiến kết hợp âm thanh Dolby 7.1 sống động mang đến trải nghiệm hình ảnh sắc nét, âm thanh sống động nhưngvẫn giữ trọn sự yên bình nội tại.
+             Ghế da từ BoConcept cùng dịch vụ đẳng cấp
+             Ghế da cao cấp từ BoConcept nâng đỡ hoàn hảo, quyền lợi check-in ưu tiên, chăn lông mềm mại và ẩm thực phục vụ tận nơi, kiến tạo sự thư thái cho mọi khoảnh khắc trải nghiệm điện ảnh.',
+           'Phong cách',
+           JSON_ARRAY('https://res.cloudinary.com/depaiphq0/image/upload/v1782915041/Lagom1_zhiqak.jpg',
+                      'https://res.cloudinary.com/depaiphq0/image/upload/v1782915042/Lagom03_pthmtp.jpg',
+                      'https://res.cloudinary.com/depaiphq0/image/upload/v1782915042/Lagom04_r0fbu2.jpg',
+                      'https://res.cloudinary.com/depaiphq0/image/upload/v1782915043/Lagom-1_wanjxw.jpg',
+                      'https://res.cloudinary.com/depaiphq0/image/upload/v1782915043/Lagom-2_lxjc0j.jpg'), 'admin');
 
-###INSERT HALL#####
-insert into hall(name, width, height, images, description, convenience, created_by)
-VALUES ('Phòng chiếu 2D 2', 25, 20,
-        JSON_ARRAY('https://example.com/hall4.jpg', 'https://example.com/hall5.jpg', 'https://example.com/hall6.jpg'),
-        'Phòng chiếu 2...', 'Hệ thống âm thanh vòm', 'admin'),
-       ('Phòng chiếu 2D 1', 20, 15,
-        JSON_ARRAY('https://example.com/hall1.jpg', 'https://example.com/hall2.jpg', 'https://example.com/hall3.jpg'),
-        'Phòng chiếu 1...', 'Hệ thống âm thanh vòm', 'admin');
+####INSERT HALL#####
+insert into hall(hall_type_id, name, width, height, created_by)
+value(1,'SCREEN1','5','4','admin');
+
+####INSERT SEAT #####
+insert into seat(hall_id, seat_type_id, row_label, col_number, created_by)
+value
+    (1,1,'A',1,'admin'),
+    (1,1,'A',2,'admin'),
+    (1,1,'KO',3,'admin'),
+    (1,1,'A',4,'admin'),
+    (1,1,'A',5,'admin'),
+
+    (1,1,'B',1,'admin'),
+    (1,2,'B',2,'admin'),
+    (1,1,'KO',3,'admin'),
+    (1,2,'B',4,'admin'),
+    (1,1,'B',5,'admin'),
+
+    (1,1,'C',1,'admin'),
+    (1,2,'C',2,'admin'),
+    (1,1,'KO',3,'admin'),
+    (1,2,'C',4,'admin'),
+    (1,1,'C',5,'admin'),
+
+    (1,3,'D',1,'admin'),
+    (1,3,'D',2,'admin'),
+    (1,1,'KO',3,'admin'),
+    (1,3,'D',4,'admin'),
+    (1,3,'D',5,'admin');
 
 
 ####INSERT SHOWTIME#####
@@ -91,95 +176,3 @@ insert into showtime(movie_id, hall_id, date, start_time, type, created_by)
     (6, 1, '2026-06-29', '19:30:00', 'Phụ đề tiếng Việt', 'admin'),
     (3, 2, '2026-07-02', '19:00:00', 'Phụ đề tiếng Việt', 'admin'),
     (4, 2, '2026-07-02', '21:00:00', 'Phụ đề tiếng Việt', 'admin');
-
-
-######INSERT ROLE#####
-insert into role(name, description, created_by)
-    value ('Admin', 'Quản trị viên có quyền truy cập đầy đủ vào hệ thống và có thể quản lý tất cả các chức năng.', 'admin'),
-    ("User", "Người dùng có quyền truy cập hạn chế, chủ yếu để xem phim và đặt vé.", 'admin');
-
-####INSERT SEAT MAP###- using postman
-# [
-#     {
-#         "seatTypeId":1 ,
-#         "rowLabel": "A",
-#         "colNumber": 1
-#     },
-#     {
-#         "seatTypeId": 1,
-#         "rowLabel": "A",
-#         "colNumber": 2
-#     },
-#         {
-#         "seatTypeId": 1,
-#         "rowLabel": "A",
-#         "colNumber": 3
-#     },
-#     {
-#         "seatTypeId": 1,
-#         "rowLabel": "A",
-#         "colNumber": 4
-#     },
-#     {
-#         "seatTypeId": 1,
-#         "rowLabel": "B",
-#         "colNumber": 1
-#     },
-#     {
-#         "seatTypeId": 2,
-#         "rowLabel": "B",
-#         "colNumber": 2
-#     },
-#     {
-#         "seatTypeId": 2,
-#         "rowLabel": "B",
-#         "colNumber": 3
-#     },
-#     {
-#         "seatTypeId": 1,
-#         "rowLabel": "B",
-#         "colNumber": 4
-#     },
-#     {
-#         "seatTypeId": 1,
-#         "rowLabel": "C",
-#         "colNumber": 1
-#     },
-#     {
-#         "seatTypeId": 1,
-#         "rowLabel": "C",
-#         "colNumber": 2
-#     },
-#     {
-#         "seatTypeId": 1,
-#         "rowLabel": "C",
-#         "colNumber": 3
-#     },
-#     {
-#         "seatTypeId": 1,
-#         "rowLabel": "C",
-#         "colNumber": 4
-#     },
-#     {
-#         "seatTypeId": 3,
-#         "rowLabel": "D",
-#         "colNumber": 1
-#     },
-#     {
-#         "seatTypeId": 3,
-#         "rowLabel": "D",
-#         "colNumber": 2
-#     },
-#     {
-#         "seatTypeId": 3,
-#         "rowLabel": "D",
-#         "colNumber": 3
-#     },
-#     {
-#         "seatTypeId": 3,
-#         "rowLabel": "D",
-#         "colNumber": 4
-#     }
-# ]
-
-###

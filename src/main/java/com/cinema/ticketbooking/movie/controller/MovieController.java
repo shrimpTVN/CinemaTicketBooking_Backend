@@ -4,6 +4,7 @@ import com.cinema.ticketbooking.dto.MovieDto;
 import com.cinema.ticketbooking.movie.service.IMovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class MovieController {
         return ResponseEntity.ok().body(movieDto);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     @PutMapping("/{id}")
     public ResponseEntity<MovieDto> updateMovie(@PathVariable Integer id, @RequestBody MovieDto movieDto){
@@ -34,6 +36,7 @@ public class MovieController {
         return ResponseEntity.ok().body(updatedMovieDto);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")
     public ResponseEntity<MovieDto> createMovie(@RequestBody MovieDto movieDto){
         MovieDto  createdMovieDto = movieService.createMovie(movieDto);

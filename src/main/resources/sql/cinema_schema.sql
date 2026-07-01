@@ -53,22 +53,35 @@ CREATE TABLE IF NOT exists movie_record
     constraint check_list check (JSON_TYPE(list) = 'ARRAY')
 );
 
+create table if not exists hall_type
+(
+    id          int auto_increment primary key,
+    name        varchar(100)                          not null unique,
+    description text                                  not null,
+    convenience text                                  not null,
+    style       varchar(100)                          not null,
+    images      JSON                                  not null,
+    status      varchar(50) default 'ON',
+    created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by  VARCHAR(20)                           NOT NULL,
+    updated_at  TIMESTAMP   DEFAULT NULL,
+    updated_by  VARCHAR(20) DEFAULT NULL
+);
 
+drop table if exists hall;
 create table if not exists hall
 (
     id          int auto_increment primary key,
     name        varchar(100)                          not null unique,
     width       int                                   not null check (width > 0),
     height      int                                   not null check (height > 0),
-    images      JSON                                  not null,
-    description text                                  not null,
-    convenience text                                  not null,
     status      varchar(50) default 'ON',
+    hall_type_id int                                   not null,
     created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by  VARCHAR(20)                           NOT NULL,
     updated_at  TIMESTAMP   DEFAULT NULL,
     updated_by  VARCHAR(20) DEFAULT NULL,
-    constraint check_images check (JSON_TYPE(images) = 'ARRAY')
+    foreign key (hall_type_id) references hall_type (id) on delete restrict
 );
 
 create table if not exists seat_type
@@ -86,7 +99,7 @@ create table if not exists seat_type
 );
 
 
-
+drop table if exists seat;
 create table if not exists seat
 (
     id           int auto_increment primary key,
@@ -103,7 +116,25 @@ create table if not exists seat
     foreign key (seat_type_id) references seat_type (id) on delete restrict
 );
 
+drop table if exists price_list;
+create table if not exists price_list
+(
+    id           int auto_increment primary key,
+    hall_id      int                                   not null,
+    seat_type_id int                                   not null,
+    type         varchar(100)                          not null,
+    price        decimal(10, 2)                        not null check (price >= 0),
+    days         varchar(20)                           not null,
+    status       varchar(50) default 'ON',
+    created_at   TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by   VARCHAR(20)                           NOT NULL,
+    updated_at   TIMESTAMP   DEFAULT NULL,
+    updated_by   VARCHAR(20) DEFAULT NULL,
+    foreign key (hall_id) references hall (id) on delete restrict,
+    foreign key (seat_type_id) references seat_type (id) on delete restrict
+);
 
+drop table if exists showtime;
 create table if not exists showtime
 (
     id         int auto_increment primary key,
@@ -120,11 +151,14 @@ create table if not exists showtime
     foreign key (hall_id) references hall (id) on delete restrict
 );
 
+drop table if exists showtime_seat;
 create table if not exists showtime_seat
 (
     showtime_id int                                   not null,
     seat_id     int                                   not null,
     status      varchar(50) default 'AVAILABLE',
+    holdBy      int  DEFAULT 0,
+    holdUntil   TIMESTAMP DEFAULT NULL,
     created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by  VARCHAR(20)                           NOT NULL,
     updated_at  TIMESTAMP   DEFAULT NULL,
@@ -134,6 +168,7 @@ create table if not exists showtime_seat
     foreign key (seat_id) references seat (id) on delete cascade
 );
 
+drop table if exists ticket;
 create table if not exists ticket
 (
     id          int auto_increment primary key,
@@ -197,22 +232,7 @@ create table if not exists invoice_detail
     foreign key (product_id) references product (id) on delete restrict
 );
 
-create table if not exists price_list
-(
-    id           int auto_increment primary key,
-    hall_id      int                                   not null,
-    seat_type_id int                                   not null,
-    type         varchar(100)                          not null,
-    price        decimal(10, 2)                        not null check (price >= 0),
-    days         varchar(20)                           not null,
-    status       varchar(50) default 'ON',
-    created_at   TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_by   VARCHAR(20)                           NOT NULL,
-    updated_at   TIMESTAMP   DEFAULT NULL,
-    updated_by   VARCHAR(20) DEFAULT NULL,
-    foreign key (hall_id) references hall (id) on delete restrict,
-    foreign key (seat_type_id) references seat_type (id) on delete restrict
-);
+
 
 create table if not exists user
 (

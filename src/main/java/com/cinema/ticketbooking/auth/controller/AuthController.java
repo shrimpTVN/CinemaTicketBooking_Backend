@@ -8,6 +8,7 @@ import com.cinema.ticketbooking.dto.responseDto.LoginResponseDto;
 import com.cinema.ticketbooking.dto.responseDto.UserResponseDto;
 import com.cinema.ticketbooking.user.service.Impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.PermissionDeniedDataAccessException;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,7 +31,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final UserServiceImpl userService;
 
-    @PostMapping("/login/public")
+    @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> apiLogin(@RequestBody LoginRequestDto loginRequestDto) {
         try {
             var resultAuthentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDto.email(),
@@ -49,7 +50,7 @@ public class AuthController {
                     .secure(false)    // Set to TRUE in production when using HTTPS!
                     .path("/")        // Cookie is valid for all routes
                     .maxAge(24* 60 * 60)  // 24 hours (must match your JWT expiration)
-                    .sameSite("Strict") // Prevents the browser from sending this cookie from other websites
+                    .sameSite("Strict" ) // Prevents the browser from sending this cookie from other websites
                     .build();
 
             // 2. Return the response with the Set-Cookie header.
@@ -69,7 +70,7 @@ public class AuthController {
 
     }
 
-    @PostMapping("/register/public")
+    @PostMapping("/register")
     public ResponseEntity<UserResponseDto> registerUser(@RequestBody UserRequestDto user){
         UserResponseDto newUser = userService.register(user);
         return ResponseEntity.ok(newUser);

@@ -129,11 +129,11 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        return publicPaths.stream().anyMatch(publicPath ->
-                pathMatcher.match(publicPath, path));
-    }
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) {
+//        String path = request.getRequestURI();
+//        return publicPaths.stream().anyMatch(publicPath ->
+//                pathMatcher.match(publicPath, path));
+//    }
 
 }

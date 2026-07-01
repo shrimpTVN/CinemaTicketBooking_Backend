@@ -26,11 +26,12 @@ public class JwtUtil {
         SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
         var fetchedUser = (User) authentication.getPrincipal();
-
+        String roles = authentication.getAuthorities().stream().map(
+                GrantedAuthority::getAuthority).collect(Collectors.joining(","));
+        System.out.println("roles " + roles);
         jwtToken = Jwts.builder().issuer("ticket-booking").subject("JWT Token")
                 .claim("username", fetchedUser.getUsername())
-                .claim("roles",authentication.getAuthorities().stream().map(
-                        GrantedAuthority::getAuthority).collect(Collectors.joining(",")))
+                .claim("roles",roles)
                 .issuedAt( new java.util.Date())
                 .expiration(new java.util.Date((new java.util.Date()).getTime() + 24 * 60 * 60 * 1000))
                 .signWith(secretKey).compact();

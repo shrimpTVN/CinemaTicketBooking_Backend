@@ -1,9 +1,10 @@
 package com.cinema.ticketbooking.core.exception;
 
-import com.cinema.ticketbooking.dto.ErrorResponseDto;
+import com.cinema.ticketbooking.dto.responseDto.ErrorResponseDto;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -74,5 +75,17 @@ public class GlobalExceptionHandler {
                 exception.getMessage(), LocalDateTime.now()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDto);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponseDto> handleAccessDeniedException(AccessDeniedException ex, WebRequest webRequest) {
+        System.out.println("AccessDeniedException: " + ex.getMessage());
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                webRequest.getDescription(false), HttpStatus.FORBIDDEN,
+                "Access Denied: Bạn không có quyền (Role) để thực hiện hành động này.",
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 }

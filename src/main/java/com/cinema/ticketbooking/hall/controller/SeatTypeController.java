@@ -4,6 +4,7 @@ import com.cinema.ticketbooking.dto.SeatTypeDto;
 import com.cinema.ticketbooking.hall.service.ISeatTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,17 +28,8 @@ public class SeatTypeController {
         SeatTypeDto seatTypeDto = seatTypeService.getSeatTypeById(id);
         return ResponseEntity.ok(seatTypeDto);
     }
-//
-//    @GetMapping("/status/{status}")
-//    public ResponseEntity<List<SeatTypeDto>> getSeatTypesByStatus(@PathVariable String status){
-//        List<SeatTypeDto> seatTypeDtos = seatTypeService.getAllSeatTypes().stream()
-//                .filter(seatTypeDto -> seatTypeDto.status().equalsIgnoreCase(status))
-//                .toList();
-//        return ResponseEntity.ok(seatTypeDtos);
-//    }
 
-
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     @PutMapping("/{id}")
     public ResponseEntity<SeatTypeDto> updateSeatType(@PathVariable Integer id, @RequestBody SeatTypeDto seatTypeDto){
@@ -45,6 +37,7 @@ public class SeatTypeController {
         return  ResponseEntity.ok(seatTypeUpdated);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<SeatTypeDto> createSeatType(@RequestBody SeatTypeDto seatTypeDto){
         SeatTypeDto createdSeatType = seatTypeService.createSeatType(seatTypeDto);
