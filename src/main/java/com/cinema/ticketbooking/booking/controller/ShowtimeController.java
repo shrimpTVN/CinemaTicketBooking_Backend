@@ -6,6 +6,7 @@ import com.cinema.ticketbooking.dto.responseDto.ShowtimeResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -48,6 +49,7 @@ public class ShowtimeController {
         return ResponseEntity.ok(showtime);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping({"/",""})
     public ResponseEntity<ShowtimeResponseDto> createShowtime(@RequestBody ShowtimeRequestDto showtimeRequestDto){
         System.out.println(showtimeRequestDto);
@@ -55,6 +57,7 @@ public class ShowtimeController {
         return ResponseEntity.ok(newShowtime);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     @PutMapping("/{id}")
     public ResponseEntity<ShowtimeResponseDto> updateShowtime(@PathVariable Integer id, @RequestBody ShowtimeRequestDto showtimeRequestDto){
