@@ -11,6 +11,8 @@ public interface IShowtimeService {
 
     public List<ShowtimeResponseDto> getAllShowtimes();
     public ShowtimeResponseDto getShowtimeById(Integer id);
+    public List<ShowtimeResponseDto> filterShowtimes(Integer movieId, LocalDate date, Integer hallId);
+    public List<ShowtimeResponseDto> filterShowtimes(Integer movieId, LocalDate date);
     public List<ShowtimeResponseDto> getShowtimesByMovieId(Integer movieId);
     public List<ShowtimeResponseDto> getShowtimesByHallId(Integer hallId);
     public List<ShowtimeResponseDto> getShowtimesByDate(LocalDate date);

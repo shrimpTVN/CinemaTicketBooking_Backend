@@ -9,6 +9,7 @@ import com.cinema.ticketbooking.movie.service.IGenreService;
 import com.cinema.ticketbooking.movie.service.IMovieService;
 import com.cinema.ticketbooking.repository.GenreRepository;
 import com.cinema.ticketbooking.repository.MovieRepository;
+import com.cinema.ticketbooking.repository.SpecialListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +27,25 @@ public class MovieServiceImpl implements IMovieService {
     private final MovieRepository movieRespository;
     private final IGenreService genreService;
     private final GenreRepository genreRepository;
+    private final SpecialListRepository specialListRepository;
 
     @Override
     public List<MovieDto> getAllMovies() {
         List<Movie> movieList = movieRespository.findAll();
         List<MovieDto> movieDtoList = new ArrayList<>();
         movieList.forEach(movie -> {
+            movieDtoList.add(transformToDto(movie));
+        });
+        return movieDtoList;
+    }
+
+    @Override
+    public List<MovieDto> getMovieByCode(String type) {
+        List<Integer>  listId = specialListRepository.findByCode(type).getList();
+        System.out.println(listId);
+        List<MovieDto> movieDtoList = new ArrayList<>();
+        listId.forEach(id -> {
+            Movie movie = movieRespository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + id));
             movieDtoList.add(transformToDto(movie));
         });
         return movieDtoList;
@@ -46,6 +60,7 @@ public class MovieServiceImpl implements IMovieService {
         }
         return null;
     }
+
 
     @Override
     public MovieDto createMovie(MovieDto movieDto) {

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -26,20 +27,23 @@ public class ShowtimeController {
         return ResponseEntity.ok(showtimes);
     }
 
-    @GetMapping("/showing")
+    @GetMapping("/filter")
     public ResponseEntity<List<ShowtimeResponseDto>> filterShowtimes(@RequestParam(required = false) Integer movieId,
-                                                                     @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+                                                                     @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                                                     @RequestParam(required =false) Integer hallId ) {
+        System.out.println("Filtering showtimes with movieId: " + movieId + ", date: " + date + ", hallId: " + hallId);
         List<ShowtimeResponseDto> showtimes;
-        if (movieId == null){
-            showtimes = showtimeService.getShowtimesByDate(date);
-        } else if (date == null){
-            showtimes = showtimeService.getShowtimesByMovieId(movieId);
+        if (movieId != null && hallId != null && date!=null) {
+            showtimes = showtimeService.filterShowtimes(movieId, date, hallId);
         } else if (movieId != null && date != null) {
-            showtimes = showtimeService.getShowtimesByDate(date).stream().filter(s -> s.movieId().equals(movieId)).toList();
-        } else{
-           showtimes = showtimeService.getAllShowtimes();
+            showtimes = showtimeService.filterShowtimes(movieId, date);
+        } else if (movieId != null) {
+            showtimes = showtimeService.getShowtimesByMovieId(movieId);
+        } else if (hallId != null) {
+            showtimes = showtimeService.getShowtimesByHallId(hallId);
+        } else {
+            showtimes = showtimeService.getShowtimesByDate(LocalDate.now());
         }
-
         return ResponseEntity.ok(showtimes);
     }
 

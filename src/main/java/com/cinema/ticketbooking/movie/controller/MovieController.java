@@ -27,6 +27,12 @@ public class MovieController {
         return ResponseEntity.ok().body(movieDto);
     }
 
+    @GetMapping("/special-list")
+    public ResponseEntity<List<MovieDto>> getSpecialList(@RequestParam String type){
+        List<MovieDto> movieDtoList = movieService.getMovieByCode(type);
+        return ResponseEntity.ok().body(movieDtoList);
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     @PutMapping("/{id}")

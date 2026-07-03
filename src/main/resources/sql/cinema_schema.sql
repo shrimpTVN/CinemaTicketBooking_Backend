@@ -1,3 +1,4 @@
+drop table if exists genre;
 CREATE TABLE IF NOT EXISTS genre
 (
     id          INT AUTO_INCREMENT PRIMARY KEY,
@@ -9,7 +10,7 @@ CREATE TABLE IF NOT EXISTS genre
     updated_by  VARCHAR(20) DEFAULT NULL
 );
 
-
+drop table if exists movie;
 CREATE TABLE IF NOT EXISTS movie
 (
     id            INT AUTO_INCREMENT PRIMARY KEY,
@@ -31,6 +32,7 @@ CREATE TABLE IF NOT EXISTS movie
     updated_by    VARCHAR(20) DEFAULT NULL
 );
 
+drop table if exists movie_genre;
 CREATE TABLE IF NOT EXISTS movie_genre
 (
     movie_id INT NOT NULL,
@@ -38,19 +40,6 @@ CREATE TABLE IF NOT EXISTS movie_genre
     PRIMARY KEY (movie_id, genre_id),
     FOREIGN KEY (movie_id) REFERENCES movie (id) ON DELETE CASCADE,
     FOREIGN KEY (genre_id) REFERENCES genre (id) ON DELETE CASCADE
-);
-
-
-CREATE TABLE IF NOT exists movie_record
-(
-    id         INT auto_increment primary key,
-    type       varchar(50)                           not null,
-    list       JSON                                  not null,
-    created_at TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_by VARCHAR(20)                           NOT NULL,
-    updated_at TIMESTAMP   DEFAULT NULL,
-    updated_by VARCHAR(20) DEFAULT NULL,
-    constraint check_list check (JSON_TYPE(list) = 'ARRAY')
 );
 
 create table if not exists hall_type
@@ -268,3 +257,18 @@ create table if not exists role
     updated_at  TIMESTAMP   DEFAULT NULL,
     updated_by  VARCHAR(20) DEFAULT NULL
 );
+
+drop table if exists special_list;
+ create table if not exists special_list(
+
+    id          int auto_increment primary key,
+    code varchar(50) not null unique,
+    name        varchar(100)                          not null unique,
+    description text                                  not null,
+    list        JSON                                  not null,
+    status      varchar(50) default 'ON',
+    created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by  VARCHAR(20)                           NOT NULL,
+    updated_at  TIMESTAMP   DEFAULT NULL,
+    updated_by  VARCHAR(20) DEFAULT NULL
+ )
