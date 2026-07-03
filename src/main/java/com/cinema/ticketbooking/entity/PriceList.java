@@ -9,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,13 +23,23 @@ public class PriceList extends BaseEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "hall_id", nullable = false)
-    private Hall hall;
+    @JoinColumn(name = "hall_type_id", nullable = false)
+    private HallType hallType;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "seat_type_id", nullable = false)
+    private SeatType seatType;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "audience_type_id", nullable = false)
+    private AudienceType audienceType;
 
     @Size(max = 100)
     @NotNull
-    @Column(name = "type", nullable = false, length = 100)
-    private String type;
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
 
     @NotNull
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
@@ -37,15 +48,13 @@ public class PriceList extends BaseEntity {
     @Size(max = 20)
     @NotNull
     @Column(name = "days", nullable = false, length = 20)
-    private String days;
+    private List<String> days;
 
     @Size(max = 50)
     @ColumnDefault("'ON'")
     @Column(name = "status", length = 50)
     private String status;
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "seat_type_id", nullable = false)
-    private SeatType seatType;
+
+
 
 }

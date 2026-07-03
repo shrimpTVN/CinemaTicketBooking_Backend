@@ -531,6 +531,242 @@ VALUES
     (3, 3, 'O', 12, 'admin'),
     (3, 3, 'O', 13, 'admin');
 
+INSERT INTO seat (hall_id, seat_type_id, row_label, col_number, created_by)
+VALUES
+    -- ==========================================
+    -- KHU VỰC GHẾ THƯỜNG (Màu xám nhạt)
+    -- ==========================================
+    -- Hàng A
+    (2, 1, 'A', 1, 'admin'),
+    (2, 1, 'A', 2, 'admin'),
+    (2, 1, 'A', 3, 'admin'),
+    (2, 1, 'A', 4, 'admin'),
+    (2, 1, 'A', 5, 'admin'),
+    (2, 1, 'A', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 1, 'A', 8, 'admin'),
+    (2, 1, 'A', 9, 'admin'),
+    (2, 1, 'A', 10, 'admin'),
+    (2, 1, 'A', 11, 'admin'),
+    (2, 1, 'A', 12, 'admin'),
+    (2,1, 'A', 13, 'admin'),
+
+    -- Hàng B
+    (2, 1, 'B', 1, 'admin'),
+    (2, 1, 'B', 2, 'admin'),
+    (2, 1, 'B', 3, 'admin'),
+    (2, 1, 'B', 4, 'admin'),
+    (2, 1, 'B', 5, 'admin'),
+    (2, 1, 'B', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 1, 'B', 8, 'admin'),
+    (2, 1, 'B', 9, 'admin'),
+    (2, 1, 'B', 10, 'admin'),
+    (2, 1, 'B', 11, 'admin'),
+    (2, 1, 'B', 12, 'admin'),
+    (2, 1, 'B', 13, 'admin'),
+
+    -- Hàng C
+    (2, 1, 'C', 1, 'admin'),
+    (2, 1, 'C', 2, 'admin'),
+    (2, 1, 'C', 3, 'admin'),
+    (2, 1, 'C', 4, 'admin'),
+    (2, 1, 'C', 5, 'admin'),
+    (2, 1, 'C', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 1, 'C', 8, 'admin'),
+    (2, 1, 'C', 9, 'admin'),
+    (2, 1, 'C', 10, 'admin'),
+    (2, 1, 'C', 11, 'admin'),
+    (2, 1, 'C', 12, 'admin'),
+    (2, 1, 'C', 13, 'admin'),
+
+    -- Hàng D
+    (2, 1, 'D', 1, 'admin'),
+    (2, 1, 'D', 2, 'admin'),
+    (2, 1, 'D', 3, 'admin'),
+    (2, 1, 'D', 4, 'admin'),
+    (2, 1, 'D', 5, 'admin'),
+    (2, 1, 'D', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 1, 'D', 8, 'admin'),
+    (2, 1, 'D', 9, 'admin'),
+    (2, 1, 'D', 10, 'admin'),
+    (2, 1, 'D', 11, 'admin'),
+    (2, 1, 'D', 12, 'admin'),
+    (2, 1, 'D', 13, 'admin'),
+
+    -- Hàng E
+    (2, 1, 'E', 1, 'admin'),
+    (2, 1, 'E', 2, 'admin'),
+    (2, 1, 'E', 3, 'admin'),
+    (2, 1, 'E', 4, 'admin'),
+    (2, 1, 'E', 5, 'admin'),
+    (2, 1, 'E', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 1, 'E', 8, 'admin'),
+    (2, 1, 'E', 9, 'admin'),
+    (2, 1, 'E', 10, 'admin'),
+    (2, 1, 'E', 11, 'admin'),
+    (2, 1, 'E', 12, 'admin'),
+    (2, 1, 'E', 13, 'admin'),
+
+    -- Hàng F
+    (2, 1, 'F', 1, 'admin'),
+    (2, 1, 'F', 2, 'admin'),
+    (2, 1, 'F', 3, 'admin'),
+    (2, 1, 'F', 4, 'admin'),
+    (2, 1, 'F', 5, 'admin'),
+    (2, 1, 'F', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 1, 'F', 8, 'admin'),
+    (2, 1, 'F', 9, 'admin'),
+    (2, 1, 'F', 10, 'admin'),
+    (2, 1, 'F', 11, 'admin'),
+    (2, 1, 'F', 12, 'admin'),
+    (2, 1, 'F', 13, 'admin'),
+
+    -- Hàng G
+    (2, 1, 'G', 1, 'admin'),
+    (2, 1, 'G', 2, 'admin'),
+    (2, 1, 'G', 3, 'admin'),
+    (2, 1, 'G', 4, 'admin'),
+    (2, 1, 'G', 5, 'admin'),
+    (2, 1, 'G', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 1, 'G', 8, 'admin'),
+    (2, 1, 'G', 9, 'admin'),
+    (2, 1, 'G', 10, 'admin'),
+    (2, 1, 'G', 11, 'admin'),
+    (2, 1, 'G', 12, 'admin'),
+    (2, 1, 'G', 13, 'admin'),
+
+    -- ==========================================
+    -- KHU VỰC GHẾ VIP (Màu hồng nhạt)
+    -- ==========================================
+    -- Hàng H
+    (2, 2, 'H', 1, 'admin'),
+    (2, 2, 'H', 2, 'admin'),
+    (2, 2, 'H', 3, 'admin'),
+    (2, 2, 'H', 4, 'admin'),
+    (2, 2, 'H', 5, 'admin'),
+    (2, 2, 'H', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 2, 'H', 8, 'admin'),
+    (2, 2, 'H', 9, 'admin'),
+    (2, 2, 'H', 10, 'admin'),
+    (2, 2, 'H', 11, 'admin'),
+    (2, 2, 'H', 12, 'admin'),
+    (2, 2, 'H', 13, 'admin'),
+
+    -- Hàng I
+    (2, 2, 'I', 1, 'admin'),
+    (2, 2, 'I', 2, 'admin'),
+    (2, 2, 'I', 3, 'admin'),
+    (2, 2, 'I', 4, 'admin'),
+    (2, 2, 'I', 5, 'admin'),
+    (2, 2, 'I', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 2, 'I', 8, 'admin'),
+    (2, 2, 'I', 9, 'admin'),
+    (2, 2, 'I', 10, 'admin'),
+    (2, 2, 'I', 11, 'admin'),
+    (2, 2, 'I', 12, 'admin'),
+    (2, 2, 'I', 13, 'admin'),
+
+    -- Hàng J
+    (2, 2, 'J', 1, 'admin'),
+    (2, 2, 'J', 2, 'admin'),
+    (2, 2, 'J', 3, 'admin'),
+    (2, 2, 'J', 4, 'admin'),
+    (2, 2, 'J', 5, 'admin'),
+    (2, 2, 'J', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 2, 'J', 8, 'admin'),
+    (2, 2, 'J', 9, 'admin'),
+    (2, 2, 'J', 10, 'admin'),
+    (2, 2, 'J', 11, 'admin'),
+    (2, 2, 'J', 12, 'admin'),
+    (2, 2, 'J', 13, 'admin'),
+
+    -- Hàng K
+    (2, 2, 'K', 1, 'admin'),
+    (2, 2, 'K', 2, 'admin'),
+    (2, 2, 'K', 3, 'admin'),
+    (2, 2, 'K', 4, 'admin'),
+    (2, 2, 'K', 5, 'admin'),
+    (2, 2, 'K', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 2, 'K', 8, 'admin'),
+    (2, 2, 'K', 9, 'admin'),
+    (2, 2, 'K', 10, 'admin'),
+    (2, 2, 'K', 11, 'admin'),
+    (2, 2, 'K', 12, 'admin'),
+    (2, 2, 'K', 13, 'admin'),
+
+    -- Hàng L
+    (2, 2, 'L', 1, 'admin'),
+    (2, 2, 'L', 2, 'admin'),
+    (2, 2, 'L', 3, 'admin'),
+    (2, 2, 'L', 4, 'admin'),
+    (2, 2, 'L', 5, 'admin'),
+    (2, 2, 'L', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 2, 'L', 8, 'admin'),
+    (2, 2, 'L', 9, 'admin'),
+    (2, 2, 'L', 10, 'admin'),
+    (2, 2, 'L', 11, 'admin'),
+    (2, 2, 'L', 12, 'admin'),
+    (2, 2, 'L', 13, 'admin'),
+
+    -- Hàng M
+    (2, 2, 'M', 1, 'admin'),
+    (2, 2, 'M', 2, 'admin'),
+    (2, 2, 'M', 3, 'admin'),
+    (2, 2, 'M', 4, 'admin'),
+    (2, 2, 'M', 5, 'admin'),
+    (2, 2, 'M', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 2, 'M', 8, 'admin'),
+    (2, 2, 'M', 9, 'admin'),
+    (2, 2, 'M', 10, 'admin'),
+    (2, 2, 'M', 11, 'admin'),
+    (2, 2, 'M', 12, 'admin'),
+    (2, 2, 'M', 13, 'admin'),
+
+    -- ==========================================
+    -- KHU VỰC SWEETBOX (Màu xanh dương)
+    -- ==========================================
+    -- Hàng N
+    (2, 3, 'N', 1, 'admin'),
+    (2, 3, 'N', 2, 'admin'),
+    (2, 3, 'N', 3, 'admin'),
+    (2, 3, 'N', 4, 'admin'),
+    (2, 3, 'N', 5, 'admin'),
+    (2, 3, 'N', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 3, 'N', 8, 'admin'),
+    (2, 3, 'N', 9, 'admin'),
+    (2, 3, 'N', 10, 'admin'),
+    (2, 3, 'N', 11, 'admin'),
+    (2, 3, 'N', 12, 'admin'),
+    (2, 3, 'N', 13, 'admin'),
+
+    -- Hàng O
+    (2, 3, 'O', 1, 'admin'),
+    (2, 3, 'O', 2, 'admin'),
+    (2, 3, 'O', 3, 'admin'),
+    (2, 3, 'O', 4, 'admin'),
+    (2, 3, 'O', 5, 'admin'),
+    (2, 3, 'O', 6, 'admin'),
+    (2, 1, 'KO', 7, 'admin'),
+    (2, 3, 'O', 8, 'admin'),
+    (2, 3, 'O', 9, 'admin'),
+    (2, 3, 'O', 10, 'admin'),
+    (2, 3, 'O', 11, 'admin'),
+    (2, 3, 'O', 12, 'admin'),
+    (2, 3, 'O', 13, 'admin');
+
 ####INSERT SHOWTIME#####
 insert into showtime(movie_id, hall_id, date, start_time, type, created_by)
     value
@@ -626,3 +862,47 @@ insert into special_list(name, code, description, list, created_by)
     ('Top Trending', 'TOP_TRENDING', 'Danh sách các bộ phim đang được quan tâm nhiều nhất', JSON_ARRAY(1, 3, 5),
      'admin'),
     ('Top bán chạy', 'TOP_SELLING', 'Danh sách các bộ phim có doanh thu cao nhất', JSON_ARRAY(2, 4, 6), 'admin');
+
+####INSERT ADIENCE TYPE####
+insert into audience_type(name, description, created_by)
+    value ('Người lớn', 'Khách hàng từ 18 tuổi trở lên', 'admin'),
+    ('U22', 'Khách hàng từ 6 đến 22 tuổi', 'admin'),
+    ('Trẻ nhỏ', 'Khách hàng từ 3 đến 5 tuổi', 'admin'),
+    ('Sinh viên', 'Khách hàng là sinh viên có thẻ sinh viên hợp lệ', 'admin'),
+    ('Người cao tuổi', 'Khách hàng từ 60 tuổi trở lên', 'admin'),
+    ('Người khuyết tật', 'Khách hàng có giấy tờ chứng minh là người khuyết tật', 'admin');
+
+####INSERT PRICE LIST####
+##2D Hall
+insert into price_list(hall_type_id, seat_type_id, audience_type_id, name, price, days, created_by)
+    value
+###Adult
+    (1, 1, 1, '2d-Normal-Adult-Weekday', 70000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU'), 'admin'),
+    (1, 1, 1, '2d-Normal-Adult-Weekend', 95000, JSON_ARRAY('FRI', 'SAT', 'SUN'),'admin'),
+    (1, 1, 1, '2d-Normal-Adult-Holiday', 100000, JSON_ARRAY('HOLIDAY'), 'admin'),
+    (1, 2, 1, '2d-VIP-Adult-Weekday', 800000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU'), 'admin'),
+    (1, 2, 1, '2d-VIP-Adult-Weekend', 105000, JSON_ARRAY('FRI', 'SAT', 'SUN'), 'admin'),
+    (1, 2, 1, '2d-VIP-Adult-Holiday', 110000, JSON_ARRAY('HOLIDAY'), 'admin'),
+    (1, 3, 1, '2d-Sweetbox-Adult-Weekday', 180000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU'), 'admin'),
+    (1, 3, 1, '2d-Sweetbox-Adult-Weekend', 240000, JSON_ARRAY('FRI', 'SAT', 'SUN'),'admin'),
+    (1, 3, 1, '2d-Normal-Adult-Holiday', 260000, JSON_ARRAY('HOLIDAY'), 'admin') ,
+###U22
+    (1, 1, 2, '2d-Normal-U22-Weekday', 55000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU', 'FRI'), 'admin'),
+    (1, 1, 2, '2d-Normal-U22-Weekend', 60000, JSON_ARRAY('SAT', 'SUN'), 'admin'),
+    (1, 1, 2, '2d-Normal-U22-Holiday', 65000, JSON_ARRAY('HOLIDAY'),'admin'),
+    (1, 2, 2, '2d-VIP-U22-Weekday', 55000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU', 'FRI'), 'admin'),
+    (1, 2, 2, '2d-VIP-U22-Weekend', 70000, JSON_ARRAY('SAT', 'SUN'), 'admin'),
+    (1, 2, 2, '2d-VIP-U22-Holiday', 75000, JSON_ARRAY('HOLIDAY'), 'admin'),
+    (1, 3, 2, '2d-Sweetbox-U22-Weekday', 140000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU', 'FRI'), 'admin'),
+    (1, 3, 2, '2d-Sweetbox-U22-Weekend', 170000, JSON_ARRAY('SAT', 'SUN'), 'admin'),
+    (1, 3, 2, '2d-Sweetbox-U22-Holiday', 180000, JSON_ARRAY('HOLIDAY'), 'admin'),
+###Student
+    (1, 1, 3, '2d-Normal-Student-Weekday', 55000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU','FRI'),'admin'),
+    (1, 1, 3, '2d-Normal-Student-Weekend', 60000, JSON_ARRAY('SAT', 'SUN'), 'admin'),
+    (1, 1, 3, '2d-Normal-Student-Holiday', 65000, JSON_ARRAY('HOLIDAY'), 'admin'),
+    (1, 2, 3, '2d-VIP-Student-Weekday', 55000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU', 'FRI'), 'admin'),
+    (1, 2, 3, '2d-VIP-Student-Weekend', 70000, JSON_ARRAY('SAT', 'SUN'), 'admin'),
+    (1, 2, 3, '2d-VIP-Student-Holiday', 75000, JSON_ARRAY('HOLIDAY'), 'admin'),
+    (1, 3, 3, '2d-Sweetbox-Student-Weekday', 140000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU', 'FRI'), 'admin'),
+    (1, 3, 3, '2d-Sweetbox-Student-Weekend', 170000, JSON_ARRAY('SAT', 'SUN'), 'admin'),
+    (1, 3, 3, '2d-Sweetbox-Student-Holiday', 180000, JSON_ARRAY('HOLIDAY'), 'admin');
