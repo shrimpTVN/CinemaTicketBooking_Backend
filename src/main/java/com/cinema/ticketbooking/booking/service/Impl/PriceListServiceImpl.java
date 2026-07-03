@@ -12,13 +12,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Locale;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class PriceListService implements IPriceListService {
+public class PriceListServiceImpl implements IPriceListService {
     private final PriceListRepository priceListRepository;
     private final HallRepository hallRepository;
     private final SeatRepository seatRepository;

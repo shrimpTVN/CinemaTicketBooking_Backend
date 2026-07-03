@@ -19,6 +19,8 @@ public class PathsConfig {
                 "/api/invoices/**",
                 "/api/hall-types/**",
                 "/api/price-lists/**",
+                "/api/booking/**",
+                "/api/products/**",
 //                "/api/users/**",
                 "/api/auth/**",
                 "/api/swagger-ui.html",
