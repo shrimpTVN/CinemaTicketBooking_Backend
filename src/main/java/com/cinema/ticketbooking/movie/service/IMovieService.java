@@ -17,6 +17,7 @@ public interface IMovieService {
 
     public MovieDto updateMovie(Integer id, MovieDto movieDto);
 
+    public void updateSpecialList();
 
 //    public MovieDto getMovieByName(String name);
 //    public boolean deleteMovie(Long id);

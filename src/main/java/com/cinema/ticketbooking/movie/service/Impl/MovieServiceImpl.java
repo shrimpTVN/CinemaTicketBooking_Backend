@@ -5,6 +5,7 @@ import com.cinema.ticketbooking.dto.GenreDto;
 import com.cinema.ticketbooking.dto.MovieDto;
 import com.cinema.ticketbooking.entity.Genre;
 import com.cinema.ticketbooking.entity.Movie;
+import com.cinema.ticketbooking.entity.SpecialList;
 import com.cinema.ticketbooking.movie.service.IGenreService;
 import com.cinema.ticketbooking.movie.service.IMovieService;
 import com.cinema.ticketbooking.repository.GenreRepository;
@@ -13,6 +14,9 @@ import com.cinema.ticketbooking.repository.SpecialListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +32,39 @@ public class MovieServiceImpl implements IMovieService {
     private final IGenreService genreService;
     private final GenreRepository genreRepository;
     private final SpecialListRepository specialListRepository;
+
+    @Override
+    public void updateSpecialList() {
+     List<Movie> movies =  movieRespository.findByStatus("ON");
+//        System.out.println("Movies: " + movies.size());
+
+     List<Integer> showingList = new ArrayList<>();
+     List<Integer> comingSoonList = new ArrayList<>();
+     List<Integer> trendingList = new ArrayList<>();
+     Instant now = Instant.now();
+     movies.forEach(movie -> {
+        if (movie.getPremiereDate().isBefore(now))
+            showingList.add(movie.getId());
+        else if (movie.getPremiereDate().isAfter(now))
+            comingSoonList.add(movie.getId());
+        trendingList.add(movie.getId());
+     });
+
+     SpecialList showing = specialListRepository.findByCode("SHOWING");
+        SpecialList comingSoon= specialListRepository.findByCode("COMING_SOON");
+        SpecialList topTrending = specialListRepository.findByCode("TOP_TRENDING");
+        SpecialList topSelling = specialListRepository.findByCode("TOP_SELLING");
+        showing.setList(showingList);
+        comingSoon.setList(comingSoonList);
+
+        topTrending.setList(trendingList);
+        topSelling.setList(trendingList);
+
+        specialListRepository.save(showing);
+        specialListRepository.save(comingSoon);
+        specialListRepository.save(topTrending);
+        specialListRepository.save(topSelling);
+    }
 
     @Override
     public List<MovieDto> getAllMovies() {
@@ -133,6 +170,8 @@ public class MovieServiceImpl implements IMovieService {
         }
         return null;
     }
+
+
 
 //    @Override
 //    public boolean deleteMovie(Long id) {

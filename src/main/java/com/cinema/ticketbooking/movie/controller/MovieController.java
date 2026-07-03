@@ -15,6 +15,13 @@ import java.util.List;
 public class MovieController {
     private final IMovieService movieService;
 
+    @GetMapping("/update-special-list")
+    public ResponseEntity<List<MovieDto>> updateSpecialList(){
+        movieService.updateSpecialList();
+        List<MovieDto> movies = movieService.getMovieByCode("SHOWING");
+        return ResponseEntity.ok().body(movies);
+    }
+
     @GetMapping({"","/"})
     public ResponseEntity<List<MovieDto>> getAllMovies(){
         List<MovieDto> movieDtoList = movieService.getAllMovies();
