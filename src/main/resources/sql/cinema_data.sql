@@ -1,3 +1,30 @@
+####INSERT PRODUCT
+INSERT INTO product(name, description, image, price, created_by)
+VALUES ('Combo 3',
+        '\"Chia sẻ niềm vui với bạn bè! Combo 3 gồm 2 bắp rang bơ, 3 Pepsi mát lạnh – tiết kiệm hơn 52,000!',
+        'https://res.cloudinary.com/depaiphq0/image/upload/v1783169044/combo-3_xphbsr.webp',
+        155000, 'admin'),
+       ('Combo 4',
+        '\"Thêm bạn, thêm vui! Combo 4 mang đến 3 bắp rang bơ, 4 Pepsi mát lạnh– tiết kiệm hơn 95,000!',
+        'https://res.cloudinary.com/depaiphq0/image/upload/v1783169044/combo-4_ygfapo.webp',
+        235000, 'admin'),
+       ('Combo 1 Big Extra Premium',
+        '\"Thỏa mãn cơn thèm\" với 1 phần bắp rang bơ thơm ngon, 1 Pepsi mát lạnh và 1 gói snack Premium tuỳ chọn!',
+        'https://res.cloudinary.com/depaiphq0/image/upload/v1783169044/Combo-1_qnatzk.webp',
+        120000, 'admin'),
+       ('Combo 2 Big Extra Premium',
+        '\"Nhân đôi sự sảng khoái! Combo gồm 1 bắp rang bơ lớn, 2 Pepsi cỡ lớn + 1 snack Premium tuỳ chọn– tiết kiệm hơn 33,000!',
+        'https://res.cloudinary.com/depaiphq0/image/upload/v1783169044/co-combo-2-extra-premium_ds9dws.webp',
+        135000, 'admin'),
+       ('Teanema Combo 1 Extra',
+        '1 Bắp ngọt + 1 Trà Galaxy',
+        'https://res.cloudinary.com/depaiphq0/image/upload/v1783169044/co-teanema-1-combo-extra_ku3rmi.png',
+        119000, 'admin'),
+       ('Combo 1 Ovaltine Extra Premium',
+        '1 Bắp ngọt + 1 Ovaltine 22oz + 1 Snack Premium',
+        'https://res.cloudinary.com/depaiphq0/image/upload/v1783169044/co-combo-1-ovaltine-premium_ntbbcm.webp',
+        120000, 'admin');
+
 ######INSERT ROLE#####
 insert into role(name, description, created_by)
     value ('Admin', 'Quản trị viên có quyền truy cập đầy đủ vào hệ thống và có thể quản lý tất cả các chức năng.',
@@ -549,7 +576,7 @@ VALUES
     (2, 1, 'A', 10, 'admin'),
     (2, 1, 'A', 11, 'admin'),
     (2, 1, 'A', 12, 'admin'),
-    (2,1, 'A', 13, 'admin'),
+    (2, 1, 'A', 13, 'admin'),
 
     -- Hàng B
     (2, 1, 'B', 1, 'admin'),
@@ -878,18 +905,18 @@ insert into price_list(hall_type_id, seat_type_id, audience_type_id, name, price
     value
 ###Adult
     (1, 1, 1, '2d-Normal-Adult-Weekday', 70000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU'), 'admin'),
-    (1, 1, 1, '2d-Normal-Adult-Weekend', 95000, JSON_ARRAY('FRI', 'SAT', 'SUN'),'admin'),
+    (1, 1, 1, '2d-Normal-Adult-Weekend', 95000, JSON_ARRAY('FRI', 'SAT', 'SUN'), 'admin'),
     (1, 1, 1, '2d-Normal-Adult-Holiday', 100000, JSON_ARRAY('HOLIDAY'), 'admin'),
     (1, 2, 1, '2d-VIP-Adult-Weekday', 800000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU'), 'admin'),
     (1, 2, 1, '2d-VIP-Adult-Weekend', 105000, JSON_ARRAY('FRI', 'SAT', 'SUN'), 'admin'),
     (1, 2, 1, '2d-VIP-Adult-Holiday', 110000, JSON_ARRAY('HOLIDAY'), 'admin'),
     (1, 3, 1, '2d-Sweetbox-Adult-Weekday', 180000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU'), 'admin'),
-    (1, 3, 1, '2d-Sweetbox-Adult-Weekend', 240000, JSON_ARRAY('FRI', 'SAT', 'SUN'),'admin'),
+    (1, 3, 1, '2d-Sweetbox-Adult-Weekend', 240000, JSON_ARRAY('FRI', 'SAT', 'SUN'), 'admin'),
     (1, 3, 1, '2d-Normal-Adult-Holiday', 260000, JSON_ARRAY('HOLIDAY'), 'admin') ,
 ###U22
     (1, 1, 2, '2d-Normal-U22-Weekday', 55000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU', 'FRI'), 'admin'),
     (1, 1, 2, '2d-Normal-U22-Weekend', 60000, JSON_ARRAY('SAT', 'SUN'), 'admin'),
-    (1, 1, 2, '2d-Normal-U22-Holiday', 65000, JSON_ARRAY('HOLIDAY'),'admin'),
+    (1, 1, 2, '2d-Normal-U22-Holiday', 65000, JSON_ARRAY('HOLIDAY'), 'admin'),
     (1, 2, 2, '2d-VIP-U22-Weekday', 55000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU', 'FRI'), 'admin'),
     (1, 2, 2, '2d-VIP-U22-Weekend', 70000, JSON_ARRAY('SAT', 'SUN'), 'admin'),
     (1, 2, 2, '2d-VIP-U22-Holiday', 75000, JSON_ARRAY('HOLIDAY'), 'admin'),
@@ -897,7 +924,7 @@ insert into price_list(hall_type_id, seat_type_id, audience_type_id, name, price
     (1, 3, 2, '2d-Sweetbox-U22-Weekend', 170000, JSON_ARRAY('SAT', 'SUN'), 'admin'),
     (1, 3, 2, '2d-Sweetbox-U22-Holiday', 180000, JSON_ARRAY('HOLIDAY'), 'admin'),
 ###Student
-    (1, 1, 3, '2d-Normal-Student-Weekday', 55000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU','FRI'),'admin'),
+    (1, 1, 3, '2d-Normal-Student-Weekday', 55000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU', 'FRI'), 'admin'),
     (1, 1, 3, '2d-Normal-Student-Weekend', 60000, JSON_ARRAY('SAT', 'SUN'), 'admin'),
     (1, 1, 3, '2d-Normal-Student-Holiday', 65000, JSON_ARRAY('HOLIDAY'), 'admin'),
     (1, 2, 3, '2d-VIP-Student-Weekday', 55000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU', 'FRI'), 'admin'),

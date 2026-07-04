@@ -1,4 +1,4 @@
 package com.cinema.ticketbooking.booking.controller;
 
-public class BookingController {
+public class InvoiceController {
 }
