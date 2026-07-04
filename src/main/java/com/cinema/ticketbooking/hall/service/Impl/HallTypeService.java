@@ -1,6 +1,6 @@
 package com.cinema.ticketbooking.hall.service.Impl;
 
-import com.cinema.ticketbooking.core.exception.ResourceNotFoundException;
+import com.cinema.ticketbooking.core.exception.custom.ResourceNotFoundException;
 import com.cinema.ticketbooking.dto.HallTypeDto;
 import com.cinema.ticketbooking.entity.HallType;
 import com.cinema.ticketbooking.repository.HallTypeRepository;

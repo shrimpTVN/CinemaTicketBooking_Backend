@@ -1,6 +1,6 @@
 package com.cinema.ticketbooking.user.service.Impl;
 
-import com.cinema.ticketbooking.core.exception.ResourceNotFoundException;
+import com.cinema.ticketbooking.core.exception.custom.ResourceNotFoundException;
 import com.cinema.ticketbooking.dto.RoleDto;
 import com.cinema.ticketbooking.entity.Role;
 import com.cinema.ticketbooking.repository.RoleRepository;

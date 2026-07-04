@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -33,14 +34,16 @@ public class ShowtimeSeat extends BaseEntity {
     @Size(max = 50)
     @ColumnDefault("'AVAILABLE'")
     @Column(name = "status", length = 50)
-    private String status;
+    private String status="AVAILABLE";
 
     @ColumnDefault("0")
-    @Column(name = "holdBy")
-    private Integer holdBy;
+    @Column(name = "hold_by")
+    private Integer holdBy=0;
 
-    @Column(name = "holdUntil")
-    private Instant holdUntil;
+    @Column(name = "hold_until")
+    private LocalDateTime holdUntil;
 
+    @Version
+    private Integer version;
 
 }

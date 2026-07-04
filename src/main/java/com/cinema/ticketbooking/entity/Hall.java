@@ -46,10 +46,6 @@ public class Hall extends BaseEntity {
 
     @OneToMany
     @JoinColumn(name = "hall_id")
-    private Set<PriceList> priceLists = new LinkedHashSet<>();
-
-    @OneToMany
-    @JoinColumn(name = "hall_id")
     private Set<Seat> seats = new LinkedHashSet<>();
 
     @OneToMany

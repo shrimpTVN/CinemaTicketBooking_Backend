@@ -47,10 +47,10 @@ public class Invoice extends BaseEntity {
     @OneToMany(mappedBy = "invoice")
     private Set<Ticket> tickets = new LinkedHashSet<>();
 
-
     @NotNull
     @ManyToOne(fetch=FetchType.LAZY, optional = false)
     @JoinColumn(name="user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     private User user;
+
 }

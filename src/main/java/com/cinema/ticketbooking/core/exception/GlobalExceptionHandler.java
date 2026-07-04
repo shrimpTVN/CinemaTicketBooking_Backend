@@ -1,6 +1,9 @@
 package com.cinema.ticketbooking.core.exception;
 
+import com.cinema.ticketbooking.core.exception.custom.ConcurrentSeatBookingException;
+import com.cinema.ticketbooking.core.exception.custom.ResourceNotFoundException;
 import com.cinema.ticketbooking.dto.responseDto.ErrorResponseDto;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -87,5 +90,25 @@ public class GlobalExceptionHandler {
         );
 
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    }
+
+    /**
+     * Handles seat concurrency collisions and returns HTTP 409 Conflict.
+     */
+    @ExceptionHandler(ConcurrentSeatBookingException.class)
+    public ResponseEntity<ErrorResponseDto> handleConcurrentSeatBooking(
+            ConcurrentSeatBookingException ex,
+            HttpServletRequest request) {
+
+//        log.warn("Booking conflict at {}: {}", request.getRequestURI(), ex.getMessage());
+
+        ErrorResponseDto errorPayload = new ErrorResponseDto(
+                request.getRequestURI(),
+                HttpStatus.CONFLICT,
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorPayload);
     }
 }

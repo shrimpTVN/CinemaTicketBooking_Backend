@@ -1,8 +1,8 @@
-package com.cinema.ticketbooking.booking.service.Impl;
+package com.cinema.ticketbooking.booking.service.impl;
 
 import com.cinema.ticketbooking.AudienceTypeRepository;
 import com.cinema.ticketbooking.booking.service.IPriceListService;
-import com.cinema.ticketbooking.core.exception.ResourceNotFoundException;
+import com.cinema.ticketbooking.core.exception.custom.ResourceNotFoundException;
 import com.cinema.ticketbooking.dto.requestDto.PriceListRequestDto;
 import com.cinema.ticketbooking.entity.*;
 import com.cinema.ticketbooking.dto.responseDto.PriceListResponseDto;

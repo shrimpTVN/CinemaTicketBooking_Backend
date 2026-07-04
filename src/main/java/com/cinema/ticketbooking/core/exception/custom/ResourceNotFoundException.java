@@ -1,4 +1,4 @@
-package com.cinema.ticketbooking.core.exception;
+package com.cinema.ticketbooking.core.exception.custom;
 
 /**
  * Simple exception to represent a missing resource (HTTP 404).

@@ -32,6 +32,9 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+//    Get Invoice
+//    Get ticket
+
     @PreAuthorize("isAuthenticated()")
     @PatchMapping("/{id}/change-password")
     public ResponseEntity<String> changePassword(@PathVariable Integer id, @RequestBody ChangePasswordRequest request) {

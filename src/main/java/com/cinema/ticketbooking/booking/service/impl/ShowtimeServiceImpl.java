@@ -1,7 +1,7 @@
-package com.cinema.ticketbooking.booking.service.Impl;
+package com.cinema.ticketbooking.booking.service.impl;
 
 import com.cinema.ticketbooking.booking.service.IShowtimeService;
-import com.cinema.ticketbooking.core.exception.ResourceNotFoundException;
+import com.cinema.ticketbooking.core.exception.custom.ResourceNotFoundException;
 import com.cinema.ticketbooking.dto.requestDto.ShowtimeRequestDto;
 import com.cinema.ticketbooking.dto.responseDto.ShowtimeResponseDto;
 import com.cinema.ticketbooking.entity.Hall;

@@ -1,7 +1,7 @@
-package com.cinema.ticketbooking.booking.service.Impl;
+package com.cinema.ticketbooking.booking.service.impl;
 
 import com.cinema.ticketbooking.booking.service.IProductService;
-import com.cinema.ticketbooking.core.exception.ResourceNotFoundException;
+import com.cinema.ticketbooking.core.exception.custom.ResourceNotFoundException;
 import com.cinema.ticketbooking.dto.ProductDto;
 import com.cinema.ticketbooking.entity.Product;
 import com.cinema.ticketbooking.repository.ProductRepository;
