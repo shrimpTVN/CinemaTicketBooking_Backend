@@ -34,17 +34,17 @@ public class Invoice extends BaseEntity {
 
     @NotNull
     @Column(name = "vat", nullable = false, precision = 5, scale = 2)
-    private BigDecimal vat= BigDecimal.valueOf(0.8);
+    private BigDecimal vat= BigDecimal.valueOf(0.08);
 
     @Size(max = 50)
     @ColumnDefault("'PENDING'")
     @Column(name = "status", length = 50)
-    private String status="PENDING"; //PENDING, PAID, CANCELLED
+    private String status="PENDING"; //PENDING, PAID, CANCELLED, ISSUED, PRINTED
 
-    @OneToMany(mappedBy = "invoice")
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<InvoiceDetail> invoiceDetails = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "invoice")
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Ticket> tickets = new LinkedHashSet<>();
 
     @NotNull

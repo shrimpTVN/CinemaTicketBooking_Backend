@@ -99,7 +99,7 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
         // 4. Process the state transition
         for (ShowtimeSeat seat : requestedSeats) {
             if (!"AVAILABLE".equals(seat.getStatus())) {
-                throw new IllegalStateException("Seat " + seat.getId().getSeatId() + " is no longer available.");
+                throw new ConcurrentSeatBookingException("Seat " + seat.getId().getSeatId() + " is no longer available.");
             }
 
             seat.setStatus("HELD");
@@ -121,7 +121,21 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
 
     @Override
     public void confirmBooking(Integer showtimeId, List<Integer> seatIds, Integer userId) {
-
+        List<ShowtimeSeat> requestedSeats = getShowtimeSeats(showtimeId, seatIds);
+        requestedSeats.forEach(seat -> {
+//            only confirm the seat when the current user is who already hold the seat and the seat status is held
+            if (!Objects.equals(seat.getHoldBy(), userId) || !seat.getStatus().equals("HELD")) {
+                throw new ConcurrentSeatBookingException("Seat " + seat.getId().getSeatId() + " is not held by user: " + userId);
+            }
+            seat.setStatus("BOOKED");
+            seat.setHoldBy(userId);
+            seat.setHoldUntil(null);
+        });
+        try {
+            showtimeSeatRepository.saveAll(requestedSeats);
+        } catch (ObjectOptimisticLockingFailureException e) {
+            throw new RuntimeException("Error while confirming showtime seat booking.");
+        }
     }
 
     @Override
@@ -130,7 +144,7 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
         requestedSeats.forEach(seat -> {
             if (!Objects.equals(seat.getHoldBy(), userId)) {
                 System.out.println("Releasing seat " + seat.getId().getSeatId() + " held by user: " + seat.getHoldBy());
-                throw new IllegalStateException("Seat " + seat.getId().getSeatId() + " is no held by user : " + userId);
+                throw new ConcurrentSeatBookingException("Seat " + seat.getId().getSeatId() + " is no held by user : " + userId);
             }
             seat.setStatus("AVAILABLE");
             seat.setHoldBy(0);

@@ -1,3 +1,11 @@
+SET FOREIGN_KEY_CHECKS = 0; -- Tắt kiểm tra khóa ngoại
+
+-- Thả ga DROP theo thứ tự bất kỳ ở đây
+DROP TABLE IF EXISTS genre, movie, special_list, movie_genre, hall_type, hall, seat_type, seat, showtime, showtime_seat, audience_type, price_list, role, user, invoice, ticket, product, invoice_detail;
+
+SET FOREIGN_KEY_CHECKS = 1; -- Bật lại kiểm tra khóa ngoại
+
+
 drop table if exists genre;
 CREATE TABLE IF NOT EXISTS genre
 (
@@ -30,6 +38,21 @@ CREATE TABLE IF NOT EXISTS movie
     created_by    VARCHAR(20)                           NOT NULL,
     updated_at    TIMESTAMP   DEFAULT NULL,
     updated_by    VARCHAR(20) DEFAULT NULL
+);
+drop table if exists special_list;
+create table if not exists special_list
+(
+
+    id          int auto_increment primary key,
+    code        varchar(50)                           not null unique,
+    name        varchar(100)                          not null unique,
+    description text                                  not null,
+    list        JSON                                  not null,
+    status      varchar(50) default 'ON',
+    created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by  VARCHAR(20)                           NOT NULL,
+    updated_at  TIMESTAMP   DEFAULT NULL,
+    updated_by  VARCHAR(20) DEFAULT NULL
 );
 
 drop table if exists movie_genre;
@@ -139,98 +162,8 @@ create table if not exists showtime_seat
     foreign key (showtime_id) references showtime (id) on delete cascade,
     foreign key (seat_id) references seat (id) on delete cascade
 );
-
-drop table if exists ticket;
-create table if not exists ticket
-(
-    id          int auto_increment primary key,
-    showtime_id int                                   not null,
-    seat_id     int                                   not null,
-    audience_type_id int                                not null,
-    invoice_id  int                                   not null,
-    price       decimal(10, 2)                        not null check (price >= 0),
-    created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_by  VARCHAR(20)                           NOT NULL,
-    updated_at  TIMESTAMP   DEFAULT NULL,
-    updated_by  VARCHAR(20) DEFAULT NULL,
-    foreign key (showtime_id) references showtime (id) on delete restrict,
-    foreign key (seat_id) references seat (id) on delete restrict,
-    foreign key (invoice_id) references invoice (id) on delete restrict,
-    foreign key (audience_type_id) references audience_type (id) on delete restrict
-);
-
-create table if not exists invoice
-(
-    id             int auto_increment primary key,
-    total_amount   decimal(10, 2)                        not null check (total_amount >= 0),
-    payment_method varchar(50)                           not null,
-    vat            decimal(5, 2)                         not null check (vat >= 0 AND vat <= 100),
-    status         varchar(50) default 'PENDING',
-    created_at     TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_by     VARCHAR(20)                           NOT NULL,
-    updated_at     TIMESTAMP   DEFAULT NULL,
-    updated_by     VARCHAR(20) DEFAULT NULL
-);
-ALTER TABLE invoice
-    ADD COLUMN user_id int,
-    ADD CONSTRAINT fk_user_id
-        FOREIGN KEY (user_id)
-            REFERENCES user (id);
-
-create table if not exists product
-(
-    id          int auto_increment primary key,
-    name        varchar(100)                          not null,
-    description text                                  not null,
-    price       decimal(10, 2)                        not null check (price >= 0),
-    image       varchar(500)                          not null,
-    status      varchar(50) default 'ON',
-    created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_by  VARCHAR(20)                           NOT NULL,
-    updated_at  TIMESTAMP   DEFAULT NULL,
-    updated_by  VARCHAR(20) DEFAULT NULL
-);
-
-create table if not exists invoice_detail
-(
-    invoice_id int                                   not null,
-    product_id int                                   not null,
-    quantity   int                                   not null check (quantity > 0),
-    price      decimal(10, 2)                        not null check (price >= 0),
-    created_at TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_by VARCHAR(20)                           NOT NULL,
-    updated_at TIMESTAMP   DEFAULT NULL,
-    updated_by VARCHAR(20) DEFAULT NULL,
-    foreign key (invoice_id) references invoice (id) on delete restrict,
-    foreign key (product_id) references product (id) on delete restrict
-);
-
-
-
-create table if not exists user
-(
-    id           int auto_increment primary key,
-    name         varchar(100)                          not null,
-    DoB          date                                  not null,
-    gender       varchar(10)                           not null,
-    point        int         default 0 check (point >= 0),
-    phone_number varchar(10)                           not null unique,
-    email        varchar(255)                          not null unique,
-    password     varchar(255)                          not null,
-    status       varchar(50) default 'ON',
-    created_at   TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_by   VARCHAR(20)                           NOT NULL,
-    updated_at   TIMESTAMP   DEFAULT NULL,
-    updated_by   VARCHAR(20) DEFAULT NULL
-);
-
-ALTER TABLE user
-    ADD COLUMN role_id INT DEFAULT 2;
-ALTER TABLE user
-    ADD CONSTRAINT fk_user_role
-        FOREIGN KEY (role_id) REFERENCES role (id);
-
-create table if not exists role
+drop table if exists audience_type;
+create table if not exists audience_type
 (
     id          int auto_increment primary key,
     name        varchar(100)                          not null unique,
@@ -241,23 +174,6 @@ create table if not exists role
     updated_at  TIMESTAMP   DEFAULT NULL,
     updated_by  VARCHAR(20) DEFAULT NULL
 );
-
-drop table if exists special_list;
-create table if not exists special_list
-(
-
-    id          int auto_increment primary key,
-    code        varchar(50)                           not null unique,
-    name        varchar(100)                          not null unique,
-    description text                                  not null,
-    list        JSON                                  not null,
-    status      varchar(50) default 'ON',
-    created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_by  VARCHAR(20)                           NOT NULL,
-    updated_at  TIMESTAMP   DEFAULT NULL,
-    updated_by  VARCHAR(20) DEFAULT NULL
-);
-
 drop table if exists price_list;
 create table if not exists price_list
 (
@@ -278,8 +194,7 @@ create table if not exists price_list
     foreign key (audience_type_id) references audience_type (id) on delete restrict
 );
 
-drop table if exists audience_type;
-create table if not exists audience_type
+create table if not exists role
 (
     id          int auto_increment primary key,
     name        varchar(100)                          not null unique,
@@ -290,3 +205,107 @@ create table if not exists audience_type
     updated_at  TIMESTAMP   DEFAULT NULL,
     updated_by  VARCHAR(20) DEFAULT NULL
 );
+
+create table if not exists user
+(
+    id           int auto_increment primary key,
+    name         varchar(100)                          not null,
+    DoB          date                                  not null,
+    gender       varchar(10)                           not null,
+    point        int         default 0 check (point >= 0),
+    phone_number varchar(10)                           not null unique,
+    email        varchar(255)                          not null unique,
+    password     varchar(255)                          not null,
+    role_id      int                                   not null default 2,
+    status       varchar(50) default 'ON',
+    created_at   TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by   VARCHAR(20)                           NOT NULL,
+    updated_at   TIMESTAMP   DEFAULT NULL,
+    updated_by   VARCHAR(20) DEFAULT NULL,
+    foreign key (role_id) references role (id) on delete restrict
+);
+
+drop table if exists invoice;
+create table if not exists invoice
+(
+    id             int auto_increment primary key,
+    user_id        int                                   not null,
+    total_amount   decimal(10, 2)                        not null check (total_amount >= 0),
+    payment_method varchar(50)                           not null,
+    vat            decimal(5, 2)                         not null check (vat >= 0 AND vat <= 100),
+    status         varchar(50) default 'PENDING',
+    created_at     TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by     VARCHAR(20)                           NOT NULL,
+    updated_at     TIMESTAMP   DEFAULT NULL,
+    updated_by     VARCHAR(20) DEFAULT NULL,
+    foreign key (user_id) references user (id) on delete restrict
+);
+
+drop table if exists ticket;
+create table if not exists ticket
+(
+    id          int auto_increment primary key,
+    showtime_id int                                   not null,
+    seat_id     int                                   not null,
+    audience_type_id int                                not null,
+    invoice_id  int                                   not null,
+    price       decimal(10, 2)                        not null check (price >= 0),
+    created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by  VARCHAR(20)                           NOT NULL,
+    updated_at  TIMESTAMP   DEFAULT NULL,
+    updated_by  VARCHAR(20) DEFAULT NULL,
+    foreign key (showtime_id) references showtime (id) on delete restrict,
+    foreign key (seat_id) references seat (id) on delete restrict,
+    foreign key (invoice_id) references invoice (id) on delete restrict,
+    foreign key (audience_type_id) references audience_type (id) on delete restrict
+);
+
+create table if not exists product
+(
+    id          int auto_increment primary key,
+    name        varchar(100)                          not null,
+    description text                                  not null,
+    price       decimal(10, 2)                        not null check (price >= 0),
+    image       varchar(500)                          not null,
+    status      varchar(50) default 'ON',
+    created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by  VARCHAR(20)                           NOT NULL,
+    updated_at  TIMESTAMP   DEFAULT NULL,
+    updated_by  VARCHAR(20) DEFAULT NULL
+);
+
+drop table if exists invoice_detail;
+create table if not exists invoice_detail
+(
+    invoice_id int                                   not null,
+    product_id int                                   not null,
+    quantity   int                                   not null check (quantity > 0),
+    price      decimal(10, 2)                        not null check (price >= 0),
+    created_at TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by VARCHAR(20)                           NOT NULL,
+    updated_at TIMESTAMP   DEFAULT NULL,
+    updated_by VARCHAR(20) DEFAULT NULL,
+    foreign key (invoice_id) references invoice (id) on delete restrict,
+    foreign key (product_id) references product (id) on delete restrict
+);
+
+DROP TABLE IF EXISTS payment_method;
+CREATE TABLE IF NOT EXISTS payment_method
+(
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    code        VARCHAR(50)                           NOT NULL UNIQUE,
+    name        VARCHAR(100)                          NOT NULL UNIQUE,
+    description TEXT                                  NOT NULL,
+    logo        VARCHAR(500)                          NOT NULL,
+    surcharge   DECIMAL(10, 2) DEFAULT 0              CHECK (surcharge >= 0),
+    status      VARCHAR(50)    DEFAULT 'ON',
+    created_at  TIMESTAMP      DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by  VARCHAR(20)                           NOT NULL,
+    updated_at  TIMESTAMP      DEFAULT NULL,
+    updated_by  VARCHAR(20)    DEFAULT NULL
+);
+
+
+
+
+
