@@ -34,12 +34,12 @@ public class Invoice extends BaseEntity {
 
     @NotNull
     @Column(name = "vat", nullable = false, precision = 5, scale = 2)
-    private BigDecimal vat;
+    private BigDecimal vat= BigDecimal.valueOf(0.8);
 
     @Size(max = 50)
     @ColumnDefault("'PENDING'")
     @Column(name = "status", length = 50)
-    private String status;
+    private String status="PENDING"; //PENDING, PAID, CANCELLED
 
     @OneToMany(mappedBy = "invoice")
     private Set<InvoiceDetail> invoiceDetails = new LinkedHashSet<>();

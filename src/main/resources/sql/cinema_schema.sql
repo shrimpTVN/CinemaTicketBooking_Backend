@@ -146,16 +146,17 @@ create table if not exists ticket
     id          int auto_increment primary key,
     showtime_id int                                   not null,
     seat_id     int                                   not null,
+    audience_type_id int                                not null,
     invoice_id  int                                   not null,
     price       decimal(10, 2)                        not null check (price >= 0),
-    qr          varchar(500)                          not null,
     created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by  VARCHAR(20)                           NOT NULL,
     updated_at  TIMESTAMP   DEFAULT NULL,
     updated_by  VARCHAR(20) DEFAULT NULL,
     foreign key (showtime_id) references showtime (id) on delete restrict,
     foreign key (seat_id) references seat (id) on delete restrict,
-    foreign key (invoice_id) references invoice (id) on delete restrict
+    foreign key (invoice_id) references invoice (id) on delete restrict,
+    foreign key (audience_type_id) references audience_type (id) on delete restrict
 );
 
 create table if not exists invoice

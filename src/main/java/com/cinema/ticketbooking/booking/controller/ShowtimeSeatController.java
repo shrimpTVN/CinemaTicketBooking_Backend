@@ -18,17 +18,17 @@ public class ShowtimeSeatController {
     private final IShowtimeSeatService showtimeSeatService;
     private final IShowtimeService showtimeService;
 
-//    @GetMapping("/initialize-showtime-seats")
-//    public ResponseEntity<String> initializeShowtimeSeats() {
-//        List<ShowtimeResponseDto> showtimeDtos = showtimeService.getAllShowtimes();
-////        System.out.println("Initializing showtime seats for " + showtimeDtos.size() + " showtimes.");
-//        showtimeDtos.forEach(showtime -> {
-////            System.out.println("Initializing seats for showtime ID: " + showtime.id() + ", Hall ID: " + showtime.hallId());
-//            showtimeSeatService.initializeInventoryForShowtime(showtime.id(), showtime.hallId());
-//        });
-//
-//        return ResponseEntity.ok("All showtime seats initialized successfully.");
-//    }
+    @GetMapping("/initialize-showtime-seats")
+    public ResponseEntity<String> initializeShowtimeSeats() {
+        List<ShowtimeResponseDto> showtimeDtos = showtimeService.getAllShowtimes();
+//        System.out.println("Initializing showtime seats for " + showtimeDtos.size() + " showtimes.");
+        showtimeDtos.forEach(showtime -> {
+//            System.out.println("Initializing seats for showtime ID: " + showtime.id() + ", Hall ID: " + showtime.hallId());
+            showtimeSeatService.initializeInventoryForShowtime(showtime.id(), showtime.hallId());
+        });
+
+        return ResponseEntity.ok("All showtime seats initialized successfully.");
+    }
 
     @GetMapping("/showtimes/{id}")
     public ResponseEntity<List<ShowtimeSeatResponseDto>> getSeatsForShowtime(@PathVariable Integer id) {

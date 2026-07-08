@@ -37,6 +37,11 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
 
     @Override
     public void initializeInventoryForShowtime(Integer showtimeId, Integer hallId) {
+        if (!showtimeSeatRepository.findByShowtimeId(showtimeId).isEmpty()) {
+            log.info("Showtime seats already initialized for showtime ID: {}", showtimeId);
+            return;
+        }
+
         Showtime showtime = showtimeRepository.findById(showtimeId)
                 .orElseThrow(() -> new IllegalArgumentException("Showtime not found for ID: " + showtimeId));
 

@@ -22,6 +22,22 @@ public class Ticket  extends BaseEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "showtime_id", nullable = false)
+    private Showtime showtime;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "seat_id", nullable = false)
+    private Seat seat;
+
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "audience_type_id", nullable = false)
+    private AudienceType audienceType;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "invoice_id", nullable = false)
     private Invoice invoice;
 
@@ -29,9 +45,5 @@ public class Ticket  extends BaseEntity {
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Size(max = 500)
-    @NotNull
-    @Column(name = "qr", nullable = false, length = 500)
-    private String qr;
 
 }
