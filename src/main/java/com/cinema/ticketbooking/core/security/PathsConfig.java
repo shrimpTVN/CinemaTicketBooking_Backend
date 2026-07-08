@@ -21,6 +21,8 @@ public class PathsConfig {
                 "/api/price-lists/**",
                 "/api/booking/**",
                 "/api/products/**",
+                "/api/payment-methods/**",
+                "/payment-methods/**",
                 "/api/showtime-seats/**",
 
                 "/api/auth/**",

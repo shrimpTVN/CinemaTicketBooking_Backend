@@ -41,12 +41,12 @@ public class PaymentMethod extends BaseEntity {
 
     @ColumnDefault("0.00")
     @Column(name = "surcharge", precision = 10, scale = 2)
-    private BigDecimal surcharge;
+    private BigDecimal surcharge = BigDecimal.valueOf(0.0);
 
     @Size(max = 50)
     @ColumnDefault("'ON'")
     @Column(name = "status", length = 50)
-    private String status;
+    private String status ="ON";
 
 
 }
