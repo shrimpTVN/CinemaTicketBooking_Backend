@@ -3,6 +3,7 @@ package com.cinema.ticketbooking.booking.service.impl;
 import com.cinema.ticketbooking.booking.service.IShowtimeSeatService;
 import com.cinema.ticketbooking.core.exception.custom.ConcurrentSeatBookingException;
 import com.cinema.ticketbooking.dto.responseDto.ShowtimeSeatResponseDto;
+import com.cinema.ticketbooking.dto.websocket.ShowtimeSeatUpdateEventDto;
 import com.cinema.ticketbooking.entity.*;
 import com.cinema.ticketbooking.repository.HallRepository;
 import com.cinema.ticketbooking.repository.SeatRepository;
@@ -12,6 +13,7 @@ import com.cinema.ticketbooking.repository.ShowtimeSeatRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +35,7 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
     private final SeatRepository seatRepository;
     private final ShowtimeRepository showtimeRepository;
     private final HallRepository hallRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
 
     @Override
@@ -111,6 +114,10 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
         // 5. Attempt to save. This is where Optimistic Locking kicks in!
         try {
             showtimeSeatRepository.saveAll(requestedSeats);
+
+            // 2. BROADCAST: Tell everyone viewing this showtime that seats are on HOLD
+            ShowtimeSeatUpdateEventDto event = new ShowtimeSeatUpdateEventDto(showtimeId, seatIds, "HOLD", userId);
+            messagingTemplate.convertAndSend("/topic/showtimes/" + showtimeId + "/seats", event);
         } catch (ObjectOptimisticLockingFailureException e) {
             log.warn("Concurrency collision detected for showtime: {}", showtimeId);
             // In a real app, throw a custom exception so the GlobalExceptionHandler
@@ -120,6 +127,7 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
     }
 
     @Override
+    @Transactional
     public void confirmBooking(Integer showtimeId, List<Integer> seatIds, Integer userId) {
         List<ShowtimeSeat> requestedSeats = getShowtimeSeats(showtimeId, seatIds);
         requestedSeats.forEach(seat -> {
@@ -130,6 +138,10 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
             seat.setStatus("BOOKED");
             seat.setHoldBy(userId);
             seat.setHoldUntil(null);
+
+            // 2. BROADCAST: Tell everyone viewing this showtime that seats are on BOOKED
+            ShowtimeSeatUpdateEventDto event = new ShowtimeSeatUpdateEventDto(showtimeId, seatIds, "BOOKED", userId);
+            messagingTemplate.convertAndSend("/topic/showtimes/" + showtimeId + "/seats", event);
         });
         try {
             showtimeSeatRepository.saveAll(requestedSeats);
@@ -139,6 +151,7 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
     }
 
     @Override
+    @Transactional
     public void releaseSeats(Integer showtimeId, List<Integer> seatIds, Integer userId) {
         List<ShowtimeSeat> requestedSeats = getShowtimeSeats(showtimeId, seatIds);
         requestedSeats.forEach(seat -> {
@@ -149,6 +162,10 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
             seat.setStatus("AVAILABLE");
             seat.setHoldBy(0);
             seat.setHoldUntil(null);
+
+            // 2. BROADCAST: Tell everyone viewing this showtime that seats are on AVAILABLE
+            ShowtimeSeatUpdateEventDto event = new ShowtimeSeatUpdateEventDto(showtimeId, seatIds, "AVAILABLE", userId);
+            messagingTemplate.convertAndSend("/topic/showtimes/" + showtimeId + "/seats", event);
         });
         try {
             showtimeSeatRepository.saveAll(requestedSeats);
@@ -159,13 +176,38 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
     }
 
     @Override
+    public void releaseAllSeatsHoldByUser(Integer userId) {
+        List<ShowtimeSeat> heldSeats = showtimeSeatRepository.findAllByHoldBy(userId);
+        Integer showtimeId =  heldSeats.getFirst().getId().getSeatId();
+        List<Integer> seatIds = new ArrayList<>();
+        heldSeats.forEach(seat -> {
+            seat.setStatus("AVAILABLE");
+            seat.setHoldBy(0);
+            seat.setHoldUntil(null);
+            seatIds.add(seat.getId().getSeatId());
+        });
+        try {
+            showtimeSeatRepository.saveAll(heldSeats);
+
+            // 2. BROADCAST: Tell everyone viewing this showtime that seats are on AVAILABLE
+            ShowtimeSeatUpdateEventDto event = new ShowtimeSeatUpdateEventDto(showtimeId, seatIds, "AVAILABLE", userId);
+            messagingTemplate.convertAndSend("/topic/showtimes/" + showtimeId + "/seats", event);
+        } catch (ObjectOptimisticLockingFailureException e) {
+            throw new RuntimeException("Error while releasing all seats held by user: " + userId);
+        }
+    }
+
+    //update message broadcast
+    @Override
+    @Transactional
     public void releaseExpiredHolds() {
         int releasedCount = showtimeSeatRepository.releaseExpiredHolds(Instant.now());
         log.info("Released {} expired holds.", releasedCount);
     }
 
     private ShowtimeSeatResponseDto transformToDto(ShowtimeSeat showtimeSeat){
-        return new ShowtimeSeatResponseDto(showtimeSeat.getId().getShowtimeId(), showtimeSeat.getId().getSeatId(), showtimeSeat.getStatus());
+        return new ShowtimeSeatResponseDto(showtimeSeat.getId().getShowtimeId(),
+                showtimeSeat.getId().getSeatId(), showtimeSeat.getStatus());
     }
 
 }

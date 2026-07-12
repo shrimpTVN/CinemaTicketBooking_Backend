@@ -1,5 +1,6 @@
 package com.cinema.ticketbooking.booking.service.impl;
 
+import com.cinema.ticketbooking.booking.service.IShowtimeSeatService;
 import com.cinema.ticketbooking.booking.service.IShowtimeService;
 import com.cinema.ticketbooking.core.exception.custom.ResourceNotFoundException;
 import com.cinema.ticketbooking.dto.requestDto.ShowtimeRequestDto;
@@ -23,6 +24,7 @@ public class ShowtimeServiceImpl implements IShowtimeService {
     private final HallRepository hallRepository;
     private final ShowtimeRepository showtimeRepository;
     private final MovieRepository movieRepository;
+    private final IShowtimeSeatService showtimeSeatService;
 
     @Override
     public List<ShowtimeResponseDto> getAllShowtimes() {
@@ -96,6 +98,7 @@ public class ShowtimeServiceImpl implements IShowtimeService {
         newShowtime.setStartTime(showtime.startTime());
         newShowtime.setType(showtime.type());
         Showtime savedShowtime = showtimeRepository.save(newShowtime);
+        showtimeSeatService.initializeInventoryForShowtime(savedShowtime.getId(), hall.getId());
         return transformToDto(savedShowtime);
     }
 

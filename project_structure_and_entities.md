@@ -858,3 +858,100 @@ The current backend already exposes API support for:
 - invoices and checkout
 
 This document should be enough for the frontend team to understand which endpoints exist, what to send, and what to expect back.
+
+## 9. Mô tả các entity và mối quan hệ (tóm tắt)
+
+Dưới đây là mô tả ngắn gọn về các entity chính, thuộc tính quan trọng và quan hệ giữa chúng. Mục tiêu: giúp frontend hiểu schema và cách liên kết dữ liệu.
+
+- User
+  - Thuộc tính chính: id (PK), name, doB (date), point (int), phoneNumber, email, password (hashed), roleId (FK), status (ACTIVE/INACTIVE)
+  - Quan hệ: Many Users -> 1 Role; 1 User -> N Invoices; 1 User có thể giữ (hold) nhiều ShowtimeSeat tạm thời.
+
+- Role
+  - Thuộc tính: id, name, description, status
+  - Quan hệ: 1 Role -> N Users
+
+- Movie
+  - Thuộc tính: id, title, duration (phút), avatar, trailer, description, country, ageLimit, premiereDate, rating, actors, director, status
+  - Quan hệ: N Movies <-> N Genres (many-to-many); 1 Movie -> N Showtimes
+
+- Genre
+  - Thuộc tính: id, name, description, status
+  - Quan hệ: N Genres <-> N Movies
+
+- Hall (rạp)
+  - Thuộc tính: id, name, width, height, hallTypeId (FK)
+  - Quan hệ: 1 Hall -> N HallSeat; 1 Hall -> N Showtimes
+
+- HallSeat (bản đồ ghế của hall)
+  - Thuộc tính: id (PK), hallId (FK), seatTypeId (FK), rowLabel, colNumber, status (AVAILABLE/UNAVAILABLE)
+  - Quan hệ: 1 HallSeat -> 1 Hall; 1 HallSeat -> 1 SeatType; HallSeat được ánh xạ sang ShowtimeSeat cho mỗi showtime
+
+- HallType
+  - Thuộc tính: id, name, description, convenience, style, images, status
+  - Quan hệ: 1 HallType -> N Halls; 1 HallType liên quan tới PriceList
+
+- SeatType
+  - Thuộc tính: id, name, priceSurcharge, description, image, status
+  - Quan hệ: 1 SeatType -> N HallSeat; 1 SeatType -> N PriceList
+
+- Showtime
+  - Thuộc tính: id, hallId (FK), movieId (FK), date, startTime, type (2D/3D/etc.)
+  - Quan hệ: 1 Showtime -> 1 Hall; 1 Showtime -> 1 Movie; 1 Showtime -> N ShowtimeSeat; 1 Showtime -> N Tickets (Invoice items)
+
+- ShowtimeSeat (inventory per showtime)
+  - Thuộc tính: id, showtimeId (FK), hallSeatId (FK), status (AVAILABLE/HOLD/BOOKED), holdExpiresAt (timestamp), price
+  - Quan hệ: 1 ShowtimeSeat -> 1 Showtime; 1 ShowtimeSeat -> 1 HallSeat; 1 ShowtimeSeat có thể được gán cho 1 Ticket (sau checkout)
+
+- AudienceType
+  - Thuộc tính: id, name (Adult/Child/Senior), description, status
+  - Quan hệ: 1 AudienceType -> N PriceList; ảnh hưởng tới giá vé
+
+- PriceList
+  - Thuộc tính: id, hallTypeId (FK), seatTypeId (FK), audienceTypeId (FK), name, price, days (list), status
+  - Quan hệ: PriceList xác định giá cho (hallType, seatType, audienceType)
+
+- PaymentMethod
+  - Thuộc tính: id, code, name, description, logo, surcharge, status
+  - Quan hệ: 1 PaymentMethod -> N Invoices
+
+- Product
+  - Thuộc tính: id, name, description, price, image, status
+  - Quan hệ: 1 Product -> N InvoiceDetails
+
+- Invoice
+  - Thuộc tính: invoiceId (PK), userId (FK), showtimeId (FK), paymentMethod (code), totalAmount, vat, status, createdAt
+  - Quan hệ: 1 Invoice -> 1 User; 1 Invoice -> 1 Showtime (summary); 1 Invoice -> N Tickets; 1 Invoice -> N InvoiceDetails
+
+- Ticket / Invoice Ticket (không nhất thiết là entity DB riêng trong mã nguồn, nhưng response chứa thông tin vé)
+  - Thuộc tính: id, invoiceId (FK), showtimeId (FK), showtimeSeatId (FK) hoặc seatRowLabel/seatColNumber, audienceTypeId, price
+  - Quan hệ: 1 Ticket -> 1 Invoice; 1 Ticket -> 1 ShowtimeSeat (bản ghi ghế cụ thể)
+
+- InvoiceDetail
+  - Thuộc tính: id, invoiceId (FK), productId (FK), quantity, price
+  - Quan hệ: 1 Invoice -> N InvoiceDetails; 1 InvoiceDetail -> 1 Product
+
+
+Tóm tắt quan hệ chính (ER summary):
+
+- Role 1---* User
+- User 1---* Invoice
+- Movie 1---* Showtime
+- Hall 1---* HallSeat
+- Hall 1---* Showtime
+- HallSeat 1---* ShowtimeSeat (một bản ghi ShowtimeSeat cho mỗi showtime)
+- Showtime 1---* ShowtimeSeat
+- ShowtimeSeat 0..1---1 Ticket (sau khi thanh toán)
+- Movie *---* Genre (qua bảng liên kết movie_genres)
+- PriceList liên kết (HallType, SeatType, AudienceType) để xác định giá
+- Invoice 1---* InvoiceDetail (sản phẩm) và 1---* Ticket (vé)
+
+
+Ví dụ nhanh về luồng dữ liệu khi checkout:
+1) FE lấy showtime và seat map: GET /showtimes/{id} + GET /showtime-seats/showtimes/{id}
+2) FE gửi hold: POST /showtime-seats/showtimes/{id}/hold (tạo ShowtimeSeat.status=HOLD với holdExpiresAt)
+3) FE gọi /price-lists/seat-price để tính giá trên từng ghế (dựa vào seatType, audienceType, date)
+4) FE gửi POST /invoices/checkout với userId, showtimeId, seatCheckouts và invoiceDetails -> tạo Invoice + Ticket(s) và chuyển các ShowtimeSeat từ HOLD -> BOOKED
+
+
+Nếu muốn, có thể thêm sơ đồ ER ASCII/PlantUML hoặc bảng chi tiết hơn cho mỗi entity (kiểu dữ liệu, ràng buộc NOT NULL, FK). Nói rõ yêu cầu mong muốn (ví dụ: PlantUML, Mermaid, hoặc mô tả chi tiết cột DB) để tiếp tục mở rộng.

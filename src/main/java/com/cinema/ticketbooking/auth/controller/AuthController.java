@@ -1,6 +1,7 @@
 package com.cinema.ticketbooking.auth.controller;
 
 import com.cinema.ticketbooking.core.constant.ApplicationConstants;
+import com.cinema.ticketbooking.core.security.custom.CustomUserDetails;
 import com.cinema.ticketbooking.core.util.JwtUtil;
 import com.cinema.ticketbooking.dto.requestDto.LoginRequestDto;
 import com.cinema.ticketbooking.dto.requestDto.UserRequestDto;
@@ -39,7 +40,7 @@ public class AuthController {
 
             String jwtToken = jwtUtil.generateJwtToken(resultAuthentication);
 
-            var fetchedUser = (User) resultAuthentication.getPrincipal();
+            var fetchedUser = (CustomUserDetails) resultAuthentication.getPrincipal();
 
             UserResponseDto userDto = null;
             if (fetchedUser != null) userDto = userService.getUserByEmail(fetchedUser.getUsername());

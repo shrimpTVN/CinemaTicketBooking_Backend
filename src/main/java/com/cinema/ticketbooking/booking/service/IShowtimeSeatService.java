@@ -18,6 +18,7 @@ public interface IShowtimeSeatService {
     public void confirmBooking(Integer showtimeId, List<Integer> seatIds, Integer userId);
 
     public void releaseSeats(Integer showtimeId, List<Integer> seatIds, Integer userId);
+    public void releaseAllSeatsHoldByUser(Integer userId);
 
     public void releaseExpiredHolds();
 }

@@ -13,6 +13,8 @@ import java.util.List;
 public interface ShowtimeSeatRepository extends JpaRepository<ShowtimeSeat, ShowtimeSeatId> {
  
     List<ShowtimeSeat> findByShowtimeId(Integer showtimeId);
+    List<ShowtimeSeat> findAllByHoldBy(Integer userId);
+
     ShowtimeSeat findByShowtimeIdAndSeatId(Integer showtimeId, Integer seatId);
 
     @Query(value="select count(*) from showtime_seat where showtime_id = :showtimeId and status = 'AVAILABLE'", nativeQuery = true)
