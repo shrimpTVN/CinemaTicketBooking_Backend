@@ -38,7 +38,7 @@ import java.util.Map;
  *       vnpay.tmn-code=2QXG2A9Q
  *       vnpay.hash-secret=97BF4G2E0B2D4H1D0B7A6C3B9E1C6D2B
  *       vnpay.url=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
- *       vnpay.return-url=http://192.168.0.241:8080/api/vnpay/return
+ *       vnpay.return-url=http://10.111.212.204:8080/api/vnpay/return
  *       vnpay.fe-success-url=http://localhost:5173/booking?vnp_status=success
  *       vnpay.fe-failure-url=http://localhost:5173/booking?vnp_status=failure
  *
