@@ -1,5 +1,6 @@
 package com.cinema.ticketbooking.auth.controller;
 
+import com.cinema.ticketbooking.auth.service.IAuthService;
 import com.cinema.ticketbooking.core.constant.ApplicationConstants;
 import com.cinema.ticketbooking.core.security.custom.CustomUserDetails;
 import com.cinema.ticketbooking.core.util.JwtUtil;
@@ -31,7 +32,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UserServiceImpl userService;
-
+    private final IAuthService authService;
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> apiLogin(@RequestBody LoginRequestDto loginRequestDto) {
         try {
@@ -41,23 +42,13 @@ public class AuthController {
             String jwtToken = jwtUtil.generateJwtToken(resultAuthentication);
 
             var fetchedUser = (CustomUserDetails) resultAuthentication.getPrincipal();
-
             UserResponseDto userDto = null;
             if (fetchedUser != null) userDto = userService.getUserByEmail(fetchedUser.getUsername());
 
-            // 1. Build the Secure HttpOnly Cookie
-            ResponseCookie jwtCookie = ResponseCookie.from(ApplicationConstants.JWT_COOKIE_NAME, jwtToken)
-                    .httpOnly(true)   // JavaScript CANNOT read this
-                    .secure(false)    // Set to TRUE in production when using HTTPS!
-                    .path("/")        // Cookie is valid for all routes
-                    .maxAge(24* 60 * 60)  // 24 hours (must match your JWT expiration)
-                    .sameSite("Strict" ) // Prevents the browser from sending this cookie from other websites
-                    .build();
-
-            // 2. Return the response with the Set-Cookie header.
+            // Return the response with the Set-Cookie header.
             // Notice we pass 'null' for the token in the DTO, keeping it out of the JSON body.
             return ResponseEntity.status(HttpStatus.OK)
-                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, authService.getUserCookie(jwtToken).toString())
                     .body(new LoginResponseDto("Login Successful", userDto ));
 
         } catch (BadCredentialsException ex) {

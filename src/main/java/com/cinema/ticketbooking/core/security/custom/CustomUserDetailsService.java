@@ -3,6 +3,7 @@ package com.cinema.ticketbooking.core.security.custom;
 import com.cinema.ticketbooking.entity.User;
 import com.cinema.ticketbooking.repository.UserRepository;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,13 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
-
-    // Inject your actual database repository here
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     public CustomUserDetails loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {

@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 public class InvoiceServiceImpl implements IInvoiceService {
 
     private final InvoiceRepository invoiceRepository;
-    private final InvoiceDetailRepository invoiceDetailRepository;
-    private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
     private final ShowtimeRepository showtimeRepository;
     private final SeatRepository seatRepository;
@@ -109,25 +107,22 @@ public class InvoiceServiceImpl implements IInvoiceService {
         // BATCH FETCHING: Extract all seat IDs and fetch them in one query
         List<Integer> allSeatIds = checkouts.stream()
                 .flatMap(c -> c.seatIds().stream())
-                .collect(Collectors.toList());
+                .toList();
 
         // Ideally: List<Seat> allSeats = seatRepository.findAllById(allSeatIds);
         // Map them by ID for O(1) memory lookup below...
-
         for (SeatCheckoutRequestDto checkout : checkouts) {
             AudienceType audienceType = audienceTypeRepository.findById(checkout.audienceTypeId())
                     .orElseThrow(() -> new IllegalArgumentException("Audience type not found"));
+
             showtimeSeatService.confirmBooking(showtime.getId(), checkout.seatIds(), userId); // Ensure atomic transition
+
             for (Integer seatId : checkout.seatIds()) {
                 Seat seat = seatRepository.findById(seatId).orElseThrow(); // Replace with batch map lookup
 
                 if (!seat.getHall().getId().equals(showtime.getHall().getId())) {
                     throw new IllegalArgumentException("Seat mismatch for hall.");
                 }
-
-                // SECURITY: Transition state atomically (Ensure you implement this method!)
-                // showtimeSeatService.confirmBooking(showtime.getId(), seatId, userId);
-
                 Ticket ticket = new Ticket();
                 ticket.setShowtime(showtime);
                 ticket.setInvoice(invoice);
@@ -146,11 +141,11 @@ public class InvoiceServiceImpl implements IInvoiceService {
 
         List<InvoiceDetail> details = new ArrayList<>();
 
-        // BATCH FETCHING: Fetch all products in one query
+
         List<Integer> productIds = requests.stream()
                 .map(InvoiceDetailRequestDto::productId)
                 .collect(Collectors.toList());
-
+        // BATCH FETCHING: Fetch all products in one query
         Map<Integer, Product> productMap = productRepository.findAllById(productIds).stream()
                 .collect(Collectors.toMap(Product::getId, p -> p));
 

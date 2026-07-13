@@ -3,19 +3,15 @@ package com.cinema.ticketbooking.core.util;
 import com.cinema.ticketbooking.core.constant.ApplicationConstants;
 import com.cinema.ticketbooking.core.security.custom.CustomUserDetails;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
@@ -24,26 +20,30 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import static org.springframework.boot.logging.log4j2.Log4J2LoggingSystem.getEnvironment;
-
 @Component
-public class JwtUtil {
-
-    // Clean Architecture: Inject configuration directly.
-    @Value("${" + ApplicationConstants.JWT_SECRET_KEY + ":" + ApplicationConstants.JWT_SECRET_DEFAULT_VALUE + "}")
-    private String secret;
+@RequiredArgsConstructor
+public class JwtUtil  {
+    // 1. Clean Architecture: Let Spring inject the Environment
+    private final Environment env;
 
     private SecretKey getSecretKey() {
+
+        String secret = env.getProperty(ApplicationConstants.JWT_SECRET_KEY,
+                ApplicationConstants.JWT_SECRET_DEFAULT_VALUE);
+//        System.out.println("Generating SecretKey for JWT signing and validation..." + secret);
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String extractToken(HttpServletRequest request) {
+//        System.out.println("Extracting JWT token from request cookies..." + request.getCookies());
         if (request.getCookies() == null) return null;
+
         for (Cookie cookie : request.getCookies()) {
             if (ApplicationConstants.JWT_COOKIE_NAME.equals(cookie.getName())) {
                 return cookie.getValue();
             }
         }
+//        System.out.println("No JWT cookie found in the request.");
         return null;
     }
 
@@ -57,6 +57,7 @@ public class JwtUtil {
     }
 
     public Claims parseClaims(String token) {
+//        System.out.println("Parsing JWT token claims..." + token);
         return Jwts.parser()
                 .verifyWith(getSecretKey())
                 .build()

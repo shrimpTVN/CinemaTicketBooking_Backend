@@ -13,6 +13,7 @@ import com.cinema.ticketbooking.repository.MovieRepository;
 import com.cinema.ticketbooking.repository.ShowtimeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -87,6 +88,7 @@ public class ShowtimeServiceImpl implements IShowtimeService {
 
 
     @Override
+    @Transactional
     public ShowtimeResponseDto createShowtime(ShowtimeRequestDto showtime) {
         Showtime newShowtime = new Showtime();
         Hall hall = hallRepository.findById(showtime.hallId()).orElseThrow(() -> new ResourceNotFoundException("Hall not found with id: " + showtime.hallId()));
@@ -98,7 +100,9 @@ public class ShowtimeServiceImpl implements IShowtimeService {
         newShowtime.setStartTime(showtime.startTime());
         newShowtime.setType(showtime.type());
         Showtime savedShowtime = showtimeRepository.save(newShowtime);
+        //generate seat map for showtime
         showtimeSeatService.initializeInventoryForShowtime(savedShowtime.getId(), hall.getId());
+
         return transformToDto(savedShowtime);
     }
 

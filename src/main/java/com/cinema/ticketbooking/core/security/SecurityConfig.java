@@ -2,6 +2,7 @@ package com.cinema.ticketbooking.core.security;
 
 import com.cinema.ticketbooking.core.security.custom.CustomUserDetailsService;
 import com.cinema.ticketbooking.core.security.filter.JwtTokenValidatorFilter;
+import com.cinema.ticketbooking.core.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +40,8 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
 
+    private final JwtUtil jwtUtil;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         // The strength parameter (10) determines the log rounds (work factor).
@@ -55,8 +58,8 @@ public class SecurityConfig {
                     publicPaths.forEach(path -> requests.requestMatchers(path).permitAll());
                     securedPaths.forEach(path -> requests.requestMatchers(path).authenticated());
                 })
-                .addFilterBefore(new JwtTokenValidatorFilter(publicPaths), BasicAuthenticationFilter.class)
-                .formLogin(AbstractHttpConfigurer::disable)
+                .addFilterBefore(new JwtTokenValidatorFilter(jwtUtil, publicPaths), BasicAuthenticationFilter.class)
+                .formLogin(AbstractHttpConfigurer::disable) // of form login to user FE login form
                 .httpBasic(withDefaults())
                 .build();
     }
@@ -65,6 +68,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Arrays.asList("http://localhost:5175","http://localhost:5173"));
+//        config.setAllowedOrigins(List.of("*"));
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.setAllowCredentials(true);
@@ -74,7 +78,6 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
 
     @Bean
     AuthenticationManager authenticationManager(){

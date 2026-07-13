@@ -2,6 +2,7 @@ package com.cinema.ticketbooking.repository;
 
 import com.cinema.ticketbooking.entity.ShowtimeSeat;
 import com.cinema.ticketbooking.entity.ShowtimeSeatId;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,9 +12,10 @@ import java.time.Instant;
 import java.util.List;
 
 public interface ShowtimeSeatRepository extends JpaRepository<ShowtimeSeat, ShowtimeSeatId> {
- 
+
+    List<ShowtimeSeat> findAllById(@NonNull Iterable<ShowtimeSeatId> ids);
     List<ShowtimeSeat> findByShowtimeId(Integer showtimeId);
-    List<ShowtimeSeat> findAllByHoldBy(Integer userId);
+    List<ShowtimeSeat> findAllByHoldByAndStatus(Integer userId, String status);
 
     ShowtimeSeat findByShowtimeIdAndSeatId(Integer showtimeId, Integer seatId);
 
@@ -57,5 +59,5 @@ public interface ShowtimeSeatRepository extends JpaRepository<ShowtimeSeat, Show
 
     List<ShowtimeSeat> findByStatus(String held);
 
-    List<ShowtimeSeat> findAllById(Iterable<ShowtimeSeatId> ids);
+
 }
