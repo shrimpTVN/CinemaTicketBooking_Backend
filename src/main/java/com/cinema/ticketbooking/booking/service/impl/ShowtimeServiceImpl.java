@@ -1,5 +1,6 @@
 package com.cinema.ticketbooking.booking.service.impl;
 
+import com.cinema.ticketbooking.booking.service.IShowtimeSeatService;
 import com.cinema.ticketbooking.booking.service.IShowtimeService;
 import com.cinema.ticketbooking.core.exception.custom.ResourceNotFoundException;
 import com.cinema.ticketbooking.dto.requestDto.ShowtimeRequestDto;
@@ -12,6 +13,7 @@ import com.cinema.ticketbooking.repository.MovieRepository;
 import com.cinema.ticketbooking.repository.ShowtimeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,6 +25,7 @@ public class ShowtimeServiceImpl implements IShowtimeService {
     private final HallRepository hallRepository;
     private final ShowtimeRepository showtimeRepository;
     private final MovieRepository movieRepository;
+    private final IShowtimeSeatService showtimeSeatService;
 
     @Override
     public List<ShowtimeResponseDto> getAllShowtimes() {
@@ -88,6 +91,7 @@ public class ShowtimeServiceImpl implements IShowtimeService {
     }
 
     @Override
+    @Transactional
     public ShowtimeResponseDto createShowtime(ShowtimeRequestDto showtime) {
         Showtime newShowtime = new Showtime();
         Hall hall = hallRepository.findById(showtime.hallId())
@@ -101,6 +105,9 @@ public class ShowtimeServiceImpl implements IShowtimeService {
         newShowtime.setStartTime(showtime.startTime());
         newShowtime.setType(showtime.type());
         Showtime savedShowtime = showtimeRepository.save(newShowtime);
+        //generate seat map for showtime
+        showtimeSeatService.initializeInventoryForShowtime(savedShowtime.getId(), hall.getId());
+
         return transformToDto(savedShowtime);
     }
 

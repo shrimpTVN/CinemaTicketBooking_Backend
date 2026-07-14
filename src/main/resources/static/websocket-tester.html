@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cinema STOMP WebSocket Tester</title>
+    <!-- Load SockJS and STOMP from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; }
+        .panel { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .log-box { background: #1e1e1e; color: #00ff00; padding: 10px; height: 300px; overflow-y: scroll; font-family: monospace; border-radius: 4px; }
+        button { padding: 10px 15px; margin-right: 10px; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 4px; }
+        button:disabled { background: #cccccc; cursor: not-allowed; }
+        input { padding: 10px; width: 300px; margin-right: 10px; border: 1px solid #ccc; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="panel">
+    <h2>1. Connection Control</h2>
+    <p><i>Note: You MUST be logged in (have the cinema_jwt cookie on localhost) before connecting!</i></p>
+    <button id="connectBtn" onclick="connect()">Connect to WebSocket</button>
+    <button id="disconnectBtn" onclick="disconnect()" disabled>Disconnect</button>
+</div>
+
+<div class="panel">
+    <h2>2. Test Subscriptions & Messages</h2>
+    <input type="text" id="showtimeId" placeholder="Enter Showtime ID (e.g., 1)" value="1">
+    <button id="subBtn" onclick="subscribeToHall()" disabled>Subscribe to Showtime Updates</button>
+    <br><br>
+    <button id="receiptBtn" onclick="requestReceipt()" disabled>Request Private Receipt (Test /app)</button>
+</div>
+
+<div class="panel">
+    <h2>Console Log</h2>
+    <div id="logArea" class="log-box"></div>
+</div>
+
+<script>
+    let stompClient = null;
+
+    function log(message) {
+        const logArea = document.getElementById('logArea');
+        const time = new Date().toLocaleTimeString();
+        logArea.innerHTML += `[${time}] ${message}<br/>`;
+        logArea.scrollTop = logArea.scrollHeight;
+    }
+
+    function connect() {
+        // Because this file is served from localhost:8080, we use a relative path.
+        // The browser will automatically attach the cinema_jwt HttpOnly cookie!
+        const socket = new SockJS('/ws-cinema');
+
+        stompClient = new window.StompJs.Client({
+            webSocketFactory: () => socket,
+            debug: function (str) {
+                // This prints the raw STOMP frames to your browser's dev console
+                console.log(str);
+            },
+            onConnect: (frame) => {
+                log("✅ Connected successfully!");
+                log("Server Frame: " + frame);
+
+                document.getElementById('connectBtn').disabled = true;
+                document.getElementById('disconnectBtn').disabled = false;
+                document.getElementById('subBtn').disabled = false;
+                document.getElementById('receiptBtn').disabled = false;
+
+                // Automatically subscribe to our private user queue
+                stompClient.subscribe('/user/queue/receipts', (message) => {
+                    log("📩 PRIVATE MESSAGE RECEIVED: " + message.body);
+                });
+                log("🎧 Subscribed to private queue: /user/queue/receipts");
+            },
+            onStompError: (frame) => {
+                log("❌ STOMP Error: " + frame.headers['message']);
+            },
+            onWebSocketError: (event) => {
+                log("❌ WebSocket connection failed. Did you log in to get the JWT?");
+            }
+        });
+
+        stompClient.activate();
+        log("⏳ Attempting to connect...");
+    }
+
+    function disconnect() {
+        if (stompClient !== null) {
+            stompClient.deactivate();
+        }
+        log("🔌 Disconnected.");
+        document.getElementById('connectBtn').disabled = false;
+        document.getElementById('disconnectBtn').disabled = true;
+        document.getElementById('subBtn').disabled = true;
+        document.getElementById('receiptBtn').disabled = true;
+    }
+
+    function subscribeToHall() {
+        const showtimeId = document.getElementById('showtimeId').value;
+        const topic = `/topic/showtimes/${showtimeId}/seats`;
+
+        stompClient.subscribe(topic, (message) => {
+            // 1. Log the raw body string to prove it arrived
+            console.log("Raw Body String:", message.body);
+
+            try {
+                // 2. Parse the JSON string into a JavaScript Object
+                const payload = JSON.parse(message.body);
+
+                // 3. You can now access your specific fields!
+                console.log("Parsed Payload:", payload);
+                console.log("Event Type:", payload.eventType);
+                console.log("Seats Updated:", payload.seatIds);
+                console.log("New Status:", payload.status);
+
+                // 4. Update the visual log on the screen
+                // We stringify it nicely so it's readable in your green console box
+                log("📢 BROADCAST RECEIVED: " + JSON.stringify(payload, null, 2));
+
+            } catch (error) {
+                log("❌ Failed to parse message body as JSON");
+                console.error("Parse error:", error);
+            }
+        });
+
+        log(`🎧 Subscribed to broadcast: ${topic}`);
+    }
+
+    function requestReceipt() {
+        const payload = JSON.stringify({ invoiceId: 999 });
+        stompClient.publish({
+            destination: '/app/invoice/receipt',
+            body: payload
+        });
+        log(`📤 Sent request to /app/invoice/receipt`);
+    }
+</script>
+</body>
+</html>

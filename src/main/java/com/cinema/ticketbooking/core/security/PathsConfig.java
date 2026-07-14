@@ -24,8 +24,11 @@ public class PathsConfig {
                 "/api/payment-methods/**",
                 "/payment-methods/**",
                 "/api/showtime-seats/**",
-
                 "/api/auth/**",
+
+                "/websocket-tester.html",
+                "/ws-cinema/**",
+
                 "/api/swagger-ui.html",
                 "/swagger-ui/**",
                 "/api/v3/api-docs/**",
