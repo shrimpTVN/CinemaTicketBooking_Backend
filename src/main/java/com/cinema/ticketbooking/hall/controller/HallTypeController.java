@@ -1,8 +1,7 @@
 package com.cinema.ticketbooking.hall.controller;
 
 import com.cinema.ticketbooking.dto.HallTypeDto;
-import com.cinema.ticketbooking.hall.service.Impl.HallTypeService;
-import com.cinema.ticketbooking.hall.service.Impl.IHallTypeService;
+import com.cinema.ticketbooking.hall.service.IHallTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

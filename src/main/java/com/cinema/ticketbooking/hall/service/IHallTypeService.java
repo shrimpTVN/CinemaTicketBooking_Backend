@@ -1,7 +1,6 @@
-package com.cinema.ticketbooking.hall.service.Impl;
+package com.cinema.ticketbooking.hall.service;
 
 import com.cinema.ticketbooking.dto.HallTypeDto;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 

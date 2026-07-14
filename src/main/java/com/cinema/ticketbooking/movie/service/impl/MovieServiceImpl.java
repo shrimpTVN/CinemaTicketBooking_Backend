@@ -1,4 +1,4 @@
-package com.cinema.ticketbooking.movie.service.Impl;
+package com.cinema.ticketbooking.movie.service.impl;
 
 import com.cinema.ticketbooking.core.exception.custom.ResourceNotFoundException;
 import com.cinema.ticketbooking.dto.GenreDto;

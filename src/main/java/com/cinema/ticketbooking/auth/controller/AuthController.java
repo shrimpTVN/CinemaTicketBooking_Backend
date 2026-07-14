@@ -1,28 +1,23 @@
 package com.cinema.ticketbooking.auth.controller;
 
 import com.cinema.ticketbooking.auth.service.IAuthService;
-import com.cinema.ticketbooking.core.constant.ApplicationConstants;
 import com.cinema.ticketbooking.core.security.custom.CustomUserDetails;
 import com.cinema.ticketbooking.core.util.JwtUtil;
 import com.cinema.ticketbooking.dto.requestDto.LoginRequestDto;
 import com.cinema.ticketbooking.dto.requestDto.UserRequestDto;
 import com.cinema.ticketbooking.dto.responseDto.LoginResponseDto;
 import com.cinema.ticketbooking.dto.responseDto.UserResponseDto;
-import com.cinema.ticketbooking.user.service.Impl.UserServiceImpl;
+import com.cinema.ticketbooking.user.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.PermissionDeniedDataAccessException;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/auth")

@@ -138,11 +138,12 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
             seat.setHoldBy(userId);
             seat.setHoldUntil(null);
 
-            // 2. BROADCAST: Tell everyone viewing this showtime that seats are on BOOKED
-            broadcastToSubscribedUser(showtimeId, seatIds, "BOOKED", userId);
+
         });
         try {
             showtimeSeatRepository.saveAll(requestedSeats);
+            // 2. BROADCAST: Tell everyone viewing this showtime that seats are on BOOKED
+            broadcastToSubscribedUser(showtimeId, seatIds, "BOOKED", userId);
         } catch (ObjectOptimisticLockingFailureException e) {
             throw new RuntimeException("Error while confirming showtime seat booking.");
         }
@@ -162,11 +163,12 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
             seat.setHoldBy(0);
             seat.setHoldUntil(null);
 
-            // 2. BROADCAST: Tell everyone viewing this showtime that seats are on AVAILABLE
-            broadcastToSubscribedUser(showtimeId, seatIds, "AVAILABLE", userId);
+
         });
         try {
             showtimeSeatRepository.saveAll(requestedSeats);
+            // 2. BROADCAST: Tell everyone viewing this showtime that seats are on AVAILABLE
+            broadcastToSubscribedUser(showtimeId, seatIds, "AVAILABLE", userId);
         } catch (ObjectOptimisticLockingFailureException e) {
 
             throw new RuntimeException("Error while release showtime seat.");
@@ -192,7 +194,6 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
         });
         try {
             showtimeSeatRepository.saveAll(heldSeats);
-
             // 2. BROADCAST: Tell everyone viewing this showtime that seats are on AVAILABLE
             broadcastToSubscribedUser(showtimeId, seatIds, "AVAILABLE", userId);
 

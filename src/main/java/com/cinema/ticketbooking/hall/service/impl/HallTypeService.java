@@ -1,8 +1,9 @@
-package com.cinema.ticketbooking.hall.service.Impl;
+package com.cinema.ticketbooking.hall.service.impl;
 
 import com.cinema.ticketbooking.core.exception.custom.ResourceNotFoundException;
 import com.cinema.ticketbooking.dto.HallTypeDto;
 import com.cinema.ticketbooking.entity.HallType;
+import com.cinema.ticketbooking.hall.service.IHallTypeService;
 import com.cinema.ticketbooking.repository.HallTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
