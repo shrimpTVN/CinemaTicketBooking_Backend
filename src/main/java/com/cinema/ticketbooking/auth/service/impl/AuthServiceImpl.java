@@ -2,15 +2,13 @@ package com.cinema.ticketbooking.auth.service.impl;
 
 import com.cinema.ticketbooking.auth.service.IAuthService;
 import com.cinema.ticketbooking.core.constant.ApplicationConstants;
-import com.cinema.ticketbooking.core.security.custom.CustomUserDetails;
 import com.cinema.ticketbooking.core.util.JwtUtil;
 import com.cinema.ticketbooking.dto.requestDto.LoginRequestDto;
 import com.cinema.ticketbooking.dto.responseDto.UserResponseDto;
-import com.cinema.ticketbooking.user.service.Impl.UserServiceImpl;
+import com.cinema.ticketbooking.user.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 @Service

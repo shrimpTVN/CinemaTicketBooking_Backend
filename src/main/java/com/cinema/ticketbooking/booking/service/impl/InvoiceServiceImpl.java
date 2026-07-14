@@ -1,6 +1,6 @@
 package com.cinema.ticketbooking.booking.service.impl;
 
-import com.cinema.ticketbooking.AudienceTypeRepository;
+import com.cinema.ticketbooking.repository.AudienceTypeRepository;
 import com.cinema.ticketbooking.booking.service.IInvoiceService;
 import com.cinema.ticketbooking.booking.service.IPriceListService;
 import com.cinema.ticketbooking.booking.service.IShowtimeSeatService;

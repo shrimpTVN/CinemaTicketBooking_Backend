@@ -1,4 +1,4 @@
-package com.cinema.ticketbooking.booking.service;
+package com.cinema.ticketbooking.booking.service.impl;
 
 import com.cinema.ticketbooking.booking.service.IInvoiceService;
 import com.cinema.ticketbooking.booking.service.IVnPayService;
