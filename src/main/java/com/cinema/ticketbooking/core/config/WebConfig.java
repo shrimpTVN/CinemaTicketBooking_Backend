@@ -6,9 +6,13 @@ import org.springframework.web.servlet.config.annotation.ApiVersionConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class WebConfig  implements WebMvcConfigurer {
+
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -25,7 +29,7 @@ public class WebConfig  implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173") //replace with the url of the Frontend.
+                .allowedOrigins("http://localhost:5173", frontendUrl) //replace with the url of the Frontend.
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true).maxAge(3600*24);

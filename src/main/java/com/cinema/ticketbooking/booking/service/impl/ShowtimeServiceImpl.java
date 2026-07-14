@@ -35,7 +35,8 @@ public class ShowtimeServiceImpl implements IShowtimeService {
 
     @Override
     public ShowtimeResponseDto getShowtimeById(Integer id) {
-        Showtime showtime = showtimeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Showtime not found with id: " + id));
+        Showtime showtime = showtimeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Showtime not found with id: " + id));
         return transformToDto(showtime);
     }
 
@@ -66,7 +67,8 @@ public class ShowtimeServiceImpl implements IShowtimeService {
     public List<ShowtimeResponseDto> getShowtimesByMovieId(Integer movieId) {
         LocalDateTime now = LocalDateTime.now();
         List<Showtime> showtimes = showtimeRepository.findByMovieId(movieId);
-        return showtimes.stream().filter(showtime -> LocalDateTime.of(showtime.getDate(), showtime.getStartTime()).isAfter(now))
+        return showtimes.stream()
+                .filter(showtime -> LocalDateTime.of(showtime.getDate(), showtime.getStartTime()).isAfter(now))
                 .map(this::transformToDto).toList();
     }
 
@@ -74,7 +76,8 @@ public class ShowtimeServiceImpl implements IShowtimeService {
     public List<ShowtimeResponseDto> getShowtimesByHallId(Integer hallId) {
         LocalDateTime now = LocalDateTime.now();
         List<Showtime> showtimes = showtimeRepository.findByHallId(hallId);
-        return showtimes.stream().filter(showtime -> LocalDateTime.of(showtime.getDate(), showtime.getStartTime()).isAfter(now))
+        return showtimes.stream()
+                .filter(showtime -> LocalDateTime.of(showtime.getDate(), showtime.getStartTime()).isAfter(now))
                 .map(this::transformToDto).toList();
     }
 
@@ -82,17 +85,19 @@ public class ShowtimeServiceImpl implements IShowtimeService {
     public List<ShowtimeResponseDto> getShowtimesByDate(LocalDate date) {
         LocalDateTime now = LocalDateTime.now();
         List<Showtime> showtimes = showtimeRepository.findByDate(date);
-        return showtimes.stream().filter(showtime -> LocalDateTime.of(showtime.getDate(), showtime.getStartTime()).isAfter(now))
+        return showtimes.stream()
+                .filter(showtime -> LocalDateTime.of(showtime.getDate(), showtime.getStartTime()).isAfter(now))
                 .map(this::transformToDto).toList();
     }
-
 
     @Override
     @Transactional
     public ShowtimeResponseDto createShowtime(ShowtimeRequestDto showtime) {
         Showtime newShowtime = new Showtime();
-        Hall hall = hallRepository.findById(showtime.hallId()).orElseThrow(() -> new ResourceNotFoundException("Hall not found with id: " + showtime.hallId()));
-        Movie movie = movieRepository.findById(showtime.movieId()).orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + showtime.movieId()));
+        Hall hall = hallRepository.findById(showtime.hallId())
+                .orElseThrow(() -> new ResourceNotFoundException("Hall not found with id: " + showtime.hallId()));
+        Movie movie = movieRepository.findById(showtime.movieId())
+                .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + showtime.movieId()));
 
         newShowtime.setHall(hall);
         newShowtime.setMovie(movie);
@@ -108,11 +113,15 @@ public class ShowtimeServiceImpl implements IShowtimeService {
 
     @Override
     public ShowtimeResponseDto updateShowtime(Integer id, ShowtimeRequestDto showtime) {
-        Showtime existingShowtime = showtimeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Showtime not found with id: " + id));
+        Showtime existingShowtime = showtimeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Showtime not found with id: " + id));
 
-        if (showtime.startTime() != null) existingShowtime.setStartTime(showtime.startTime());
-        if (showtime.date() != null) existingShowtime.setDate(showtime.date());
-        if (showtime.type() != null) existingShowtime.setType(showtime.type());
+        if (showtime.startTime() != null)
+            existingShowtime.setStartTime(showtime.startTime());
+        if (showtime.date() != null)
+            existingShowtime.setDate(showtime.date());
+        if (showtime.type() != null)
+            existingShowtime.setType(showtime.type());
 
         Showtime updatedShowtime = showtimeRepository.save(existingShowtime);
         return transformToDto(updatedShowtime);
@@ -125,7 +134,8 @@ public class ShowtimeServiceImpl implements IShowtimeService {
 
     private ShowtimeResponseDto transformToDto(Showtime showtime) {
         return new ShowtimeResponseDto(showtime.getId(), showtime.getHall().getId(), showtime.getHall().getName(),
-                showtime.getMovie().getId(), showtime.getMovie().getTitle(), showtime.getDate(), showtime.getStartTime(), showtime.getType());
+                showtime.getMovie().getId(), showtime.getMovie().getTitle(), showtime.getDate(),
+                showtime.getStartTime(), showtime.getType());
     }
 
 }
