@@ -6,6 +6,7 @@ import com.cinema.ticketbooking.entity.HallType;
 import com.cinema.ticketbooking.hall.service.IHallTypeService;
 import com.cinema.ticketbooking.repository.HallTypeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,12 +41,7 @@ public class HallTypeService implements IHallTypeService {
     @Override
     public HallTypeDto createHallType(HallTypeDto hallTypeDto) {
         HallType hallType = new HallType();
-        hallType.setName(hallTypeDto.name());
-        hallType.setDescription(hallTypeDto.description());
-        hallType.setConvenience(hallTypeDto.convenience());
-        hallType.setStyle(hallTypeDto.style());
-        hallType.setImages(hallTypeDto.images());
-        hallType.setStatus(hallTypeDto.status() != null ? hallTypeDto.status() : "ON");
+        BeanUtils.copyProperties(hallTypeDto, hallType);
 
         HallType savedHallType = hallTypeRepository.save(hallType);
         return transformToDto(savedHallType);
@@ -56,21 +52,7 @@ public class HallTypeService implements IHallTypeService {
         HallType hallType = hallTypeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hall type not found with id: " + id));
 
-        if (hallTypeDto.name() != null) {
-            hallType.setName(hallTypeDto.name());
-        }
-        if (hallTypeDto.description() != null) {
-            hallType.setDescription(hallTypeDto.description());
-        }
-        if (hallTypeDto.convenience() != null) {
-            hallType.setConvenience(hallTypeDto.convenience());
-        }
-        if (hallTypeDto.style() != null) {
-            hallType.setStyle(hallTypeDto.style());
-        }
-        if (hallTypeDto.images() != null) {
-            hallType.setImages(hallTypeDto.images());
-        }
+        BeanUtils.copyProperties(hallTypeDto, hallType);
 
         HallType updatedHallType = hallTypeRepository.save(hallType);
         return transformToDto(updatedHallType);

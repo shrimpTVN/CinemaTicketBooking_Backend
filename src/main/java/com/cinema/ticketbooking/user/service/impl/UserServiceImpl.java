@@ -96,12 +96,14 @@ public class UserServiceImpl implements IUserService {
 //        check role
         User user = new User();
         Role role = roleRepository.findById(userRequestDto.roleId()).orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + userRequestDto.roleId()));
+        user.setRole(role);
+
         user.setName(userRequestDto.name());
         user.setDoB(userRequestDto.doB());
         user.setPhoneNumber(userRequestDto.phoneNumber());
         user.setEmail(userRequestDto.email());
-        user.setRole(role);
         user.setPassword(passwordEncoder.encode(userRequestDto.password()));
+
         userRepository.save(user);
         return transformToDto(user);
     }

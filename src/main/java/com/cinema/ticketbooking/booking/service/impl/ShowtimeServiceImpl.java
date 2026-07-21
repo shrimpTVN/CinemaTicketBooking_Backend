@@ -43,11 +43,7 @@ public class ShowtimeServiceImpl implements IShowtimeService {
     @Override
     public List<ShowtimeResponseDto> filterShowtimes(Integer movieId, LocalDate date, Integer hallId) {
         LocalDateTime now = LocalDateTime.now();
-        return showtimeRepository.findAll().stream()
-                .filter(showtime -> movieId == null || showtime.getMovie().getId().equals(movieId))
-                .filter(showtime -> date == null || showtime.getDate().equals(date))
-                .filter(showtime -> hallId == null || showtime.getHall().getId().equals(hallId))
-                .filter(showtime -> LocalDateTime.of(showtime.getDate(), showtime.getStartTime()).isAfter(now))
+        return showtimeRepository.findByMovieIdAndDateAndHallId(movieId, date, LocalDate.from(now), hallId).stream()
                 .map(this::transformToDto)
                 .toList();
     }
@@ -55,10 +51,7 @@ public class ShowtimeServiceImpl implements IShowtimeService {
     @Override
     public List<ShowtimeResponseDto> filterShowtimes(Integer movieId, LocalDate date) {
         LocalDateTime now = LocalDateTime.now();
-        return showtimeRepository.findAll().stream()
-                .filter(showtime -> movieId == null || showtime.getMovie().getId().equals(movieId))
-                .filter(showtime -> date == null || showtime.getDate().equals(date))
-                .filter(showtime -> LocalDateTime.of(showtime.getDate(), showtime.getStartTime()).isAfter(now))
+        return showtimeRepository.findByMovieIdAndDate(movieId, date, LocalDate.from(now)).stream()
                 .map(this::transformToDto)
                 .toList();
     }
@@ -66,28 +59,22 @@ public class ShowtimeServiceImpl implements IShowtimeService {
     @Override
     public List<ShowtimeResponseDto> getShowtimesByMovieId(Integer movieId) {
         LocalDateTime now = LocalDateTime.now();
-        List<Showtime> showtimes = showtimeRepository.findByMovieId(movieId);
-        return showtimes.stream()
-                .filter(showtime -> LocalDateTime.of(showtime.getDate(), showtime.getStartTime()).isAfter(now))
-                .map(this::transformToDto).toList();
+        List<Showtime> showtimes = showtimeRepository.findByMovieId(movieId, LocalDate.from(now));
+        return showtimes.stream().map(this::transformToDto).toList();
     }
 
     @Override
     public List<ShowtimeResponseDto> getShowtimesByHallId(Integer hallId) {
         LocalDateTime now = LocalDateTime.now();
-        List<Showtime> showtimes = showtimeRepository.findByHallId(hallId);
-        return showtimes.stream()
-                .filter(showtime -> LocalDateTime.of(showtime.getDate(), showtime.getStartTime()).isAfter(now))
-                .map(this::transformToDto).toList();
+        List<Showtime> showtimes = showtimeRepository.findByHallId(hallId, LocalDate.from(now));
+        return showtimes.stream().map(this::transformToDto).toList();
     }
 
     @Override
     public List<ShowtimeResponseDto> getShowtimesByDate(LocalDate date) {
-        LocalDateTime now = LocalDateTime.now();
+
         List<Showtime> showtimes = showtimeRepository.findByDate(date);
-        return showtimes.stream()
-                .filter(showtime -> LocalDateTime.of(showtime.getDate(), showtime.getStartTime()).isAfter(now))
-                .map(this::transformToDto).toList();
+        return showtimes.stream().map(this::transformToDto).toList();
     }
 
     @Override
@@ -105,6 +92,7 @@ public class ShowtimeServiceImpl implements IShowtimeService {
         newShowtime.setStartTime(showtime.startTime());
         newShowtime.setType(showtime.type());
         Showtime savedShowtime = showtimeRepository.save(newShowtime);
+
         //generate seat map for showtime
         showtimeSeatService.initializeInventoryForShowtime(savedShowtime.getId(), hall.getId());
 

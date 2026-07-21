@@ -17,27 +17,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
- * ─────────────────────────────────────────────────────────────────────────────
- *  VnPayServiceImpl  –  FILE THỬ NGHIỆM (TEST-ONLY)
- * ─────────────────────────────────────────────────────────────────────────────
- *
- *  Implement đầy đủ luồng tạo URL và xác thực callback VNPay Sandbox.
- *
- *  Các property cần có trong application.properties:
- *    vnpay.tmn-code=2QXG2A9Q
- *    vnpay.hash-secret=97BF4G2E0B2D4H1D0B7A6C3B9E1C6D2B
- *    vnpay.url=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
- *    vnpay.return-url=http://10.111.212.204:8080/api/vnpay/return
- *    vnpay.fe-success-url=http://localhost:5173/booking
- *    vnpay.fe-failure-url=http://localhost:5173/booking
- *
+
  *  Lưu ý quan trọng về thời gian:
  *    - VNPay Sandbox dùng giờ Việt Nam (UTC+7) để kiểm tra vnp_CreateDate.
  *    - Code này lấy giờ server với ZoneId "Asia/Ho_Chi_Minh" → luôn đúng.
  *    - Đây chính là lý do luồng FE bị lỗi "quá thời gian giao dịch":
  *      đồng hồ máy tính dev đang là 2026, FE cố sửa thủ công nhưng bị sai.
- *
- * ─────────────────────────────────────────────────────────────────────────────
  */
 @Slf4j
 @Service
