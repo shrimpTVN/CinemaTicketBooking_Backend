@@ -46,10 +46,4 @@ public class PaymentMethodController {
         return ResponseEntity.ok(paymentMethodService.updatePaymentMethod(id, paymentMethodDto));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePaymentMethod(@PathVariable Integer id) {
-        paymentMethodService.deletePaymentMethod(id);
-        return ResponseEntity.ok("Deleted payment method successfully");
-    }
 }

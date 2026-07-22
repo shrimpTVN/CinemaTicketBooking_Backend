@@ -33,7 +33,7 @@ public class Product extends BaseEntity {
 
     @NotNull
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
+    private BigDecimal price = BigDecimal.ZERO;
 
     @Size(max = 500)
     @NotNull
@@ -43,7 +43,7 @@ public class Product extends BaseEntity {
     @Size(max = 50)
     @ColumnDefault("'ON'")
     @Column(name = "status", length = 50)
-    private String status;
+    private String status = "ON";
 
     @OneToMany(mappedBy = "product")
     private Set<InvoiceDetail> invoiceDetails = new LinkedHashSet<>();

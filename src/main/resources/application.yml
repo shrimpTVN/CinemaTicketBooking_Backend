@@ -1,0 +1,7 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 930594519981-94g92j79lqsht3jkoborqjrp62i62i9n.apps.googleusercontent.com # Injected via environment variable

@@ -1,3 +1,17 @@
+####INSERT PAYMENT METHOD####
+INSERT INTO payment_method(code, name, description, logo, surcharge, created_by)
+VALUES ('MOMO', 'Ví MoMo', 'Thanh toán nhanh chóng và bảo mật qua Ví điện tử MoMo.',
+        'https://res.cloudinary.com/depaiphq0/image/upload/v1783786591/images_zme00b.png', 0.00, 'admin'),
+       ('VNPAY', 'Cổng thanh toán VNPAY',
+        'Thanh toán quét mã QR qua ứng dụng ngân hàng hoặc thẻ ATM nội địa, thẻ quốc tế.',
+        'https://res.cloudinary.com/depaiphq0/image/upload/v1783786625/images_smqnem.jpg', 0.00, 'admin'),
+       ('ZALOPAY', 'Ví ZaloPay', 'Thanh toán trực tuyến dễ dàng và tiện lợi bằng ứng dụng Ví điện tử ZaloPay.',
+        'https://res.cloudinary.com/depaiphq0/image/upload/v1783786655/images_kdfjks.png', 0.00, 'admin'),
+       ('BANK_CARD', 'Thẻ ngân hàng (ATM/Visa/Mastercard)',
+        'Thanh toán trực tiếp bằng các loại thẻ ngân hàng nội địa (ATM) hoặc quốc tế (Visa, Mastercard, JCB).',
+        'https://res.cloudinary.com/depaiphq0/image/upload/v1783786695/images_gqzrse.jpg', 0.00, 'admin');
+
+
 ####INSERT PRODUCT
 INSERT INTO product(name, description, image, price, created_by)
 VALUES ('Combo 3',
