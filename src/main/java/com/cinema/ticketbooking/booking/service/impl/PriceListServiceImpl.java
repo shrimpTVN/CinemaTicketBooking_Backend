@@ -1,7 +1,7 @@
 package com.cinema.ticketbooking.booking.service.impl;
 
-import com.cinema.ticketbooking.repository.AudienceTypeRepository;
 import com.cinema.ticketbooking.booking.service.IPriceListService;
+import com.cinema.ticketbooking.repository.AudienceTypeRepository;
 import com.cinema.ticketbooking.core.exception.custom.ResourceNotFoundException;
 import com.cinema.ticketbooking.dto.requestDto.PriceListRequestDto;
 import com.cinema.ticketbooking.entity.*;
@@ -18,7 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PriceListServiceImpl implements IPriceListService {
     private final PriceListRepository priceListRepository;
-    private final HallRepository hallRepository;
     private final SeatRepository seatRepository;
     private final SeatTypeRepository seatTypeRepository;
     private final HallTypeRepository hallTypeRepository;

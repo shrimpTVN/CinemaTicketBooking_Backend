@@ -30,9 +30,4 @@ public class Genre extends BaseEntity {
     @NotBlank
     private String description;
 
-    // 'mappedBy' flags this as the inverse/non-owning side.
-    // It points to the 'genres' field in the Movie entity.
-    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY)
-    private Set<Movie> movies = new HashSet<>();
-
 }

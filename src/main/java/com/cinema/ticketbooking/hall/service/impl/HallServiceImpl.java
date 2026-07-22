@@ -237,7 +237,7 @@ public class HallServiceImpl  implements IHallService {
             updatedSeats.add(seatToUpdate);
         }
 
-        // Notice: NO seatRepository.save() in the loop.
+
         // Because of @Transactional, Hibernate's Dirty Checking detects the modifications
         // and automatically fires UPDATE statements when the transaction commits.
 

@@ -6,6 +6,7 @@ import com.cinema.ticketbooking.entity.SeatType;
 import com.cinema.ticketbooking.hall.service.ISeatTypeService;
 import com.cinema.ticketbooking.repository.SeatTypeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -22,12 +23,6 @@ public class SeatTypeServiceImpl implements ISeatTypeService {
         return seatTypes.stream().map(this::transformToDto).toList();
 
     }
-
-//    @Override
-//    public SeatTypeDto getSeatTypeById(Integer id) {
-//        SeatType seatType = seatTypeRepository.getReferenceById(id);
-//        return transformToDto(seatType);
-//    }
 
     @Override
     public SeatTypeDto getSeatTypeById(Integer id) {
@@ -58,21 +53,8 @@ public class SeatTypeServiceImpl implements ISeatTypeService {
     public SeatTypeDto updateSeatType(Integer id, SeatTypeDto seatTypeDto) {
         SeatType seatType = seatTypeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("SeatType not found with id: " + id));
-        if (seatTypeDto.name() != null) {
-            seatType.setName(seatTypeDto.name());
-        }
-        if (seatTypeDto.description() != null) {
-            seatType.setDescription(seatTypeDto.description());
-        }
-        if (seatTypeDto.image() != null) {
-            seatType.setImage(seatTypeDto.image());
-        }
-        if (seatTypeDto.status() != null) {
-            seatType.setStatus(seatTypeDto.status());
-        }
-        if (seatTypeDto.priceSurcharge() != null) {
-            seatType.setPriceSurcharge(seatTypeDto.priceSurcharge());
-        }
+
+        BeanUtils.copyProperties(seatTypeDto, seatType);
 
         SeatType updatedSeatType = seatTypeRepository.save(seatType);
         return transformToDto(updatedSeatType);

@@ -15,6 +15,7 @@ import java.util.List;
 public class MovieController {
     private final IMovieService movieService;
 
+//    updating logic when have enough database quantity
     @GetMapping("/update-special-list")
     public ResponseEntity<List<MovieDto>> updateSpecialList(){
         movieService.updateSpecialList();

@@ -12,6 +12,7 @@ import com.cinema.ticketbooking.repository.GenreRepository;
 import com.cinema.ticketbooking.repository.MovieRepository;
 import com.cinema.ticketbooking.repository.SpecialListRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -27,31 +28,33 @@ import org.springframework.transaction.annotation.Transactional;
 public class MovieServiceImpl implements IMovieService {
 
     private final MovieRepository movieRespository;
-    private final IGenreService genreService;
     private final GenreRepository genreRepository;
     private final SpecialListRepository specialListRepository;
 
     @Override
     public void updateSpecialList() {
-     List<Movie> movies =  movieRespository.findByStatus("ON");
+//   get movie which is showing or will coming soon
+        List<Movie> movies = movieRespository.findByStatus("ON");
 //        System.out.println("Movies: " + movies.size());
 
-     List<Integer> showingList = new ArrayList<>();
-     List<Integer> comingSoonList = new ArrayList<>();
-     List<Integer> trendingList = new ArrayList<>();
-     Instant now = Instant.now();
-     movies.forEach(movie -> {
-        if (movie.getPremiereDate().isBefore(now))
-            showingList.add(movie.getId());
-        else if (movie.getPremiereDate().isAfter(now))
-            comingSoonList.add(movie.getId());
-        trendingList.add(movie.getId());
-     });
+        List<Integer> showingList = new ArrayList<>();
+        List<Integer> comingSoonList = new ArrayList<>();
+        List<Integer> trendingList = new ArrayList<>();
+        Instant now = Instant.now();
+        movies.forEach(movie -> {
+            if (movie.getPremiereDate().isBefore(now))
+                showingList.add(movie.getId());
+            else if (movie.getPremiereDate().isAfter(now))
+                comingSoonList.add(movie.getId());
 
-     SpecialList showing = specialListRepository.findByCode("SHOWING");
-        SpecialList comingSoon= specialListRepository.findByCode("COMING_SOON");
+            trendingList.add(movie.getId());
+        });
+
+        SpecialList showing = specialListRepository.findByCode("SHOWING");
+        SpecialList comingSoon = specialListRepository.findByCode("COMING_SOON");
         SpecialList topTrending = specialListRepository.findByCode("TOP_TRENDING");
         SpecialList topSelling = specialListRepository.findByCode("TOP_SELLING");
+
         showing.setList(showingList);
         comingSoon.setList(comingSoonList);
 
@@ -67,23 +70,23 @@ public class MovieServiceImpl implements IMovieService {
     @Override
     public List<MovieDto> getAllMovies() {
         List<Movie> movieList = movieRespository.findAll();
-        List<MovieDto> movieDtoList = new ArrayList<>();
-        movieList.forEach(movie -> {
-            movieDtoList.add(transformToDto(movie));
-        });
-        return movieDtoList;
+
+        return movieList.stream().map(this::transformToDto).toList();
     }
 
     @Override
     public List<MovieDto> getMovieByCode(String type) {
-        List<Integer>  listId = specialListRepository.findByCode(type).getList();
-        System.out.println(listId);
-        List<MovieDto> movieDtoList = new ArrayList<>();
-        listId.forEach(id -> {
-            Movie movie = movieRespository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + id));
-            movieDtoList.add(transformToDto(movie));
-        });
-        return movieDtoList;
+        List<Integer> listId = specialListRepository.findByCode(type).getList();
+
+//        listId.forEach(id -> {
+//            Movie movie = movieRespository.findById(id)
+//                    .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + id));
+//
+//            movieDtoList.add(transformToDto(movie));
+//        });
+        List<Movie> movies = movieRespository.findAllById(listId);
+
+        return movies.stream().map(this::transformToDto).toList();
     }
 
     @Override
@@ -120,7 +123,9 @@ public class MovieServiceImpl implements IMovieService {
         movieDto.genres().forEach(genreDto -> {
             genres.add(genreRepository.findById(genreDto.id()).orElse(null));
         });
-        Movie movie = new Movie(movieDto.title(), movieDto.duration(), movieDto.avatar(), movieDto.trailer(), movieDto.description(), movieDto.country(), movieDto.ageLimit(), movieDto.premiereDate(), movieDto.rating(), movieDto.actors(), movieDto.director(), movieDto.status(), genres);
+        Movie movie = new Movie();
+        BeanUtils.copyProperties(movieDto, movie);
+        movie.setGenres(genres);
 
         Movie savedMovie = movieRespository.save(movie);
         return transformToDto(savedMovie);
@@ -131,30 +136,7 @@ public class MovieServiceImpl implements IMovieService {
         Movie movie = movieRespository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + id));
 
         if (movieRespository.existsById(id)) {
-
-            if (movieDto.title() != null) movie.setTitle(movieDto.title());
-
-            if (movieDto.duration() != null) movie.setDuration(movieDto.duration());
-
-            if (movieDto.avatar() != null) movie.setAvatar(movieDto.avatar());
-
-            if (movieDto.trailer() != null) movie.setTrailer(movieDto.trailer());
-
-            if (movieDto.description() != null) movie.setDescription(movieDto.description());
-
-            if (movieDto.country() != null) movie.setCountry(movieDto.country());
-
-            if (movieDto.ageLimit() != null) movie.setAgeLimit(movieDto.ageLimit());
-
-            if (movieDto.premiereDate() != null) movie.setPremiereDate(movieDto.premiereDate());
-
-            if (movieDto.rating() != null) movie.setRating(movieDto.rating());
-
-            if (movieDto.actors() != null) movie.setActors(movieDto.actors());
-
-            if (movieDto.director() != null) movie.setDirector(movieDto.director());
-
-            if (movieDto.status() != null) movie.setStatus(movieDto.status());
+            BeanUtils.copyProperties(movieDto, movie);
 
             if (movieDto.genres() != null) {
                 Set<Genre> genres = new HashSet<>();
@@ -170,16 +152,6 @@ public class MovieServiceImpl implements IMovieService {
     }
 
 
-
-//    @Override
-//    public boolean deleteMovie(Long id) {
-//        if (movieRespository.existsById(id)) {
-//            movieRespository.deleteById(id);
-//            return true;
-//        }
-//        return false;
-//    }
-
     private MovieDto transformToDto(Movie movie) {
         // Avoid returning managed entity collections directly to the DTO. Returning the raw
         // Set<Genre> can trigger lazy loading and potentially mark entities dirty which
@@ -188,7 +160,9 @@ public class MovieServiceImpl implements IMovieService {
         if (movie.getGenres() != null) {
             movie.getGenres().forEach(genre -> genreDtos.add(transformToDto(genre)));
         }
-        return new MovieDto(movie.getId(), movie.getTitle(), movie.getDuration(), movie.getAvatar(), movie.getTrailer(), movie.getDescription(), movie.getCountry(), movie.getAgeLimit(), movie.getPremiereDate(), movie.getRating(), movie.getActors(), movie.getDirector(), movie.getStatus(), genreDtos);
+        return new MovieDto(movie.getId(), movie.getTitle(), movie.getDuration(), movie.getAvatar(),
+                movie.getTrailer(), movie.getDescription(), movie.getCountry(), movie.getAgeLimit(), movie.getPremiereDate(),
+                movie.getRating(), movie.getActors(), movie.getDirector(), movie.getStatus(), genreDtos);
     }
 
     private GenreDto transformToDto(Genre genre) {
