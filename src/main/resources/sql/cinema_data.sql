@@ -1,4 +1,4 @@
-####INSERT PRODUCT
+﻿####INSERT PRODUCT
 INSERT INTO product(name, description, image, price, created_by)
 VALUES ('Combo 3',
         '\"Chia sẻ niềm vui với bạn bè! Combo 3 gồm 2 bắp rang bơ, 3 Pepsi mát lạnh – tiết kiệm hơn 52,000!',
@@ -97,34 +97,34 @@ values (1, 'Minions & Quái Vật', 90,
         'https://www.youtube.com/embed/ZXAcQeaTq0Q?si=hS81fuivsnFOUSDt',
         'Minions & Quái Vật là câu chuyện vừa náo loạn, vừa ngớ ngẩn nhưng “hoàn toàn có thật” về cách Minions chinh phục Hollywood, trở thành ngôi sao điện ảnh, rồi mất tất cả, vô tình thả quái vật ra khắp thế giới và sau đó phải cùng nhau hợp sức để cứu lấy hành tinh khỏi chính mớ hỗn loạn mà mình tạo ra.',
         'Mỹ', 0, '2026-07-01 00:00:00', 9.3, 'Pierre Coffin, Chistoph Waltz, Jeff Bridges, Jesse Eisenberg',
-        'Pierre Coffin', 'NOW_SHOWING', 'admin'),
+        'Pierre Coffin', 'ON', 'admin'),
 
        (2, 'Backrooms: Thực Thể Quỷ Quyệt', 110,
         'https://res.cloudinary.com/depaiphq0/image/upload/v1782986380/backrooms-500_1781235880443_pjhlel.jpg',
         'https://www.youtube.com/embed/VnJ5eZcW3fU?si=ezUy5Ifvaz9EB4fJ',
         'Backrooms theo chân Clark (Chiwetel Ejiofor), một chủ cửa hàng nội thất, vô tình phát hiện cánh cửa bí ẩn dưới tầng hầm. Bước qua đó, anh bị cuốn vào một chiều không gian vô tận với những căn phòng màu vàng méo mó, liên tục lặp lại. Khi Clark ngày càng lún sâu và ám ảnh, nhà trị liệu tâm lý của anh là Mary (Renate Reinsve) quyết định bước vào không gian đó để tìm và giải cứu anh.',
         'Mỹ', 16, '2026-06-25 00:00:00', 8.2, 'Chiwetel Ejiofor, Renate Reinsve, Mark Duplass', 'Kane Parsons',
-        'NOW_SHOWING', 'admin'),
+        'ON', 'admin'),
 
        (3, 'Colony', 122,
         'https://res.cloudinary.com/depaiphq0/image/upload/v1782987286/colony-500_1780479019386_vii0bp.webp ',
         'https://www.youtube.com/embed/YYFycg2c09o?si=f8gGTVDiN2t-htS-',
         'Khi một dịch bệnh bí ẩn bùng phát tại tòa cao ốc giữa trung tâm Seoul, những người sống sót bị mắc kẹt và buộc phải chiến đấu để thoát thân. Những người đã nhiễm bệnh không chỉ là những xác sống mất não thông thường - chúng đang tiến hóa và săn mồi theo bầy đàn có tổ chức. Hy vọng duy nhất của những người sống sót phụ thuộc vào một gã đàn ông tự nhận đang mang trong mình loại vắc-xin có thể chấm dứt đại dịch. Trong cuộc chạy trốn nghẹt thở lên sân thượng, ranh giới giữa con người và quái vật dần sụp đổ.',
         'Hàn Quốc', 16, '2026-06-10 00:00:00', 9.0, 'Ji Chang Wook, Jun Ji Huyn, Koo Kyo Hwan', 'Yeon Sang Ho',
-        'NOW_SHOWING', 'admin'),
+        'ON', 'admin'),
 
        (4, 'Ám Ảnh', 109,
         'https://res.cloudinary.com/depaiphq0/image/upload/v1782986406/obsession-500_1781492667428_l7anyg.jpg ',
         'https://www.youtube.com/embed/rZF4vNv36Dw?si=SwG-OA3m4t2gmxQN',
         'Bear, một chàng trai si tình, đã bẻ gãy món đồ chơi bí ẩn mang tên "Liễu Ước Nguyện" để đổi lấy tình yêu của cô gái mình thầm thương. Điều ước nhanh chóng trở thành hiện thực, nhưng hạnh phúc mà anh hằng mong đợi lại dần biến thành cơn ác mộng. Bear dần nhận ra một sự thật rùng rợn: cái giá phải trả cho món quà kỳ diệu đó kinh hoàng và đen tối hơn bất cứ điều gì anh có thể tưởng tượng.',
         'Mỹ', 18, '2026-06-19 00:00:00', 8.7, 'Michael Johnton, Inde Navarrette, Cooper Tomlinson', 'Curry Barker',
-        'NOW_SHOWING', 'admin'),
+        'ON', 'admin'),
 
        (5, 'Mesdames Thanh Sắc', 125,
         'https://res.cloudinary.com/depaiphq0/image/upload/v1782988106/madames-thanh-sac-500_1781496606189_ost45k.jpg ',
         'https://www.youtube.com/embed/enNVcwigZg4?si=tWVi_A134WYitgOd',
         'Mesdames Thanh Sắc xoay quanh cuộc đời của đại mỹ nhân Cầm Thanh (Thanh Hằng) và Madame Sắc (Hồng Ánh) - bà chủ vũ trường Kim Đô vô cùng giàu có và sở hữu nhiều kim cương. Dù ở dưới trướng của bà Sắc và từng bước trở thành vũ nữ đình đám nhất Sài Gòn những năm 1960, nhưng Cầm Thanh luôn muốn nổi loạn. Từ đó, hai người phụ nữ bắt đầu cuộc giằng co căng thẳng dẫn đến những sự kiện gây rúng động.',
-        'Việt Nam', 18, '2026-06-18 00:00:00', 8.3, 'Hồng Ánh, Thanh Hằng, Lương Thế Thành', 'Thắng Vũ', 'NOW_SHOWING',
+        'Việt Nam', 18, '2026-06-18 00:00:00', 8.3, 'Hồng Ánh, Thanh Hằng, Lương Thế Thành', 'Thắng Vũ', 'ON',
         'admin'),
 
        (6, 'Supergirl', 108,
@@ -132,13 +132,13 @@ values (1, 'Minions & Quái Vật', 90,
         'https://www.youtube.com/embed/zb37oinmNQM?si=Kn_dom2_5--4c4jM',
         'Supergirl – bom tấn mới nhất từ DC Studios – sẽ chính thức đổ bộ các rạp chiếu toàn cầu vào mùa hè này, với Milly Alcock đảm nhận vai kép Supergirl/Kara Zor-El. Khi một kẻ thù bất ngờ và tàn nhẫn giáng đòn ngay tại nơi cô gọi là nhà, Kara Zor-El – hay còn được biết đến với cái tên Supergirl – buộc phải bắt tay với một đồng minh không ai ngờ tới, bắt đầu chuyến hành trình xuyên dải ngân hà đầy sử thi, nơi vừa là cuộc trả thù, vừa là hành trình đi tìm công lý.',
         'Mỹ', 13, '2026-06-24 00:00:00', 8.6, 'Milly Alcock, Matthias Schoenaerts, Eve Ridley, Jason Momoa',
-        'Craig Gillespie', 'NOW_SHOWING', 'admin'),
+        'Craig Gillespie', 'ON', 'admin'),
 
        (7, 'Câu Chuyện Đồ Chơi 5', 102,
         'https://res.cloudinary.com/depaiphq0/image/upload/v1782986414/toy-story-5-500_1780307783575_iosmtm.jpg ',
         'https://www.youtube.com/embed/BXN2fTDtak8?si=C-YN9FnqRiwke8r3',
         'Các món đồ chơi đã trở lại trong Toy Story 5 của Disney và Pixar, và lần này sẽ là cuộc đối đầu giữa đồ chơi và công nghệ. Buzz, Woody, Jessie cùng cả nhóm đồ chơi quen thuộc sẽ phải đối mặt với thử thách khó khăn hơn gấp bội khi chạm trán một mối đe dọa ảnh hưởng đến toàn bộ thế giới đồ chơi.',
-        'Mỹ', 0, '2026-06-17 00:00:00', 8.8, 'Tom Hanks, Keanu Reeves, Bonnie Hunt', 'Andrew Stanton', 'NOW_SHOWING',
+        'Mỹ', 0, '2026-06-17 00:00:00', 8.8, 'Tom Hanks, Keanu Reeves, Bonnie Hunt', 'Andrew Stanton', 'ON',
         'admin'),
 
        (8, 'Tung Hoành Tứ Hải', 109,
@@ -147,7 +147,7 @@ values (1, 'Minions & Quái Vật', 90,
         'Tung Hoành Tứ Hải có thể xem là "Phong Trần Tam Hiệp" phiên bản siêu trộm thời hiện đại. Được "cầm trịch" bởi đạo diễn gạo cội Ngô Vũ Sâm- người định hình phong cách hành động "Gun-fu" cùng thể loại "Tam kiệt", Tung Hoành Tứ Hải kể về nhóm "đạo tặc" do Châu Nhuận Phát dẫn đầu trên đường thực hiện phi vụ cuối cùng trước khi giải nghệ.
    Khung hình bộ ba Châu Nhuận Phát - Trương Quốc - Chung Sở Hồng chu du khắp nơi trên xe mui trần đánh dấu khoảnh khắc kinh điển của điện ảnh Hương Cảng và cũng đại diện cho thời hoàng kim thống trị Châu Á của phim Hongkong.',
         'Hồng Kong', 16, '2026-06-26 00:00:00', 7.9, 'Châu Nhuật Phát, Trương Quốc Vĩnh, Chung Sở Hồng', 'Ngô Vũ Sâm',
-        'NOW_SHOWING', 'admin'),
+        'ON', 'admin'),
 
        (9, 'Ngày Con Sống Lại', 126,
         'https://res.cloudinary.com/depaiphq0/image/upload/v1782986499/sheep-in-the-box-2_1782790582072_zfj4o1.webp ',
@@ -155,7 +155,7 @@ values (1, 'Minions & Quái Vật', 90,
         'Đạo diễn Kore-eda trở lại với một tác phẩm giả tưởng đầy cảm động. Một cặp vợ chồng đau đớn trải qua nỗi đau mất con. Để lấp đầy khoảng trống trong tổ ấm nhỏ, cả hai quyết định nhận nuôi một rô-bốt hình người hiện đại, chăm sóc nó như con trai ruột.
    Nếu một cỗ máy có khả năng biểu đạt cảm xúc, trao đi và nhận lại tình yêu, liệu sợi dây kết nối này có kém phần thiêng liêng hơn huyết thống?',
         'Nhật Bản', 13, '2026-07-05 00:00:00', 0.0, 'Ayase Haruka, Yamamoto Daigo, Kuwaki Rimu', 'Hirokazu Kore-Eda',
-        'COMING_SOON', 'admin'),
+        'ON', 'admin'),
 
        (10, 'Moana', 120,
         'https://res.cloudinary.com/depaiphq0/image/upload/v1782986478/moana-500_1774495216480_uxedda.jpg ',
@@ -164,7 +164,7 @@ values (1, 'Minions & Quái Vật', 90,
    Bộ phim được đạo diễn bởi Thomas Kail, người từng giành giải Emmy® và Tony Award® (Hamilton); sản xuất bởi Dwayne Johnson, Dany Garcia, Beau Flynn, Hiram Garcia và Lin-Manuel Miranda; đồng thời được điều hành sản xuất bởi Kail, Scott Sheldon, Charles Newirth và Auliʻi Cravalho – người từng lồng tiếng cho Moana trong hai phần phim hoạt hình Moana và Moana 2.
    Moana quy tụ các ca khúc gốc do Lin-Manuel Miranda, Opetaia Foaʻi và Mark Mancina sáng tác, cùng phần nhạc nền nguyên bản do Mark Mancina đảm nhiệm. Khán giả sẽ được đắm mình trong những khung hình mãn nhãn, âm thanh sống động và các giai điệu cuốn hút của Moana',
         'Mỹ', 0, '2026-07-10 00:00:00', 0.0, 'Dwayne Johnson, Catherine Laga’aia, Frankie Adams', 'Thomas Kail',
-        'COMING_SOON', 'admin'),
+        'ON', 'admin'),
 
        (11, 'The Odyssey', 173,
         'https://res.cloudinary.com/depaiphq0/image/upload/v1782986484/the-oddysey-500_1778060370554_jmcxsg.jpg ',
@@ -172,7 +172,7 @@ values (1, 'Minions & Quái Vật', 90,
         'Theo chân Odysseus trong hành trình trở về nhà sau cuộc chiến thành Troy, tràn ngập thử thách như cuộc chạm trán của ông với Polyphemus, các nàng tiên cá, Circe và kết thúc bằng cuộc đoàn tụ với vợ mình, Penelope.',
         'Mỹ', 0, '2026-07-17 00:00:00', 0.0,
         'Matt Damon, Tom Holland, Charlize Theron, Anne Hathaway, Jon Bernthal, Zendaya, Lupita Nyong’o, Robert Pattinson',
-        'Christopher Nolan', 'COMING_SOON', 'admin'),
+        'Christopher Nolan', 'ON', 'admin'),
 
        (12, 'Phim Điện Ảnh Thám Tử Lừng Danh Conan: Thiên Thần Sa Ngã Trên Xa Lộ', 109,
         'https://res.cloudinary.com/depaiphq0/image/upload/v1782986487/detective-conan-fallen-angel-of-the-highway-51_1781578881102_zuzncz.jpg ',
@@ -181,7 +181,7 @@ values (1, 'Minions & Quái Vật', 90,
    Conan, gia đình Ran, Sonoko, đội thám tử nhí cùng Sera Masumi đến khu vực Minatomirai, Yokohama để tham dự “Lễ hội Moto Kanagawa”. Sự kiện náo nhiệt này nhanh chóng bị khuấy động bởi tay lái bí ẩn mang biệt danh “Quái Xế Đen”. Hắn phóng xe với tốc độ kinh hoàng, lao vọt lên nóc chiếc xe chở nhóm Conan rồi biến mất trong chớp mắt, khiến ngay cả nữ cảnh sát giao thông nổi tiếng với danh xưng “Nữ Thần Gió” của Sở Cảnh sát Kanagawa - Hagiwara Chihaya - cũng không thể truy đuổi kịp.
    Trong khi cuộc săn lùng vẫn rơi vào bế tắc, tại hội trường lễ hội lại diễn ra màn ra mắt mẫu moto công nghệ cao màu trắng mang tên “Angel”. Điều đáng ngờ là chiếc xe của “Quái Xế Đen” lại sở hữu thiết kế gần như giống hệt mẫu xe này. Bỗng dưng, nữ cảnh sát Chihaya chợt nhớ về những ký ức tưởng chừng đã ngủ yên về người em trai quá cố Hagiwara Kenji và người bạn thân cùng khóa của anh, Matsuda Jinpei. Danh tính thực sự của kẻ cầm lái và mục đích đằng sau những cuộc rượt đuổi đầy nguy hiểm ấy kéo Conan và nữ cảnh sát Chihaya vào một cuộc đấu trí, khơi dậy một vụ án của nhiều năm trước.',
         'Nhật Bản', 13, '2026-07-18 00:00:00', 0.0,
-        'Hayashibara Megumi, Takayama Minami, Yamazaki Wakana, Koyama Rikiya', 'Takahiro Hasui', 'COMING_SOON',
+        'Hayashibara Megumi, Takayama Minami, Yamazaki Wakana, Koyama Rikiya', 'Takahiro Hasui', 'ON',
         'admin');
 
 ###INSERT MOVIE_GENRE#######
@@ -933,3 +933,10 @@ insert into price_list(hall_type_id, seat_type_id, audience_type_id, name, price
     (1, 3, 3, '2d-Sweetbox-Student-Weekday', 140000, JSON_ARRAY('MON', 'TUE', 'WED', 'THU', 'FRI'), 'admin'),
     (1, 3, 3, '2d-Sweetbox-Student-Weekend', 170000, JSON_ARRAY('SAT', 'SUN'), 'admin'),
     (1, 3, 3, '2d-Sweetbox-Student-Holiday', 180000, JSON_ARRAY('HOLIDAY'), 'admin');
+
+####INSERT PAYMENT METHOD####
+INSERT INTO payment_method(code, name, description, logo, surcharge, created_by)
+VALUES ('MOMO', 'Ví MoMo', 'Thanh toán nhanh chóng và bảo mật qua Ví điện tử MoMo.', 'https://res.cloudinary.com/depaiphq0/image/upload/v1783786591/images_zme00b.png', 0.00, 'admin'),
+       ('VNPAY', 'Cổng thanh toán VNPAY', 'Thanh toán quét mã QR qua ứng dụng ngân hàng hoặc thẻ ATM nội địa, thẻ quốc tế.', 'https://res.cloudinary.com/depaiphq0/image/upload/v1783786625/images_smqnem.jpg', 0.00, 'admin'),
+       ('ZALOPAY', 'Ví ZaloPay', 'Thanh toán trực tuyến dễ dàng và tiện lợi bằng ứng dụng Ví điện tử ZaloPay.', 'https://res.cloudinary.com/depaiphq0/image/upload/v1783786655/images_kdfjks.png', 0.00, 'admin'),
+       ('BANK_CARD', 'Thẻ ngân hàng (ATM/Visa/Mastercard)', 'Thanh toán trực tiếp bằng các loại thẻ ngân hàng nội địa (ATM) hoặc quốc tế (Visa, Mastercard, JCB).', 'https://res.cloudinary.com/depaiphq0/image/upload/v1783786695/images_gqzrse.jpg', 0.00, 'admin');

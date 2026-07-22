@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -130,15 +131,16 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
     public void confirmBooking(Integer showtimeId, List<Integer> seatIds, Integer userId) {
         List<ShowtimeSeat> requestedSeats = getShowtimeSeats(showtimeId, seatIds);
         requestedSeats.forEach(seat -> {
-//            only confirm the seat when the current user is who already hold the seat and the seat status is held
-            if (!Objects.equals(seat.getHoldBy(), userId) || !seat.getStatus().equals("HELD")) {
-                throw new ConcurrentSeatBookingException("Seat " + seat.getId().getSeatId() + " is not held by user: " + userId);
+            // only confirm the seat when the current user holds the seat OR the seat is still AVAILABLE
+            boolean isHeldByCurrentUser = Objects.equals(seat.getHoldBy(), userId) && "HELD".equals(seat.getStatus());
+            boolean isAvailable = "AVAILABLE".equals(seat.getStatus());
+            
+            if (!isHeldByCurrentUser && !isAvailable) {
+                throw new ConcurrentSeatBookingException("Seat " + seat.getId().getSeatId() + " is already booked or held by another user.");
             }
             seat.setStatus("BOOKED");
             seat.setHoldBy(userId);
             seat.setHoldUntil(null);
-
-
         });
         try {
             showtimeSeatRepository.saveAll(requestedSeats);
@@ -205,14 +207,36 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
     //update message broadcast
     @Override
     @Transactional
+    @Scheduled(fixedRate = 5000)
     public void releaseExpiredHolds() {
-        int releasedCount = showtimeSeatRepository.releaseExpiredHolds(Instant.now());
-        log.info("Released {} expired holds.", releasedCount);
+        LocalDateTime now = LocalDateTime.now();
+        List<ShowtimeSeat> expiredSeats = showtimeSeatRepository.findExpiredHolds(now);
+        if (expiredSeats.isEmpty()) {
+            return;
+        }
+
+        // Group expired seats by showtimeId
+        java.util.Map<Integer, List<ShowtimeSeat>> groupedByShowtime = expiredSeats.stream()
+                .collect(Collectors.groupingBy(s -> s.getId().getShowtimeId()));
+
+        groupedByShowtime.forEach((showtimeId, seats) -> {
+            List<Integer> seatIds = new java.util.ArrayList<>();
+            seats.forEach(seat -> {
+                seat.setStatus("AVAILABLE");
+                seat.setHoldBy(0);
+                seat.setHoldUntil(null);
+                seatIds.add(seat.getId().getSeatId());
+            });
+            showtimeSeatRepository.saveAll(seats);
+            // Broadcast the release to everyone
+            broadcastToSubscribedUser(showtimeId, seatIds, "AVAILABLE", 0);
+            log.info("Released and broadcasted {} expired seats for showtimeId {}", seatIds.size(), showtimeId);
+        });
     }
 
     private ShowtimeSeatResponseDto transformToDto(ShowtimeSeat showtimeSeat){
         return new ShowtimeSeatResponseDto(showtimeSeat.getId().getShowtimeId(),
-                showtimeSeat.getId().getSeatId(), showtimeSeat.getStatus());
+                showtimeSeat.getId().getSeatId(), showtimeSeat.getStatus(), showtimeSeat.getHoldBy());
     }
 
     private void broadcastToSubscribedUser(Integer showtimeId, List<Integer> seatIds, String status, Integer userId) {

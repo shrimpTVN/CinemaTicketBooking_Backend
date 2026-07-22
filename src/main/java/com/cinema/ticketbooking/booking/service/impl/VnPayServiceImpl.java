@@ -75,9 +75,16 @@ public class VnPayServiceImpl implements IVnPayService {
 
     // ─────────────────────────────────────────────────────────────────────────
     @Override
-    public String createPaymentUrl(int invoiceId, long amount, String clientIp) {
+    public String createPaymentUrl(int invoiceId, long amount, String clientIp, String feOrigin) {
         // Lấy giờ THẬT của Việt Nam từ đồng hồ server (không bị lỗi timezone)
         String createDate = LocalDateTime.now(VN_ZONE).format(VNP_DATE_FMT);
+        String expireDate = LocalDateTime.now(VN_ZONE).plusMinutes(5).format(VNP_DATE_FMT);
+
+        // Sử dụng feOrigin động từ Frontend để làm URL redirect trực tiếp từ VNPay.
+        // Giúp trình duyệt quay về đúng IP ban đầu đã truy cập (localhost hoặc IP LAN).
+        String dynamicReturnUrl = (feOrigin != null && !feOrigin.isBlank()) 
+                ? feOrigin + "/booking" 
+                : returnUrl;
 
         // Tập hợp tham số VNPay (đã sort theo alphabet nhờ TreeMap)
         Map<String, String> params = new TreeMap<>();
@@ -86,12 +93,13 @@ public class VnPayServiceImpl implements IVnPayService {
         params.put("vnp_TmnCode",    tmnCode);
         params.put("vnp_Amount",     String.valueOf(amount * 100L));
         params.put("vnp_CreateDate", createDate);
+        params.put("vnp_ExpireDate", expireDate);
         params.put("vnp_CurrCode",   "VND");
         params.put("vnp_IpAddr",     clientIp);
         params.put("vnp_Locale",     "vn");
         params.put("vnp_OrderInfo",  "ThanhToanHoaDon_" + invoiceId);
         params.put("vnp_OrderType",  "other");
-        params.put("vnp_ReturnUrl",  returnUrl);
+        params.put("vnp_ReturnUrl",  dynamicReturnUrl);
         params.put("vnp_TxnRef",     String.valueOf(invoiceId));
 
         // Bước 1: Chuỗi ký dùng URL-encoded values (chuẩn VNPay official Java SDK)
@@ -142,16 +150,18 @@ public class VnPayServiceImpl implements IVnPayService {
 
     // ─────────────────────────────────────────────────────────────────────────
     @Override
-    public String getFESuccessUrl(Map<String, String> vnpayParams) {
+    public String getFESuccessUrl(Map<String, String> vnpayParams, String feOrigin) {
         String invoiceId = vnpayParams.getOrDefault("vnp_TxnRef", "");
-        return feSuccessUrl + "?vnp_status=success&invoiceId=" + invoiceId;
+        String base = (feOrigin != null && !feOrigin.isBlank()) ? feOrigin + "/booking" : feSuccessUrl;
+        return base + "?vnp_status=success&invoiceId=" + invoiceId;
     }
 
     @Override
-    public String getFEFailureUrl(Map<String, String> vnpayParams) {
+    public String getFEFailureUrl(Map<String, String> vnpayParams, String feOrigin) {
         String invoiceId = vnpayParams.getOrDefault("vnp_TxnRef", "");
         String code      = vnpayParams.getOrDefault("vnp_ResponseCode", "99");
-        return feFailureUrl + "?vnp_status=failure&invoiceId=" + invoiceId + "&code=" + code;
+        String base = (feOrigin != null && !feOrigin.isBlank()) ? feOrigin + "/booking" : feFailureUrl;
+        return base + "?vnp_status=failure&invoiceId=" + invoiceId + "&code=" + code;
     }
 
     // ── Utility: build query string (sort alphabet → đúng chuẩn VNPay) ───────

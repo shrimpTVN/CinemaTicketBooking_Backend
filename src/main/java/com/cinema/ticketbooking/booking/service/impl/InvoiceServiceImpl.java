@@ -1,5 +1,6 @@
 package com.cinema.ticketbooking.booking.service.impl;
 
+import com.cinema.ticketbooking.core.exception.custom.ConcurrentSeatBookingException;
 import com.cinema.ticketbooking.repository.AudienceTypeRepository;
 import com.cinema.ticketbooking.booking.service.IInvoiceService;
 import com.cinema.ticketbooking.booking.service.IPriceListService;
@@ -35,6 +36,7 @@ public class InvoiceServiceImpl implements IInvoiceService {
     private final IPriceListService priceListService;
     private final ProductRepository productRepository;
     private final IShowtimeSeatService showtimeSeatService;
+    private final ShowtimeSeatRepository showtimeSeatRepository;
 
     @Override
     public List<InvoiceResponseDto> getAllInvoices() {
@@ -115,7 +117,22 @@ public class InvoiceServiceImpl implements IInvoiceService {
             AudienceType audienceType = audienceTypeRepository.findById(checkout.audienceTypeId())
                     .orElseThrow(() -> new IllegalArgumentException("Audience type not found"));
 
-            showtimeSeatService.confirmBooking(showtime.getId(), checkout.seatIds(), userId); // Ensure atomic transition
+            // Validate that the seats are indeed HELD by this user, but DO NOT confirm/BOOK them yet.
+            // They will be set to BOOKED only when the invoice status becomes PAID.
+            for (Integer seatId : checkout.seatIds()) {
+                ShowtimeSeatId showtimeSeatId = new ShowtimeSeatId(showtime.getId(), seatId);
+                ShowtimeSeat showtimeSeat = showtimeSeatRepository.findById(showtimeSeatId)
+                        .orElseThrow(() -> new IllegalArgumentException("Seat not found for showtime: " + seatId));
+                
+                System.out.println(">>> [processTickets] seatId=" + seatId + 
+                                   ", dbHoldBy=" + showtimeSeat.getHoldBy() + 
+                                   ", requestUserId=" + userId + 
+                                   ", dbStatus=" + showtimeSeat.getStatus());
+                
+                if (!Objects.equals(showtimeSeat.getHoldBy(), userId) || !"HELD".equals(showtimeSeat.getStatus())) {
+                    throw new ConcurrentSeatBookingException("Seat " + seatId + " is not held by user: " + userId);
+                }
+            }
 
             for (Integer seatId : checkout.seatIds()) {
                 Seat seat = seatRepository.findById(seatId).orElseThrow(); // Replace with batch map lookup
@@ -173,6 +190,25 @@ public class InvoiceServiceImpl implements IInvoiceService {
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invoice not found for ID: " + id));
         invoice.setStatus(status);
+        
+        if ("PAID".equals(status)) {
+            // Confirm all seats for this invoice (move from HELD to BOOKED)
+            Integer showtimeId = invoice.getTickets().stream()
+                    .findFirst()
+                    .map(t -> t.getShowtime().getId())
+                    .orElse(null);
+            if (showtimeId != null) {
+                List<Integer> seatIds = invoice.getTickets().stream()
+                        .map(t -> t.getSeat().getId())
+                        .toList();
+                showtimeSeatService.confirmBooking(showtimeId, seatIds, invoice.getUser().getId());
+            }
+        } else if ("CANCELLED".equals(status)) {
+            // Không giải phóng ghế lập tức ở đây để người dùng có thể thử thanh toán lại
+            // hoặc chọn phương thức khác trong thời gian 5 phút còn lại.
+            // Ghế sẽ được tự động giải phóng bởi Scheduler khi hết 5 phút giữ ghế.
+        }
+        
         invoiceRepository.save(invoice);
     }
 
@@ -186,7 +222,8 @@ public class InvoiceServiceImpl implements IInvoiceService {
             transformToDto(showtime),
             invoice.getTickets().stream().map(this::transformToDto).toList(),
             invoice.getInvoiceDetails().stream().map(this::transformToDto).toList(),
-            invoice.getPaymentMethod(), invoice.getTotalAmount(), invoice.getVat());
+            invoice.getPaymentMethod(), invoice.getTotalAmount(), invoice.getVat(),
+            invoice.getStatus());
     }
 
     private TicketResponseDto transformToDto(Ticket ticket) {

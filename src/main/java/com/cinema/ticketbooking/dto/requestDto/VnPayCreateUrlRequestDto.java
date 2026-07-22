@@ -23,4 +23,7 @@ public class VnPayCreateUrlRequestDto {
 
     /** IP client – nếu null/blank thì BE tự lấy từ HttpServletRequest */
     private String clientIp;
+
+    /** Origin của Frontend (ví dụ http://localhost:5173 hoặc http://192.168.1.10:5173) */
+    private String feOrigin;
 }

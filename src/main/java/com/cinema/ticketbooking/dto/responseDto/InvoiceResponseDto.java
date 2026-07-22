@@ -9,6 +9,7 @@ import java.util.List;
 public record InvoiceResponseDto(@NotNull Integer invoiceId, @NotNull Integer userId, @NotNull ShowtimeResponseDto showtime,
                                  @NotNull List<TicketResponseDto> tickets,
                                  @NotNull List<InvoiceDetailResponseDto> products,
-                                 @NotNull String paymentMethod, @NotNull BigDecimal totalAmount, @NotNull BigDecimal vat) {
+                                 @NotNull String paymentMethod, @NotNull BigDecimal totalAmount, @NotNull BigDecimal vat,
+                                 @NotNull String status) {
 
 }

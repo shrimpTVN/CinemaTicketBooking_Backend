@@ -1,5 +1,6 @@
 package com.cinema.ticketbooking.booking.controller;
 
+import com.cinema.ticketbooking.booking.service.IInvoiceService;
 import com.cinema.ticketbooking.booking.service.IVnPayService;
 import com.cinema.ticketbooking.dto.requestDto.VnPayCreateUrlRequestDto;
 import com.cinema.ticketbooking.dto.responseDto.VnPayCreateUrlResponseDto;
@@ -56,6 +57,7 @@ import java.util.Map;
 public class VnPayController {
 
     private final IVnPayService vnPayService;
+    private final IInvoiceService invoiceService;
 
     /**
      * FE gọi endpoint này để nhận URL thanh toán VNPay.
@@ -79,7 +81,8 @@ public class VnPayController {
         String paymentUrl = vnPayService.createPaymentUrl(
                 request.getInvoiceId(),
                 request.getAmount(),
-                clientIp
+                clientIp,
+                request.getFeOrigin()
         );
 
         log.info("[VNPay] Created payment URL for invoiceId={}, amount={}", request.getInvoiceId(), request.getAmount());
@@ -106,6 +109,8 @@ public class VnPayController {
         String responseCode = params.getOrDefault("vnp_ResponseCode", "99");
         String txnRef = params.getOrDefault("vnp_TxnRef", "");
 
+        String feOrigin = params.get("fe_origin");
+
         if (isValid && "00".equals(responseCode)) {
             // Thanh toán thành công → cập nhật invoice PAID
             try {
@@ -115,11 +120,20 @@ public class VnPayController {
             } catch (NumberFormatException e) {
                 log.error("[VNPay] Invalid txnRef (invoiceId): {}", txnRef);
             }
-            response.sendRedirect(vnPayService.getFESuccessUrl(params));
+            response.sendRedirect(vnPayService.getFESuccessUrl(params, feOrigin));
         } else {
             // Chữ ký sai hoặc thanh toán thất bại/huỷ
             log.warn("[VNPay] Payment FAILED or invalid signature. responseCode={}, txnRef={}", responseCode, txnRef);
-            response.sendRedirect(vnPayService.getFEFailureUrl(params));
+            try {
+                if (!txnRef.isBlank()) {
+                    int invoiceId = Integer.parseInt(txnRef);
+                    invoiceService.updateInvoiceStatus(invoiceId, "CANCELLED");
+                    log.info("[VNPay] Invoice {} marked as CANCELLED due to payment failure.", invoiceId);
+                }
+            } catch (Exception e) {
+                log.error("[VNPay] Failed to mark invoice as CANCELLED after payment failure", e);
+            }
+            response.sendRedirect(vnPayService.getFEFailureUrl(params, feOrigin));
         }
     }
 

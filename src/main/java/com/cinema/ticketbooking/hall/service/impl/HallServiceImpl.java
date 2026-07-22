@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class HallServiceImpl  implements IHallService {
+public class HallServiceImpl implements IHallService {
     private final HallRepository hallRepository;
     private final HallTypeRepository hallTypeRepository;
     private final SeatTypeRepository seatTypeRepository;
@@ -49,7 +49,8 @@ public class HallServiceImpl  implements IHallService {
         hall.setHeight(hallDto.height());
 
         HallType hallType = hallTypeRepository.findById(hallDto.hallTypeId())
-                .orElseThrow(() -> new ResourceNotFoundException("Hall type not found with id: " + hallDto.hallTypeId()));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Hall type not found with id: " + hallDto.hallTypeId()));
         hall.setHallType(hallType);
 
         hallRepository.save(hall);
@@ -84,14 +85,15 @@ public class HallServiceImpl  implements IHallService {
         return "Hall status updated successfully";
     }
 
-//    You fetch the Hall entity just to access its getSeats() collection.
-//    @Override
-//    public List<SeatDto> getHallSeatMap(int id) {
-//        Hall hall = hallRepository.findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundException("Hall not found with id: " + id));
-//        @NonNull Set<Seat> seats = hall.getSeats();
-//        return seats.stream().map(this::transformToDto).toList();
-//    }
+    // You fetch the Hall entity just to access its getSeats() collection.
+    // @Override
+    // public List<SeatDto> getHallSeatMap(int id) {
+    // Hall hall = hallRepository.findById(id)
+    // .orElseThrow(() -> new ResourceNotFoundException("Hall not found with id: " +
+    // id));
+    // @NonNull Set<Seat> seats = hall.getSeats();
+    // return seats.stream().map(this::transformToDto).toList();
+    // }
 
     // Better approach
     @Override
@@ -102,30 +104,32 @@ public class HallServiceImpl  implements IHallService {
                 .toList();
     }
 
-//    This is the dreaded N+1 Query Problem
-//    @Override
-//    public List<SeatDto> generateHallSeatMap(int id, List<SeatDto> seatDtos) {
-//        Set<Seat> seats = new HashSet<>();
-//        Hall hall = hallRepository.findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundException("Hall not found with id: " + id));
-//
-//        seatDtos.forEach(seatDto -> {
-//            Seat seat = new Seat();
-//            // Set seat properties based on seatDto
-//            SeatType seatType = seatTypeRepository.findById(seatDto.seatTypeId())
-//                    .orElseThrow(() -> new ResourceNotFoundException("Seat type not found with id: " + seatDto.seatTypeId()));
-//            seat.setSeatType(seatType);
-//            seat.setRowLabel(seatDto.rowLabel());
-//            seat.setColNumber(seatDto.colNumber());
-//            seat.setStatus("ON");
-//            seats.add(seat);
-//        });
-//        hall.setSeats(seats);
-//        hallRepository.save(hall);
-//        return List.of();
-//    }
+    // This is the dreaded N+1 Query Problem
+    // @Override
+    // public List<SeatDto> generateHallSeatMap(int id, List<SeatDto> seatDtos) {
+    // Set<Seat> seats = new HashSet<>();
+    // Hall hall = hallRepository.findById(id)
+    // .orElseThrow(() -> new ResourceNotFoundException("Hall not found with id: " +
+    // id));
+    //
+    // seatDtos.forEach(seatDto -> {
+    // Seat seat = new Seat();
+    // // Set seat properties based on seatDto
+    // SeatType seatType = seatTypeRepository.findById(seatDto.seatTypeId())
+    // .orElseThrow(() -> new ResourceNotFoundException("Seat type not found with
+    // id: " + seatDto.seatTypeId()));
+    // seat.setSeatType(seatType);
+    // seat.setRowLabel(seatDto.rowLabel());
+    // seat.setColNumber(seatDto.colNumber());
+    // seat.setStatus("ON");
+    // seats.add(seat);
+    // });
+    // hall.setSeats(seats);
+    // hallRepository.save(hall);
+    // return List.of();
+    // }
 
-//    better approach
+    // better approach
     @Override
     @Transactional // Ensures ACID compliance. Either all seats save, or none do.
     public List<SeatDto> generateHallSeatMap(int id, List<SeatDto> seatDtos) {
@@ -137,7 +141,8 @@ public class HallServiceImpl  implements IHallService {
                 .map(SeatDto::seatTypeId)
                 .collect(Collectors.toSet());
 
-        // 2. Fetch all required SeatTypes in ONE query (e.g., SELECT * FROM seat_type WHERE id IN (...))
+        // 2. Fetch all required SeatTypes in ONE query (e.g., SELECT * FROM seat_type
+        // WHERE id IN (...))
         // Store them in a Map for instant O(1) memory lookup inside the loop
         Map<Integer, SeatType> seatTypeMap = seatTypeRepository.findAllById(seatTypeIds).stream()
                 .collect(Collectors.toMap(SeatType::getId, type -> type));
@@ -145,7 +150,8 @@ public class HallServiceImpl  implements IHallService {
         Set<Seat> newSeats = new HashSet<>();
 
         for (SeatDto dto : seatDtos) {
-            SeatType type = seatTypeMap.get(dto.seatTypeId());//get seatType from map<id, seatType> instead of query from the DB
+            SeatType type = seatTypeMap.get(dto.seatTypeId());// get seatType from map<id, seatType> instead of query
+                                                              // from the DB
             if (type == null) {
                 throw new ResourceNotFoundException("Seat type not found: " + dto.seatTypeId());
             }
@@ -160,6 +166,9 @@ public class HallServiceImpl  implements IHallService {
             newSeats.add(seat);
         }
 
+        if (!newSeats.isEmpty()) {
+            seatRepository.saveAll(newSeats);
+        }
         hall.getSeats().addAll(newSeats);
 
         // We only call save once. Hibernate will batch insert the seats.
@@ -168,45 +177,52 @@ public class HallServiceImpl  implements IHallService {
         return newSeats.stream().map(this::transformToDto).toList();
     }
 
-//    N+1 Queries Multiplied
-//    Missing @Transactional
-//    Security/Data Leakage
-//    Hibernate Dirty Checking
-//    @Override
-//    public List<SeatDto> updateHallSeatMap(int id, List<SeatDto> seatDtos) {
-//        Hall hall = hallRepository.findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundException("Hall not found with id: " + id));
-//        seatDtos.stream().map(seatDto -> {
-//            Seat seat = seatRepository.findById(seatDto.id())
-//                    .orElseThrow(() -> new ResourceNotFoundException("Seat not found with id: " + seatDto.id()));
-//            if (seatDto.rowLabel() != null) {
-//                seat.setRowLabel(seatDto.rowLabel());
-//            }
-//            if (seatDto.colNumber() != null) {
-//                seat.setColNumber(seatDto.colNumber());
-//            }
-//            if (seatDto.status() != null) {
-//                seat.setStatus(seatDto.status());
-//            }
-//            if (seatDto.seatTypeId() != null) {
-//                SeatType seatType = seatTypeRepository.findById(seatDto.seatTypeId())
-//                        .orElseThrow(() -> new ResourceNotFoundException("Seat type not found with id: " + seatDto.seatTypeId()));
-//                seat.setSeatType(seatType);
-//            }
-//            seatRepository.save(seat);
-//            return transformToDto(seat);
-//        }).toList();
-//        return seatDtos;
-//    }
-//  Better approach
+    // N+1 Queries Multiplied
+    // Missing @Transactional
+    // Security/Data Leakage
+    // Hibernate Dirty Checking
+    // @Override
+    // public List<SeatDto> updateHallSeatMap(int id, List<SeatDto> seatDtos) {
+    // Hall hall = hallRepository.findById(id)
+    // .orElseThrow(() -> new ResourceNotFoundException("Hall not found with id: " +
+    // id));
+    // seatDtos.stream().map(seatDto -> {
+    // Seat seat = seatRepository.findById(seatDto.id())
+    // .orElseThrow(() -> new ResourceNotFoundException("Seat not found with id: " +
+    // seatDto.id()));
+    // if (seatDto.rowLabel() != null) {
+    // seat.setRowLabel(seatDto.rowLabel());
+    // }
+    // if (seatDto.colNumber() != null) {
+    // seat.setColNumber(seatDto.colNumber());
+    // }
+    // if (seatDto.status() != null) {
+    // seat.setStatus(seatDto.status());
+    // }
+    // if (seatDto.seatTypeId() != null) {
+    // SeatType seatType = seatTypeRepository.findById(seatDto.seatTypeId())
+    // .orElseThrow(() -> new ResourceNotFoundException("Seat type not found with
+    // id: " + seatDto.seatTypeId()));
+    // seat.setSeatType(seatType);
+    // }
+    // seatRepository.save(seat);
+    // return transformToDto(seat);
+    // }).toList();
+    // return seatDtos;
+    // }
+    // Better approach
     @Override
     @Transactional
     public List<SeatDto> updateHallSeatMap(int id, List<SeatDto> seatDtos) {
-        // 1. Fetch all existing seats for THIS hall to ensure security
+        // 1. Fetch the Hall entity
+        Hall hall = hallRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Hall not found with id: " + id));
+
+        // 2. Fetch all existing seats for THIS hall to ensure security
         Map<Integer, Seat> existingSeatsMap = seatRepository.findByHallId(id).stream()
                 .collect(Collectors.toMap(Seat::getId, seat -> seat));
 
-        // 2. Fetch required SeatTypes in batch (Same optimization as above)
+        // 3. Fetch required SeatTypes in batch (Same optimization as above)
         Set<Integer> seatTypeIds = seatDtos.stream()
                 .map(SeatDto::seatTypeId)
                 .filter(Objects::nonNull)
@@ -216,40 +232,73 @@ public class HallServiceImpl  implements IHallService {
                 .collect(Collectors.toMap(SeatType::getId, type -> type));
 
         List<Seat> updatedSeats = new ArrayList<>();
+        List<Seat> newSeats = new ArrayList<>();
 
         for (SeatDto dto : seatDtos) {
-            // SECURITY: Only allow updating seats that actually belong to this hall
-            Seat seatToUpdate = existingSeatsMap.get(dto.id());
-            if (seatToUpdate == null) {
-                throw new IllegalArgumentException("Seat ID " + dto.id() + " does not belong to Hall " + id);
+            Seat seatToUpdate;
+            if (dto.id() == null) {
+                // If it is a new seat (e.g. grid resized), create it
+                seatToUpdate = new Seat();
+                seatToUpdate.setHall(hall);
+                newSeats.add(seatToUpdate);
+            } else {
+                // SECURITY: Only allow updating seats that actually belong to this hall
+                seatToUpdate = existingSeatsMap.get(dto.id());
+                if (seatToUpdate == null) {
+                    throw new IllegalArgumentException("Seat ID " + dto.id() + " does not belong to Hall " + id);
+                }
             }
 
-            if (dto.rowLabel() != null) seatToUpdate.setRowLabel(dto.rowLabel());
-            if (dto.colNumber() != null) seatToUpdate.setColNumber(dto.colNumber());
-            if (dto.status() != null) seatToUpdate.setStatus(dto.status());
+            if (dto.rowLabel() != null)
+                seatToUpdate.setRowLabel(dto.rowLabel());
+            if (dto.colNumber() != null)
+                seatToUpdate.setColNumber(dto.colNumber());
+            if (dto.status() != null)
+                seatToUpdate.setStatus(dto.status());
 
             if (dto.seatTypeId() != null) {
                 SeatType type = seatTypeMap.get(dto.seatTypeId());
-                if (type == null) throw new ResourceNotFoundException("Seat type not found");
+                if (type == null)
+                    throw new ResourceNotFoundException("Seat type not found: " + dto.seatTypeId());
                 seatToUpdate.setSeatType(type);
             }
 
             updatedSeats.add(seatToUpdate);
         }
 
-        // Notice: NO seatRepository.save() in the loop.
-        // Because of @Transactional, Hibernate's Dirty Checking detects the modifications
-        // and automatically fires UPDATE statements when the transaction commits.
+        // 4. Identify seats to delete (exist in DB but not in the incoming payload)
+        Set<Integer> incomingIds = seatDtos.stream()
+                .map(SeatDto::id)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        List<Seat> seatsToDelete = existingSeatsMap.values().stream()
+                .filter(seat -> !incomingIds.contains(seat.getId()))
+                .toList();
+
+        if (!seatsToDelete.isEmpty()) {
+            hall.getSeats().removeAll(seatsToDelete);
+            seatRepository.deleteAll(seatsToDelete);
+        }
+
+        if (!newSeats.isEmpty()) {
+            seatRepository.saveAll(newSeats);
+            hall.getSeats().addAll(newSeats);
+        }
+
+        hallRepository.save(hall);
 
         return updatedSeats.stream().map(this::transformToDto).toList();
     }
-    private HallResponseDto transformToDto(Hall hall){
+
+    private HallResponseDto transformToDto(Hall hall) {
         return new HallResponseDto(hall.getId(), hall.getName(), hall.getWidth(),
-                hall.getHeight(),hall.getHallType().getName(), hall.getStatus());
+                hall.getHeight(), hall.getHallType().getName(), hall.getStatus());
     }
 
-    private SeatDto transformToDto(Seat seat){
-        return new SeatDto(seat.getId(), seat.getSeatType().getId(), seat.getRowLabel(), seat.getColNumber(), seat.getStatus());
-   }
+    private SeatDto transformToDto(Seat seat) {
+        return new SeatDto(seat.getId(), seat.getSeatType().getId(), seat.getRowLabel(), seat.getColNumber(),
+                seat.getStatus());
+    }
 
 }
