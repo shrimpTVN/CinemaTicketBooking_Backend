@@ -23,6 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         // 1. Fetch YOUR user from MySQL
         User mySqlUser = userRepository.findByEmail(email);
 //                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
         if (mySqlUser == null) {
             throw new UsernameNotFoundException(email);
         }

@@ -1,10 +1,8 @@
 package com.cinema.ticketbooking.core.security.filter;
 
-import com.cinema.ticketbooking.core.constant.ApplicationConstants;
 import com.cinema.ticketbooking.core.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,11 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtTokenValidatorFilter extends OncePerRequestFilter {
@@ -40,8 +34,7 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
-            throws ServletException, IOException {
+                                    @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         String jwt = jwtUtil.extractToken(request);
 
@@ -57,6 +50,7 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
                         username, null, AuthorityUtils.commaSeparatedStringToAuthorityList(roles));
 
+                //set the Security context
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
             } catch (ExpiredJwtException exception) {

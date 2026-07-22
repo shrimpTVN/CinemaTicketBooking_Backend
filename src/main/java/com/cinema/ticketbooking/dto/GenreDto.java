@@ -2,7 +2,6 @@ package com.cinema.ticketbooking.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.io.Serializable;

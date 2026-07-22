@@ -27,6 +27,7 @@ public class PathsConfig {
                 "/api/auth/**",
 
                 "/websocket-tester.html",
+                "/oauth-test.html",
                 "/ws-cinema/**",
 
                 "/api/swagger-ui.html",

@@ -13,5 +13,5 @@ public interface IPaymentMethodService {
 
     PaymentMethodDto updatePaymentMethod(Integer id, PaymentMethodDto paymentMethodDto);
 
-    void deletePaymentMethod(Integer id);
+
 }

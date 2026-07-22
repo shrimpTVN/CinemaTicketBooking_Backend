@@ -1,6 +1,5 @@
 package com.cinema.ticketbooking.dto;
 
-import com.cinema.ticketbooking.entity.Genre;
 import com.cinema.ticketbooking.entity.Movie;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

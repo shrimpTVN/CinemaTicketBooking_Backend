@@ -6,6 +6,7 @@ import com.cinema.ticketbooking.dto.PaymentMethodDto;
 import com.cinema.ticketbooking.entity.PaymentMethod;
 import com.cinema.ticketbooking.repository.PaymentMethodRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -37,12 +38,7 @@ public class PaymentMethodServiceImpl implements IPaymentMethodService {
         ensureUniqueFields(paymentMethodDto.code(), paymentMethodDto.name(), null);
 
         PaymentMethod paymentMethod = new PaymentMethod();
-        paymentMethod.setCode(paymentMethodDto.code());
-        paymentMethod.setName(paymentMethodDto.name());
-        paymentMethod.setDescription(paymentMethodDto.description());
-        paymentMethod.setLogo(paymentMethodDto.logo());
-        paymentMethod.setSurcharge(paymentMethodDto.surcharge() != null ? paymentMethodDto.surcharge() : BigDecimal.ZERO);
-        paymentMethod.setStatus(paymentMethodDto.status() != null ? paymentMethodDto.status() : "ON");
+        BeanUtils.copyProperties(paymentMethodDto, paymentMethod);
 
         PaymentMethod savedPaymentMethod = paymentMethodRepository.save(paymentMethod);
         return transformToDto(savedPaymentMethod);
@@ -80,13 +76,6 @@ public class PaymentMethodServiceImpl implements IPaymentMethodService {
         return transformToDto(updatedPaymentMethod);
     }
 
-    @Override
-    public void deletePaymentMethod(Integer id) {
-        if (!paymentMethodRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Payment method not found with id: " + id);
-        }
-        paymentMethodRepository.deleteById(id);
-    }
 
     private void requireCreateFields(PaymentMethodDto paymentMethodDto) {
         if (paymentMethodDto.code() == null || paymentMethodDto.name() == null

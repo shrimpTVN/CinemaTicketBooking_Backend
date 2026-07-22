@@ -2,6 +2,8 @@ package com.cinema.ticketbooking.core.util;
 
 import com.cinema.ticketbooking.core.constant.ApplicationConstants;
 import com.cinema.ticketbooking.core.security.custom.CustomUserDetails;
+import com.cinema.ticketbooking.dto.responseDto.UserResponseDto;
+import com.cinema.ticketbooking.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -88,5 +90,18 @@ public class JwtUtil  {
                     .compact();
         }
         throw new IllegalArgumentException("Invalid authentication information");
+    }
+
+    public String generateJwtToken(UserResponseDto user) {
+        return Jwts.builder()
+                .issuer("ticket-booking")
+                .subject("JWT Token")
+                .claim("username", user.email())
+                .claim("userId", user.id())
+                .claim("roles", user.role())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
+                .signWith(getSecretKey())
+                .compact();
     }
 }

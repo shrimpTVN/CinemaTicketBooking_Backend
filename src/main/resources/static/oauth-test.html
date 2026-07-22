@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinema System: OAuth 2.0 Test Client</title>
+    <!-- 1. Load the official Google Identity Services script -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body style="font-family: system-ui, -apple-system, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto;">
+
+<h2>OAuth 2.0 Backend Verification Sandbox</h2>
+<p>Use this isolated environment to generate a real Google ID Token. You can then copy this token to test your Spring
+    Boot <code>/api/auth/google</code> endpoint.</p>
+
+<!-- 2. Configure the Google Sign-In client -->
+<!-- REPLACE 'YOUR_GOOGLE_CLIENT_ID' WITH YOUR ACTUAL CLIENT ID -->
+<div id="g_id_onload"
+     data-client_id="930594519981-94g92j79lqsht3jkoborqjrp62i62i9n.apps.googleusercontent.com"
+     data-callback="handleCredentialResponse"
+     data-auto_prompt="false">
+</div>
+
+<!-- 3. Render the Google Sign-In button -->
+<div class="g_id_signin"
+     data-type="standard"
+     data-size="large"
+     data-theme="outline"
+     data-text="sign_in_with"
+     data-shape="rectangular"
+     data-logo_alignment="left">
+</div>
+
+<div style="margin-top: 30px;">
+    <h3>Your Cryptographic ID Token:</h3>
+    <textarea id="tokenDisplay" rows="8" style="width: 100%; font-family: monospace; padding: 10px;" readonly
+              placeholder="Authenticate above to generate your token..."></textarea>
+    <br><br>
+    <button onclick="copyToken()" style="padding: 10px 20px; cursor: pointer;">Copy Token for Postman</button>
+</div>
+
+<script>
+    /**
+     * 4. The Callback Function
+     * This executes immediately after the user successfully authenticates with Google.
+     */
+    function handleCredentialResponse(response) {
+        // response.credential contains the base64-encoded JWT ID token
+        const idToken = response.credential;
+        console.log("Successfully retrieved ID Token from Google.");
+
+        // Display the token for easy copying
+        document.getElementById('tokenDisplay').value = idToken;
+
+        // ARCHITECTURAL NOTE:
+        // In a real React app, you would execute the fetch call below.
+        // For now, it is commented out so you can manually test via Postman.
+
+        /*
+        fetch('http://localhost:8080/api/auth/google', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: idToken })
+        })
+        .then(res => res.json())
+        .then(data => console.log('Spring Boot System JWT:', data))
+        .catch(err => console.error('Connection Error:', err));
+        */
+    }
+
+    function copyToken() {
+        const tokenArea = document.getElementById("tokenDisplay");
+        if (!tokenArea.value) {
+            alert("Please sign in first to generate a token.");
+            return;
+        }
+        tokenArea.select();
+        document.execCommand("copy");
+        alert("Token copied! Paste this into the 'token' field of your TokenDto in Postman.");
+    }
+</script>
+</body>
+</html>

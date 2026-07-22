@@ -5,6 +5,7 @@ import com.cinema.ticketbooking.core.exception.custom.ResourceNotFoundException;
 import com.cinema.ticketbooking.dto.ProductDto;
 import com.cinema.ticketbooking.entity.Product;
 import com.cinema.ticketbooking.repository.ProductRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +33,7 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public ProductDto createProduct(ProductDto productDto) {
         Product product = new Product();
-        product.setName(productDto.name());
-        product.setDescription(productDto.description());
-        product.setPrice(productDto.price());
-        product.setImage(productDto.image());
-        product.setStatus( "ON");
+        BeanUtils.copyProperties(productDto, product);
 
         Product savedProduct = productRepository.save(product);
         return transformToDto(savedProduct);
@@ -47,10 +44,7 @@ public class ProductServiceImpl implements IProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product id is not exists: " + id));
 
-        product.setName(productDto.name());
-        product.setDescription(productDto.description());
-        product.setPrice(productDto.price());
-        product.setImage(productDto.image());
+        BeanUtils.copyProperties(productDto, product);
 
         Product updatedProduct = productRepository.save(product);
         return transformToDto(updatedProduct);

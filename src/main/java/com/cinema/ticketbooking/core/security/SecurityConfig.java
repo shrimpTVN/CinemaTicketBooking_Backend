@@ -63,7 +63,7 @@ public class SecurityConfig {
                 })
                 .addFilterBefore(new JwtTokenValidatorFilter(jwtUtil, publicPaths), BasicAuthenticationFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable) // of form login to user FE login form
-                .httpBasic(withDefaults())
+                .httpBasic(AbstractHttpConfigurer::disable) // disable basic auth to prevent browser popup
                 .build();
     }
 
