@@ -10,10 +10,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -45,10 +42,11 @@ public class HallType  extends BaseEntity {
     @Column(name = "style", nullable = false, length = 100)
     private String style;
 
-    @NotNull
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "images", nullable = false)
-    private List<String> images;
+    // This creates a separate table: hall_type_images (hall_type_id, image_url)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "hall_type_image", joinColumns = @JoinColumn(name = "hall_type_id"))
+    @Column(name = "image_url")
+    private List<String> images = new ArrayList<>();
 
     @Size(max = 50)
     @ColumnDefault("'ON'")

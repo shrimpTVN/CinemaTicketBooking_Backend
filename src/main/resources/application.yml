@@ -5,3 +5,8 @@ spring:
         registration:
           google:
             client-id: 930594519981-94g92j79lqsht3jkoborqjrp62i62i9n.apps.googleusercontent.com # Injected via environment variable
+
+cloudinary:
+    cloud-name: depaiphq0
+    api-key: 746389516589297
+    api-secret: IurXYsZYcLEgvQicz-200t8OMDM

@@ -1,3 +1,19 @@
+###INSERT HALL_TYPE_IMAGE#####
+insert into hall_type_image(hall_type_id, image_url, created_by)
+    value (2, 'https://res.cloudinary.com/depaiphq0/image/upload/v1782914513/imax-1_xp6oh6.webp', 'admin'),
+    (2, 'https://res.cloudinary.com/depaiphq0/image/upload/v1782914513/imax-2_zzuipz.jpg', 'admin'),
+    (2, 'https://res.cloudinary.com/depaiphq0/image/upload/v1782914514/imax-3_etcojt.jpg', 'admin'),
+    (2, 'https://res.cloudinary.com/depaiphq0/image/upload/v1782914514/imax-5_blwdtd.jpg', 'admin'),
+    (2, 'https://res.cloudinary.com/depaiphq0/image/upload/v1782914514/imax-4_g3wnyg.jpg', 'admin');
+
+insert into hall_type_image(hall_type_id, image_url, created_by)
+    value (3, 'https://res.cloudinary.com/depaiphq0/image/upload/v1782915041/Lagom1_zhiqak.jpg', 'admin'),
+    (3, 'https://res.cloudinary.com/depaiphq0/image/upload/v1782915042/Lagom03_pthmtp.jpg', 'admin'),
+    (3, 'https://res.cloudinary.com/depaiphq0/image/upload/v1782915042/Lagom04_r0fbu2.jpg', 'admin'),
+    (3, 'https://res.cloudinary.com/depaiphq0/image/upload/v1782915043/Lagom-1_wanjxw.jpg', 'admin'),
+    (3, 'https://res.cloudinary.com/depaiphq0/image/upload/v1782915043/Lagom-2_lxjc0j.jpg', 'admin');
+
+
 ####INSERT PAYMENT METHOD####
 INSERT INTO payment_method(code, name, description, logo, surcharge, created_by)
 VALUES ('MOMO', 'Ví MoMo', 'Thanh toán nhanh chóng và bảo mật qua Ví điện tử MoMo.',
@@ -282,6 +298,9 @@ insert into hall_type(name, description, convenience, style, images, created_by)
                 'https://res.cloudinary.com/depaiphq0/image/upload/v1782914514/imax-3_etcojt.jpg',
                 'https://res.cloudinary.com/depaiphq0/image/upload/v1782914514/imax-5_blwdtd.jpg',
                 'https://res.cloudinary.com/depaiphq0/image/upload/v1782914514/imax-4_g3wnyg.jpg'), 'admin');
+
+
+
 insert into hall_type(name, description, convenience, style, images, created_by)
     value ('Lagom',
            'Bước vào LAGOM là bước vào một thế giới nơi công nghệ hòa quyện tinh tế cùng nghệ thuật cảm xúc. Lấy cảm hứng từ triết lý LAGOM của Thụy Điển - Vừa đủ, Cân bằng và trọn vẹn, không gian phòng chiếu được bao phủ bởi những gam màu be nhẹ nhàng, ấm áp, tạo nên một không khí thanh lịch, trầm ổn, nơi mọi ồn ào của cuộc sống dường như được bỏ lại phía sau cánh cửa. Công nghệ trình chiếu sử dụng hệ thống máy chiếu tiên tiến cùng âm thanh Dolby 7.1 sống động nhưng hòa quyện tuyệt vời để không phá vỡ sự tĩnh tại của thiết kế phòng chiếu.
@@ -302,6 +321,8 @@ insert into hall_type(name, description, convenience, style, images, created_by)
                       'https://res.cloudinary.com/depaiphq0/image/upload/v1782915042/Lagom04_r0fbu2.jpg',
                       'https://res.cloudinary.com/depaiphq0/image/upload/v1782915043/Lagom-1_wanjxw.jpg',
                       'https://res.cloudinary.com/depaiphq0/image/upload/v1782915043/Lagom-2_lxjc0j.jpg'), 'admin');
+
+
 
 ####INSERT HALL#####
 insert into hall(hall_type_id, name, width, height, created_by)
