@@ -186,7 +186,7 @@ public class InvoiceServiceImpl implements IInvoiceService {
             transformToDto(showtime),
             invoice.getTickets().stream().map(this::transformToDto).toList(),
             invoice.getInvoiceDetails().stream().map(this::transformToDto).toList(),
-            invoice.getPaymentMethod(), invoice.getTotalAmount(), invoice.getVat());
+            invoice.getPaymentMethod(), invoice.getTotalAmount(), invoice.getVat(), invoice.getStatus());
     }
 
     private TicketResponseDto transformToDto(Ticket ticket) {

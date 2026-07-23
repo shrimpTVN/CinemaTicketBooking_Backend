@@ -16,7 +16,7 @@ public interface IVnPayService {
      * @param clientIp  IP của user (VNPay bắt buộc)
      * @return URL đầy đủ để redirect user sang VNPay
      */
-    String createPaymentUrl(int invoiceId, long amount, String clientIp);
+    String createPaymentUrl(int invoiceId, long amount, String clientIp, String feOrigin);
 
     /**
      * Xác thực chữ ký HMAC-SHA512 trong callback từ VNPay.
@@ -40,11 +40,11 @@ public interface IVnPayService {
      * Lấy URL FE để redirect user khi thanh toán thành công.
      * Ví dụ: http://localhost:5173/booking?vnp_status=success&invoiceId=5
      */
-    String getFESuccessUrl(Map<String, String> vnpayParams);
+    String getFESuccessUrl(Map<String, String> vnpayParams, String feOrigin);
 
     /**
      * Lấy URL FE để redirect user khi thanh toán thất bại/huỷ.
      * Ví dụ: http://localhost:5173/booking?vnp_status=failure&invoiceId=5
      */
-    String getFEFailureUrl(Map<String, String> vnpayParams);
+    String getFEFailureUrl(Map<String, String> vnpayParams, String feOrigin);
 }

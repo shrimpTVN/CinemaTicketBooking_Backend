@@ -10,6 +10,6 @@ public record InvoiceResponseDto(@NotNull Integer invoiceId, @NotNull Integer us
                                  @NotNull List<TicketResponseDto> tickets,
                                  @NotNull List<InvoiceDetailResponseDto> products,
                                  @NotNull String paymentMethod, @NotNull BigDecimal totalAmount,
-                                 @NotNull BigDecimal vat) {
+                                 @NotNull BigDecimal vat, @NotNull String status) {
 
 }

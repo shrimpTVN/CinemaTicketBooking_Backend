@@ -208,7 +208,7 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
 
     private ShowtimeSeatResponseDto transformToDto(ShowtimeSeat showtimeSeat) {
         return new ShowtimeSeatResponseDto(showtimeSeat.getId().getShowtimeId(),
-                showtimeSeat.getId().getSeatId(), showtimeSeat.getStatus());
+                showtimeSeat.getId().getSeatId(), showtimeSeat.getHoldBy(), showtimeSeat.getStatus());
     }
 
     private void broadcastToSubscribedUser(Integer showtimeId, List<Integer> seatIds, String status, Integer userId) {

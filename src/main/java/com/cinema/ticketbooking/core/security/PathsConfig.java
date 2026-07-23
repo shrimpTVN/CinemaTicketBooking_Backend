@@ -25,10 +25,14 @@ public class PathsConfig {
                 "/payment-methods/**",
                 "/api/showtime-seats/**",
                 "/api/auth/**",
+                "/api/vnpay/**",
+
 
                 "/websocket-tester.html",
                 "/oauth-test.html",
                 "/ws-cinema/**",
+
+//                "/api/webhooks/vnpay/ipn",
 
                 "/api/swagger-ui.html",
                 "/swagger-ui/**",

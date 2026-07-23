@@ -12,21 +12,10 @@ import lombok.Data;
  * "clientIp": "192.168.0.100"   // optional, BE tự lấy nếu không có
  * }
  */
-@Data
-public class VnPayCreateUrlRequestDto {
+public record VnPayCreateUrlRequestDto(
+        int invoiceId,
+        long amount,
+        String clientIp,
+        String feOrigin
+) { }
 
-    /**
-     * ID hoá đơn – dùng làm vnp_TxnRef
-     */
-    private int invoiceId;
-
-    /**
-     * Số tiền VND (chưa nhân 100, BE sẽ nhân khi gửi sang VNPay)
-     */
-    private long amount;
-
-    /**
-     * IP client – nếu null/blank thì BE tự lấy từ HttpServletRequest
-     */
-    private String clientIp;
-}

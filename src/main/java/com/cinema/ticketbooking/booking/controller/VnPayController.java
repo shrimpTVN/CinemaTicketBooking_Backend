@@ -1,5 +1,6 @@
 package com.cinema.ticketbooking.booking.controller;
 
+import com.cinema.ticketbooking.booking.service.IInvoiceService;
 import com.cinema.ticketbooking.booking.service.IVnPayService;
 import com.cinema.ticketbooking.dto.requestDto.VnPayCreateUrlRequestDto;
 import com.cinema.ticketbooking.dto.responseDto.VnPayCreateUrlResponseDto;
@@ -56,6 +57,7 @@ import java.util.Map;
 public class VnPayController {
 
     private final IVnPayService vnPayService;
+    private final IInvoiceService invoiceService;
 
     /**
      * FE gọi endpoint này để nhận URL thanh toán VNPay.
@@ -71,18 +73,19 @@ public class VnPayController {
             HttpServletRequest httpRequest
     ) {
         // Lấy IP từ request thật nếu FE không gửi
-        String clientIp = request.getClientIp();
+        String clientIp = request.clientIp();
         if (clientIp == null || clientIp.isBlank()) {
             clientIp = getClientIp(httpRequest);
         }
 
         String paymentUrl = vnPayService.createPaymentUrl(
-                request.getInvoiceId(),
-                request.getAmount(),
-                clientIp
+                request.invoiceId(),
+                request.amount(),
+                clientIp,
+                request.feOrigin()
         );
 
-        log.info("[VNPay] Created payment URL for invoiceId={}, amount={}", request.getInvoiceId(), request.getAmount());
+        log.info("[VNPay] Created payment URL for invoiceId={}, amount={}", request.invoiceId(), request.amount());
         return ResponseEntity.ok(new VnPayCreateUrlResponseDto(paymentUrl));
     }
 
@@ -92,7 +95,6 @@ public class VnPayController {
      *
      * VNPay gửi các param: vnp_ResponseCode, vnp_TxnRef, vnp_Amount,
      *                      vnp_SecureHash, vnp_TransactionNo, ...
-     *
      * vnp_ResponseCode = "00" → thanh toán thành công
      * vnp_ResponseCode != "00" → thất bại hoặc bị huỷ
      */
@@ -106,6 +108,8 @@ public class VnPayController {
         String responseCode = params.getOrDefault("vnp_ResponseCode", "99");
         String txnRef = params.getOrDefault("vnp_TxnRef", "");
 
+        String feOrigin = params.get("fe_origin");
+
         if (isValid && "00".equals(responseCode)) {
             // Thanh toán thành công → cập nhật invoice PAID
             try {
@@ -115,11 +119,11 @@ public class VnPayController {
             } catch (NumberFormatException e) {
                 log.error("[VNPay] Invalid txnRef (invoiceId): {}", txnRef);
             }
-            response.sendRedirect(vnPayService.getFESuccessUrl(params));
+            response.sendRedirect(vnPayService.getFESuccessUrl(params, feOrigin));
         } else {
             // Chữ ký sai hoặc thanh toán thất bại/huỷ
             log.warn("[VNPay] Payment FAILED or invalid signature. responseCode={}, txnRef={}", responseCode, txnRef);
-            response.sendRedirect(vnPayService.getFEFailureUrl(params));
+            response.sendRedirect(vnPayService.getFEFailureUrl(params,  feOrigin));
         }
     }
 
