@@ -71,8 +71,6 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Arrays.asList("http://localhost:5175","http://localhost:5173", frontendUrl));
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5175","http://localhost:5173"));
-//        config.setAllowedOrigins(List.of("*"));
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.setAllowCredentials(true);

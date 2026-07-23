@@ -14,6 +14,7 @@ import com.cinema.ticketbooking.entity.User;
 import com.cinema.ticketbooking.user.service.impl.UserServiceImpl;
 import jakarta.validation.Payload;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,6 +33,7 @@ import java.security.GeneralSecurityException;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -52,6 +54,7 @@ public class AuthController {
             UserResponseDto userDto = null;
             if (fetchedUser != null) userDto = userService.getUserByEmail(fetchedUser.getUsername());
 
+            log.info("User {} logged in successfully. JWT Token generated.", userDto.email());
             // Return the response with the Set-Cookie header.
             return ResponseEntity.status(HttpStatus.OK)
                     .header(HttpHeaders.SET_COOKIE, authService.getUserCookie(jwtToken).toString())
@@ -62,7 +65,7 @@ public class AuthController {
         } catch (AuthenticationException ex) {
             return buildErrorResponse(HttpStatus.UNAUTHORIZED, "Authentication failed");
         } catch (Exception e) {
-            System.out.println("Error occurred during login: " + e.getMessage());
+            log.error("Error occurred during login: {}", e.getMessage());
             return buildErrorResponse(HttpStatus.BAD_REQUEST, "An error occurred while processing your request");
         }
 
@@ -81,6 +84,7 @@ public class AuthController {
 
         // Generate system JWT
         String systemJwt = jwtUtil.generateJwtToken(userDto);
+        log.info("User {} logged in via Google successfully. System JWT Token generated.", userDto.email());
         // Return the response with the Set-Cookie header.
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, authService.getUserCookie(systemJwt).toString())
