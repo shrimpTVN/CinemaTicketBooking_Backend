@@ -100,7 +100,7 @@ drop table if exists hall;
 create table if not exists hall
 (
     id           int auto_increment primary key,
-    name         varchar(100)                          not null unique,
+    name         varchar(100)                          not null,
     width        int                                   not null check (width > 0),
     height       int                                   not null check (height > 0),
     status       varchar(50) default 'ON',
@@ -111,6 +111,9 @@ create table if not exists hall
     updated_by   VARCHAR(20) DEFAULT NULL,
     foreign key (hall_type_id) references hall_type (id) on delete restrict
 );
+SHOW INDEX FROM hall;
+ALTER TABLE hall  DROP INDEX name;
+
 
 create table if not exists seat_type
 (
