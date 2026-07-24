@@ -84,14 +84,6 @@ public class HallServiceImpl  implements IHallService {
         return "Hall status updated successfully";
     }
 
-//    You fetch the Hall entity just to access its getSeats() collection.
-//    @Override
-//    public List<SeatDto> getHallSeatMap(int id) {
-//        Hall hall = hallRepository.findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundException("Hall not found with id: " + id));
-//        @NonNull Set<Seat> seats = hall.getSeats();
-//        return seats.stream().map(this::transformToDto).toList();
-//    }
 
     // Better approach
     @Override
@@ -160,11 +152,7 @@ public class HallServiceImpl  implements IHallService {
             newSeats.add(seat);
         }
 
-        hall.getSeats().addAll(newSeats);
-
-        // We only call save once. Hibernate will batch insert the seats.
-        hallRepository.save(hall);
-
+        seatRepository.saveAll(newSeats);
         return newSeats.stream().map(this::transformToDto).toList();
     }
 
