@@ -17,7 +17,7 @@ public class ImageStorageServiceImpl implements ImageStorageService {
     private final Cloudinary cloudinary;
 
     @Override
-    public String uploadTempImage(MultipartFile file) throws IOException {
+    public String uploadImage(MultipartFile file, String folderName) throws IOException {
         // Upload to a specific 'temp-cinema-uploads' folder
         Map params = ObjectUtils.asMap(
                 "folder", "temp-cinema-uploads",
