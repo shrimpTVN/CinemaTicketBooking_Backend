@@ -1,6 +1,8 @@
 package com.cinema.ticketbooking.core.security.filter;
 
 import com.cinema.ticketbooking.core.util.JwtUtil;
+import com.cinema.ticketbooking.core.security.custom.CustomUserDetails;
+import com.cinema.ticketbooking.core.security.custom.CustomUserDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -13,7 +15,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -27,6 +28,7 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     private final JwtUtil jwtUtil;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Qualifier("publicPaths")
     private final List<String> publicPaths;
@@ -45,10 +47,10 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
                 Claims claims = jwtUtil.parseClaims(jwt);
 
                 String username = String.valueOf(claims.get("username"));
-                String roles = String.valueOf(claims.get("roles"));
+                CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        username, null, AuthorityUtils.commaSeparatedStringToAuthorityList(roles));
+                        userDetails, null, userDetails.getAuthorities());
 
                 //set the Security context
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -114,4 +116,3 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
 //        filterChain.doFilter(request, response);
 //
 //    }
-

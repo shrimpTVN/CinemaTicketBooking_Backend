@@ -61,7 +61,7 @@ public class SecurityConfig {
                     publicPaths.forEach(path -> requests.requestMatchers(path).permitAll());
                     securedPaths.forEach(path -> requests.requestMatchers(path).authenticated());
                 })
-                .addFilterBefore(new JwtTokenValidatorFilter(jwtUtil, publicPaths), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenValidatorFilter(jwtUtil, customUserDetailsService, publicPaths), BasicAuthenticationFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable) // of form login to user FE login form
                 .httpBasic(AbstractHttpConfigurer::disable) // disable basic auth to prevent browser popup
                 .build();
