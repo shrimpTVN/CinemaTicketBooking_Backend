@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class EventService implements IEventService {
+public class EventServiceImpl implements IEventService {
     private final EventRepository eventRepository;
     @Override
     public List<EventResponseDto> getAllEvents() {
