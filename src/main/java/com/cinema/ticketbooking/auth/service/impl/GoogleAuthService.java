@@ -1,6 +1,7 @@
 package com.cinema.ticketbooking.auth.service.impl;
 
 import com.cinema.ticketbooking.auth.service.IGoogleAuthService;
+import com.cinema.ticketbooking.core.util.BookingReferenceGenerator;
 import com.cinema.ticketbooking.dto.requestDto.UserRequestDto;
 import com.cinema.ticketbooking.dto.responseDto.UserResponseDto;
 import com.cinema.ticketbooking.entity.User;
@@ -27,6 +28,8 @@ public class GoogleAuthService implements IGoogleAuthService {
 
     private final IUserService userService;
     private final UserRepository userRepository;
+    private final BookingReferenceGenerator generator = new BookingReferenceGenerator();
+
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String clientId;
 
@@ -63,8 +66,13 @@ public class GoogleAuthService implements IGoogleAuthService {
         String name = payload.get("name").toString();
 
         if (!userRepository.existsUserByEmail(email)) {
-            return userService.register(new UserRequestDto(name, LocalDate.of(2000, 1, 1),
-                    0, "0123456789", email, "random-password", 0, "ON"));
+            LocalDate DoB = LocalDate.of(2000, 1, 1);
+            String phoneNumber = generator.generateHumanReadableCode(10);
+            String password = generator.generateHumanReadableCode(26);
+
+            UserRequestDto user = new UserRequestDto(name, DoB, 0, phoneNumber, email, password, 1, "ON");
+
+            return userService.register(user, "GOOGLE");
         }
         return userService.getUserByEmail(email);
     }

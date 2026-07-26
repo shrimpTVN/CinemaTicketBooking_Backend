@@ -231,9 +231,8 @@ create table if not exists user
     id           int auto_increment primary key,
     name         varchar(100) not null,
     DoB          date         not null,
-    gender       varchar(10)  not null,
     point        int                   default 0 check (point >= 0),
-    phone_number varchar(10)  not null unique,
+    phone_number varchar(10)  not null,
     email        varchar(255) not null unique,
     password     varchar(255) not null,
     role_id      int          not null default 2,
@@ -244,6 +243,12 @@ create table if not exists user
     updated_by   VARCHAR(20)           DEFAULT NULL,
     foreign key (role_id) references role (id) on delete restrict
 );
+
+SHOW INDEX FROM user;
+ALTER TABLE user
+    DROP INDEX phone_number;
+alter table user
+    add register_by varchar(50) default 'MANUAL';
 
 drop table if exists invoice;
 create table if not exists invoice

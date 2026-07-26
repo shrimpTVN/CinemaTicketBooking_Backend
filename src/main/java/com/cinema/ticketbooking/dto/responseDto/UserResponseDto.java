@@ -12,5 +12,6 @@ import java.time.LocalDate;
 public record UserResponseDto(Integer id, @NotNull @Size(max = 100) String name, @NotNull LocalDate doB, Integer point,
                               @NotNull @Size(max = 10) String phoneNumber, @NotNull @Size(max = 50) String email,
                               @Size(max = 20) String role,
-                              @Size(max = 50) String status) implements Serializable {
+                              @Size(max = 50) String status,
+                              String registerBy) implements Serializable {
 }

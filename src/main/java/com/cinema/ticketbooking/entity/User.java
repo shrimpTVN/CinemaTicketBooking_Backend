@@ -48,6 +48,11 @@ public class User extends BaseEntity {
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
+    @Size(max = 50)
+    @NotNull
+    @Column(name="register_by", nullable = false, length = 50)
+    private String registerBy = "MANUAL";
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
