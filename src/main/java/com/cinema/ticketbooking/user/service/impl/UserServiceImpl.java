@@ -59,7 +59,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserResponseDto register(UserRequestDto userRequestDto) {
+    public UserResponseDto register(UserRequestDto userRequestDto, String registerBy) {
         User user = new User();
         if (userRepository.findByEmail(userRequestDto.email()) != null) {
             throw new IllegalArgumentException("Email is already in use");
@@ -69,6 +69,7 @@ public class UserServiceImpl implements IUserService {
         user.setDoB(userRequestDto.doB());
         user.setPhoneNumber(userRequestDto.phoneNumber());
         user.setEmail(userRequestDto.email());
+        user.setRegisterBy(registerBy);
 
         user.setPassword(passwordEncoder.encode(userRequestDto.password()));
         Role role = roleRepository.findById(2).orElseThrow(() -> new ResourceNotFoundException("Role not found with id: 2"));
@@ -127,6 +128,6 @@ public class UserServiceImpl implements IUserService {
 
     public UserResponseDto transformToDto(User user) {
         return new UserResponseDto(user.getId(), user.getName(), user.getDoB(), user.getPoint(),
-                user.getPhoneNumber(), user.getEmail(), user.getRole().getName(), user.getStatus());
+                user.getPhoneNumber(), user.getEmail(), user.getRole().getName(), user.getStatus(), user.getRegisterBy());
     }
 }

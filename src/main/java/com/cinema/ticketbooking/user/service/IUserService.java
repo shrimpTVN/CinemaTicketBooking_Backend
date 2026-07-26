@@ -12,7 +12,7 @@ public interface IUserService {
     public UserResponseDto getUserByEmail(String email);
 
     public UserResponseDto Login(String email, String password);
-    public UserResponseDto register(UserRequestDto userRequestDto);
+    public UserResponseDto register(UserRequestDto userRequestDto, String registerBy);
     public void changePassword(int userId, String email, String oldPassword, String newPassword);
 
     public UserResponseDto createUser(UserRequestDto userRequestDto);
