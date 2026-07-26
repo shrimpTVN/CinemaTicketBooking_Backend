@@ -7,7 +7,7 @@ public interface ImageStorageService {
     /**
      * Uploads a file to a temporary holding area and returns the URL.
      */
-    String uploadTempImage(MultipartFile file) throws IOException;
+    String uploadImage(MultipartFile file, String folderName) throws IOException;
 
     /**
      * Moves an image from the temporary area to the permanent movie-posters folder.

@@ -3,7 +3,10 @@ package com.cinema.ticketbooking.media.controller;
 import com.cinema.ticketbooking.media.service.ImageStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -19,10 +22,43 @@ public class MediaController {
     private final ImageStorageService imageStorageService;
 
 
-    @PostMapping(path={"/upload/movie-poster","/upload/seat-type-image","/upload/combo-image"})
-    public ResponseEntity<Map<String, String>> uploadPoster(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/upload/movie-poster")
+    public ResponseEntity<Map<String, String>> uploadMoviePoster(@RequestParam("file") MultipartFile file) {
         try {
-            String imageUrl = imageStorageService.uploadTempImage(file);
+            String imageUrl = imageStorageService.uploadImage(file, "movies");
+            // Return JSON containing the URL
+            return ResponseEntity.ok(Map.of("url", imageUrl));
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/upload/seat-type-image")
+    public ResponseEntity<Map<String, String>> uploadSeatTypeImage(@RequestParam("file") MultipartFile file) {
+        try {
+            String imageUrl = imageStorageService.uploadImage(file, "seat-types");
+            // Return JSON containing the URL
+            return ResponseEntity.ok(Map.of("url", imageUrl));
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/upload/combo-image")
+    public ResponseEntity<Map<String, String>> uploadComboImage(@RequestParam("file") MultipartFile file) {
+        try {
+            String imageUrl = imageStorageService.uploadImage(file, "combos");
+            // Return JSON containing the URL
+            return ResponseEntity.ok(Map.of("url", imageUrl));
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(path={"/upload/event-poster", "/upload/event-banner"})
+    public ResponseEntity<Map<String, String>> uploadEventImages(@RequestParam("file") MultipartFile file) {
+        try {
+            String imageUrl = imageStorageService.uploadImage(file, "events");
             // Return JSON containing the URL
             return ResponseEntity.ok(Map.of("url", imageUrl));
         } catch (IOException e) {
@@ -37,7 +73,7 @@ public class MediaController {
         for (MultipartFile file : files) {
             try {
                 // Utilizing the temp bin pattern from our previous session
-                String url = imageStorageService.uploadTempImage(file);
+                String url = imageStorageService.uploadImage(file, "halls");
                 uploadedUrls.add(url);
             } catch (Exception e) {
                 // ARCHITECT'S NOTE: In a production system, you might want to

@@ -112,7 +112,8 @@ create table if not exists hall
     foreign key (hall_type_id) references hall_type (id) on delete restrict
 );
 SHOW INDEX FROM hall;
-ALTER TABLE hall  DROP INDEX name;
+ALTER TABLE hall
+    DROP INDEX name;
 
 
 create table if not exists seat_type
@@ -324,7 +325,34 @@ CREATE TABLE IF NOT EXISTS payment_method
     updated_by  VARCHAR(20)    DEFAULT NULL
 );
 
+create table if not exists comment_rating
+(
+    id         int auto_increment primary key,
+    user_id    int                                   not null,
+    movie_id   int                                   not null,
+    rating     float                                 not null check (rating >= 0 AND rating <= 10),
+    comment    text                                  not null,
+    created_at TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by VARCHAR(20)                           NOT NULL,
+    updated_at TIMESTAMP   DEFAULT NULL,
+    updated_by VARCHAR(20) DEFAULT NULL,
+    foreign key (user_id) references user (id) on delete restrict,
+    foreign key (movie_id) references movie (id) on delete restrict
+);
 
+create table if not exists event
+(
+    id          int auto_increment primary key,
+    title       varchar(200)                          not null,
+    description text                                  not null,
+    poster      varchar(500)                          not null,
+    banner      varchar(500)                          not null,
+    status      varchar(50) default 'ON',
+    created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by  VARCHAR(20)                           NOT NULL,
+    updated_at  TIMESTAMP   DEFAULT NULL,
+    updated_by  VARCHAR(20) DEFAULT NULL
+);
 
 
 
