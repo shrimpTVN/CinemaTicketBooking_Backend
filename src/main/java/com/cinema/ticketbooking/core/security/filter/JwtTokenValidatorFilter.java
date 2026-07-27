@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -46,15 +47,27 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
                 // Delegating token parsing entirely to JwtUtil for Single Responsibility Principle
                 Claims claims = jwtUtil.parseClaims(jwt);
 
+                // 1. Extract data purely from the token
                 String username = String.valueOf(claims.get("username"));
-                CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+                Integer userId = (Integer) claims.get("userId");
+                String authoritiesClaim = String.valueOf(claims.get("roles"));
 
+                // 2. Reconstruct the CustomUserDetails object statelessly
+                CustomUserDetails statelessPrincipal = new CustomUserDetails(
+                        userId,
+                        username,
+                        "", // Password is not needed for already-authenticated stateless requests
+                        AuthorityUtils.commaSeparatedStringToAuthorityList(authoritiesClaim)
+                );
+
+                // 3. Set the statelessPrincipal as the FIRST argument (the Principal)
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
+                        statelessPrincipal,
+                        null,
+                        statelessPrincipal.getAuthorities()
+                );
 
-                //set the Security context
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
             } catch (ExpiredJwtException exception) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Token Expired");
@@ -75,44 +88,3 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
 //    }
 
 }
-
-//    @Override
-//    protected void doFilterInternal(HttpServletRequest request,
-//                                    HttpServletResponse response, FilterChain filterChain)
-//            throws ServletException, IOException {
-//
-//        String authHeader = request.getHeader(ApplicationConstants.JWT_HEADER);
-//
-//        if (null != authHeader) {
-//            try {
-//                // Extract the JWT token
-//                // Whoever bears (holds) the token is trusted and can access the protected resource.
-//                String jwt = authHeader.substring(7); // Remove 'Bearer ' prefix
-//                Environment env = getEnvironment();
-//                if (null != env) {
-//                    String secret = env.getProperty(ApplicationConstants.JWT_SECRET_KEY,
-//                            ApplicationConstants.JWT_SECRET_DEFAULT_VALUE);
-//                    SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-//
-//                    if (null != secretKey) {
-//                        Claims claims = Jwts.parser().verifyWith(secretKey)
-//                                .build().parseSignedClaims(jwt).getPayload();
-//                        String username = String.valueOf(claims.get("username"));
-//                        String roles = String.valueOf(claims.get("roles"));
-//                        Authentication authentication = new UsernamePasswordAuthenticationToken(username,
-//                                null, AuthorityUtils.commaSeparatedStringToAuthorityList(roles));
-//                        SecurityContextHolder.getContext().setAuthentication(authentication);
-//                    }
-//                }
-//
-//            } catch (ExpiredJwtException exception) {
-//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//                response.getWriter().write("Token Expired");
-//                return;
-//            } catch (Exception exception) {
-//                throw new BadCredentialsException("Invalid Token received!");
-//            }
-//        }
-//        filterChain.doFilter(request, response);
-//
-//    }

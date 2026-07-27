@@ -1,5 +1,7 @@
 package com.cinema.ticketbooking.dto.requestDto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
@@ -13,9 +15,9 @@ import lombok.Data;
  * }
  */
 public record VnPayCreateUrlRequestDto(
-        int invoiceId,
-        long amount,
+       @NotNull int invoiceId,
+        @NotNull @Min(0) long amount,
         String clientIp,
-        String feOrigin
+        @NotNull String feOrigin
 ) { }
 

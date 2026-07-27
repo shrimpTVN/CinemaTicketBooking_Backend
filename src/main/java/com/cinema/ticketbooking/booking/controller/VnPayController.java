@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -60,20 +61,19 @@ public class VnPayController {
     private final IInvoiceService invoiceService;
 
     /**
-     * FE gọi endpoint này để nhận URL thanh toán VNPay.
-     *
+     * FE call this API to take the URL payment with VNPay
      * Request body: { invoiceId, amount, clientIp (optional) }
      * Response:     { paymentUrl }
-     *
-     * FE sau đó làm: window.location.href = response.paymentUrl
      */
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create-payment-url")
     public ResponseEntity<VnPayCreateUrlResponseDto> createPaymentUrl(
             @RequestBody VnPayCreateUrlRequestDto request,
-            HttpServletRequest httpRequest
-    ) {
-        // Lấy IP từ request thật nếu FE không gửi
+            HttpServletRequest httpRequest) {
+
         String clientIp = request.clientIp();
+
+        //take client IP from the HTTP request if client didn't send it inside the request body
         if (clientIp == null || clientIp.isBlank()) {
             clientIp = getClientIp(httpRequest);
         }
@@ -91,12 +91,11 @@ public class VnPayController {
 
     /**
      * VNPay redirect user về URL này sau khi thanh toán.
-     * BE xác thực chữ ký → cập nhật invoice → redirect user sang FE.
-     *
-     * VNPay gửi các param: vnp_ResponseCode, vnp_TxnRef, vnp_Amount,
+     * Spring verify the signature from VNPay -> mark the invoice as PAID if valid -> redict user to FE success/failure page.
+     * VNPay will send these params: vnp_ResponseCode, vnp_TxnRef, vnp_Amount,
      *                      vnp_SecureHash, vnp_TransactionNo, ...
-     * vnp_ResponseCode = "00" → thanh toán thành công
-     * vnp_ResponseCode != "00" → thất bại hoặc bị huỷ
+     * vnp_ResponseCode = "00" → pay successful
+     * vnp_ResponseCode != "00" → pay failed or canceled
      */
     @GetMapping("/return")
     public void handleReturn(
@@ -104,14 +103,16 @@ public class VnPayController {
             jakarta.servlet.http.HttpServletResponse response
     ) throws Exception {
         log.info("[VNPay] Return callback received: {}", params);
+        //check whether params valid or not
         boolean isValid = vnPayService.verifyReturnSignature(params);
+        //take response code from the params
         String responseCode = params.getOrDefault("vnp_ResponseCode", "99");
         String txnRef = params.getOrDefault("vnp_TxnRef", "");
 
         String feOrigin = params.get("fe_origin");
 
         if (isValid && "00".equals(responseCode)) {
-            // Thanh toán thành công → cập nhật invoice PAID
+            // if payment success, updating invoice as paid.
             try {
                 int invoiceId = Integer.parseInt(txnRef);
                 vnPayService.markInvoicePaid(invoiceId, params);

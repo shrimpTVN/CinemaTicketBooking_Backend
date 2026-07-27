@@ -66,6 +66,7 @@ public class PriceListServiceImpl implements IPriceListService {
         SeatType seatType = seat.getSeatType();
 
         List<PriceList> priceLists = priceListRepository.findByReferences(hallType.getId(), seatType.getId(), audienceTypeId);
+        System.out.println("Price lists found: " + priceLists.size() + " for hallTypeId: " + hallType.getId() + ", seatTypeId: " + seatType.getId() + ", audienceTypeId: " + audienceTypeId);
         if (priceLists.isEmpty()) {
             throw new ResourceNotFoundException("Price list not found for the given references");
         }

@@ -67,6 +67,7 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
 
     @Override
     public List<ShowtimeSeatResponseDto> getSeatsForShowtime(Integer showtimeId) {
+        System.out.println("Fetching seat map for showtime ID: " + showtimeId);
         List<ShowtimeSeat> showtimeSeats = showtimeSeatRepository.findSeatMapByShowtimeId(showtimeId);
         return showtimeSeats.stream().map(this::transformToDto).collect(Collectors.toList());
     }
@@ -96,7 +97,7 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
     @Transactional
     public void holdSeats(Integer showtimeId, List<Integer> seatIds, Integer userId) {
         List<ShowtimeSeat> requestedSeats = getShowtimeSeats(showtimeId, seatIds);
-
+        log.info("User {} is attempting to hold seats: {} for showtime: {}", userId, seatIds, showtimeId);
         // 4. Process the state transition
         for (ShowtimeSeat seat : requestedSeats) {
             if (!"AVAILABLE".equals(seat.getStatus())) {
@@ -108,7 +109,6 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
             // Hold the seat for exactly 5 minutes
             seat.setHoldUntil(LocalDateTime.now().plusMinutes(5));
         }
-
         // 5. Attempt to save. This is where Optimistic Locking kicks in!
         try {
             showtimeSeatRepository.saveAll(requestedSeats);
@@ -127,6 +127,7 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
     @Override
     @Transactional
     public void confirmBooking(Integer showtimeId, List<Integer> seatIds, Integer userId) {
+
         List<ShowtimeSeat> requestedSeats = getShowtimeSeats(showtimeId, seatIds);
         requestedSeats.forEach(seat -> {
 //            only confirm the seat when the current user is who already hold the seat and the seat status is held
@@ -138,6 +139,7 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
             seat.setHoldUntil(null);
         });
         try {
+            log.info("Confirmed {} seats of the showtime {} for user {}", seatIds, showtimeId, userId);
             showtimeSeatRepository.saveAll(requestedSeats);
             // 2. BROADCAST: Tell everyone viewing this showtime that seats are on BOOKED
             broadcastToSubscribedUser(showtimeId, seatIds, "BOOKED", userId);
@@ -149,11 +151,12 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
     @Override
     @Transactional
     public void releaseSeats(Integer showtimeId, List<Integer> seatIds, Integer userId) {
+
         List<ShowtimeSeat> requestedSeats = getShowtimeSeats(showtimeId, seatIds);
         requestedSeats.forEach(seat -> {
             //only release the showtime-sea that held by this user and in the "HELD" status
             if (!Objects.equals(seat.getHoldBy(), userId) || !"HELD".equals(seat.getStatus())) {
-//                System.out.println("Releasing seat " + seat.getId().getSeatId() + " held by user: " + seat.getHoldBy());
+                log.warn("Releasing seat {} held by user: {}", seat.getId().getSeatId(), seat.getHoldBy());
                 throw new ConcurrentSeatBookingException("Seat " + seat.getId().getSeatId() + " is no held by user : " + userId);
             }
             seat.setStatus("AVAILABLE");
@@ -161,6 +164,7 @@ public class ShowtimeSeatServiceImpl implements IShowtimeSeatService {
             seat.setHoldUntil(null);
         });
         try {
+            log.info("released {} seats of the showtime {} held by user {}", seatIds, showtimeId, userId);
             showtimeSeatRepository.saveAll(requestedSeats);
             // 2. BROADCAST: Tell everyone viewing this showtime that seats are on AVAILABLE
             broadcastToSubscribedUser(showtimeId, seatIds, "AVAILABLE", userId);

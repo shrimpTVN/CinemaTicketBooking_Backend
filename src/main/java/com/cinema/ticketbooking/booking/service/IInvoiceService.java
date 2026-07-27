@@ -12,5 +12,8 @@ public interface IInvoiceService {
 
     public InvoiceResponseDto createInvoice(InvoiceRequestDto invoiceRequestDto);
 //    public InvoiceResponseDto updateInvoice(InvoiceRequestDto invoiceRequestDto);
-    public void updateInvoiceStatus(Integer id, String status);
+//    public void updateInvoiceStatus(Integer id, String status);
+
+    public void markInvoicePaid(Integer invoiceId);
+    public void markInvoiceCancelled(Integer invoiceId);
 }

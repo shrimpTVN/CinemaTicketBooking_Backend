@@ -2,6 +2,8 @@ package com.cinema.ticketbooking.booking.service.impl;
 
 import com.cinema.ticketbooking.booking.service.IInvoiceService;
 import com.cinema.ticketbooking.booking.service.IVnPayService;
+import com.cinema.ticketbooking.entity.Invoice;
+import com.cinema.ticketbooking.repository.InvoiceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,9 +50,6 @@ public class VnPayServiceImpl implements IVnPayService {
     @Value("${vnpay.fe-failure-url}")
     private String feFailureUrl;
 
-    // InvoiceService để cập nhật trạng thái sau khi thanh toán
-    private final IInvoiceService invoiceService;
-
     // ── Định dạng thời gian VNPay yêu cầu ────────────────────────────────────
     private static final DateTimeFormatter VNP_DATE_FMT =
             DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
@@ -58,9 +57,21 @@ public class VnPayServiceImpl implements IVnPayService {
     // ── Timezone Việt Nam ─────────────────────────────────────────────────────
     private static final ZoneId VN_ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
 
+
+    private final IInvoiceService invoiceService;
+    private final InvoiceRepository invoiceRepository;
+
+
     // ─────────────────────────────────────────────────────────────────────────
     @Override
     public String createPaymentUrl(int invoiceId, long amount, String clientIp, String feOrigin) {
+        Invoice invoice = invoiceRepository.findById(invoiceId)
+                .orElseThrow(() -> new IllegalArgumentException("Invoice not found: " + invoiceId));
+
+        if (!invoice.getStatus().equals("PENDING")) {
+            throw new IllegalArgumentException("Invoice status is not PENDING. Cannot create payment URL for invoice " + invoiceId);
+        }
+
         // Lấy giờ THẬT của Việt Nam từ đồng hồ server (không bị lỗi timezone)
         String createDate = LocalDateTime.now(VN_ZONE).format(VNP_DATE_FMT);
 
@@ -128,7 +139,7 @@ public class VnPayServiceImpl implements IVnPayService {
     @Override
     public void markInvoicePaid(int invoiceId, Map<String, String> vnpayParams) {
         // Gọi service Invoice có sẵn để cập nhật trạng thái
-        invoiceService.updateInvoiceStatus(invoiceId, "PAID");
+        invoiceService.markInvoicePaid(invoiceId);
         log.info("[VNPay] Invoice {} marked as PAID. VNPay TxnNo={}",
                 invoiceId, vnpayParams.get("vnp_TransactionNo"));
     }

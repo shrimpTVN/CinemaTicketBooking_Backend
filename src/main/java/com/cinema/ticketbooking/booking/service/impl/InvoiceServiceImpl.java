@@ -1,8 +1,7 @@
 package com.cinema.ticketbooking.booking.service.impl;
 
-import com.cinema.ticketbooking.booking.service.IPriceListService;
-import com.cinema.ticketbooking.repository.AudienceTypeRepository;
 import com.cinema.ticketbooking.booking.service.IInvoiceService;
+import com.cinema.ticketbooking.booking.service.IPriceListService;
 import com.cinema.ticketbooking.booking.service.IShowtimeSeatService;
 import com.cinema.ticketbooking.dto.requestDto.InvoiceDetailRequestDto;
 import com.cinema.ticketbooking.dto.requestDto.InvoiceRequestDto;
@@ -14,6 +13,7 @@ import com.cinema.ticketbooking.dto.responseDto.TicketResponseDto;
 import com.cinema.ticketbooking.entity.*;
 import com.cinema.ticketbooking.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class InvoiceServiceImpl implements IInvoiceService {
 
     private final InvoiceRepository invoiceRepository;
@@ -54,6 +55,7 @@ public class InvoiceServiceImpl implements IInvoiceService {
         List<Invoice> invoices = invoiceRepository.findByUserId(userId);
         return invoices.stream().map(this::transformToDto).toList();
     }
+
     @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
     public InvoiceResponseDto createInvoice(InvoiceRequestDto request) {
@@ -100,6 +102,8 @@ public class InvoiceServiceImpl implements IInvoiceService {
         return transformToDto(savedInvoice);
     }
 
+
+
     private List<Ticket> processTickets(Invoice invoice, Showtime showtime,
                                         List<SeatCheckoutRequestDto> checkouts, Integer userId) {
         List<Ticket> tickets = new ArrayList<>();
@@ -115,7 +119,9 @@ public class InvoiceServiceImpl implements IInvoiceService {
             AudienceType audienceType = audienceTypeRepository.findById(checkout.audienceTypeId())
                     .orElseThrow(() -> new IllegalArgumentException("Audience type not found"));
 
-            showtimeSeatService.confirmBooking(showtime.getId(), checkout.seatIds(), userId); // Ensure atomic transition
+            //add that step, we only hold seats for the user. The seats will become BOOKED when payment is successfully
+            //we don't need to hold seat at that step because we already did it  before
+//            showtimeSeatService.holdSeats(showtime.getId(), checkout.seatIds(), userId); // Ensure atomic transition
 
             for (Integer seatId : checkout.seatIds()) {
                 Seat seat = seatRepository.findById(seatId).orElseThrow(); // Replace with batch map lookup
@@ -166,32 +172,75 @@ public class InvoiceServiceImpl implements IInvoiceService {
         return details;
     }
 
+    @Override
+    @Transactional(isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
+    public void markInvoicePaid(Integer invoiceId) {
+        Invoice invoice = invoiceRepository.findById(invoiceId)
+                .orElseThrow(() -> new IllegalArgumentException("Invoice not found for ID: " + invoiceId));
 
+        if (invoice.getStatus().equals("PENDING")) {
+            invoice.setStatus("PAID");
+
+            Set<Ticket> tickets = new HashSet<>(invoice.getTickets());
+            int showtimeId = tickets.iterator().next().getShowtime().getId();
+            List<Integer> seatIds = tickets.stream().map(ticket -> ticket.getSeat().getId()).toList();
+
+            //confirm the booking of all seats of the invoice
+            showtimeSeatService.confirmBooking(showtimeId, seatIds, invoice.getUser().getId());
+
+            invoiceRepository.save(invoice);
+        } else {
+
+            if (invoice.getStatus().equals("PAID")) {
+                log.warn("Attempt to mark invoice {} as PAID, but it is already marked as PAID.", invoiceId);
+                throw new IllegalArgumentException("Invoice already marked as PAID");
+            }
+
+            log.warn("Attempt to mark invoice {} as PAID, but it is not in PENDING status", invoiceId);
+            throw new IllegalStateException("Invoice is not in PENDING status, cannot mark as PAID.");
+        }
+
+    }
 
     @Override
-    public void updateInvoiceStatus(Integer id, String status) {
-        Invoice invoice = invoiceRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invoice not found for ID: " + id));
-        invoice.setStatus(status);
-        invoiceRepository.save(invoice);
+    @Transactional(isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
+    public void markInvoiceCancelled(Integer invoiceId) {
+        Invoice invoice = invoiceRepository.findById(invoiceId)
+                .orElseThrow(() -> new IllegalArgumentException("Invoice not found for ID: " + invoiceId));
+        //only cancelling the invoice that is in PENDING status
+        if (invoice.getStatus().equals("PENDING")) {
+            invoice.setStatus("CANCELLED");
+
+            Set<Ticket> tickets = new HashSet<>(invoice.getTickets());
+            int showtimeId = tickets.iterator().next().getShowtime().getId();
+            List<Integer> seatIds = tickets.stream().map(ticket -> ticket.getSeat().getId()).toList();
+            //release all seat of the invoice
+            showtimeSeatService.releaseSeats(showtimeId, seatIds, invoice.getUser().getId());
+
+            //delete tickets on the DB
+            invoice.setTickets(new HashSet<>()); // Clear tickets to release seats
+
+            invoiceRepository.save(invoice);
+        }
     }
+
 
     private InvoiceResponseDto transformToDto(Invoice invoice) {
         Showtime showtime = invoice.getTickets().stream().findFirst()
                 .map(Ticket::getShowtime)
                 .orElseThrow(() -> new IllegalArgumentException("No showtime found for invoice ID: " + invoice.getId()));
-    return new InvoiceResponseDto(
-            invoice.getId(),
-            invoice.getUser().getId(),
-            transformToDto(showtime),
-            invoice.getTickets().stream().map(this::transformToDto).toList(),
-            invoice.getInvoiceDetails().stream().map(this::transformToDto).toList(),
-            invoice.getPaymentMethod(), invoice.getTotalAmount(), invoice.getVat(), invoice.getStatus());
+        return new InvoiceResponseDto(
+                invoice.getId(),
+                invoice.getUser().getId(),
+                transformToDto(showtime),
+                invoice.getTickets().stream().map(this::transformToDto).toList(),
+                invoice.getInvoiceDetails().stream().map(this::transformToDto).toList(),
+                invoice.getPaymentMethod(), invoice.getTotalAmount(), invoice.getVat(), invoice.getStatus());
     }
 
     private TicketResponseDto transformToDto(Ticket ticket) {
         return new TicketResponseDto(ticket.getId(), ticket.getShowtime().getId(), ticket.getAudienceType().getName(),
-                ticket.getSeat().getRowLabel(),ticket.getSeat().getColNumber(), ticket.getPrice());
+                ticket.getSeat().getRowLabel(), ticket.getSeat().getColNumber(), ticket.getPrice());
     }
 
     private InvoiceDetailResponseDto transformToDto(InvoiceDetail invoiceDetail) {
@@ -202,97 +251,4 @@ public class InvoiceServiceImpl implements IInvoiceService {
         return new ShowtimeResponseDto(showtime.getId(), showtime.getHall().getId(), showtime.getHall().getName(),
                 showtime.getMovie().getId(), showtime.getMovie().getTitle(), showtime.getDate(), showtime.getStartTime(), showtime.getType());
     }
-
-//    @Override
-//    @Transactional(isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
-//    public InvoiceResponseDto createInvoice(InvoiceRequestDto invoiceRequestDto) {
-//        User user = userRepository.findById(invoiceRequestDto.userId())
-//                .orElseThrow(() -> new IllegalArgumentException("User not found for ID: " + invoiceRequestDto.userId()));
-//        Showtime showtime = showtimeRepository.findById(invoiceRequestDto.showtimeId())
-//                .orElseThrow(() -> new IllegalArgumentException("Showtime not found for ID: " + invoiceRequestDto.showtimeId()));
-//
-////        set basic information for invoice
-//        Invoice invoice = new Invoice();
-//        invoice.setUser(user);
-//        invoice.setStatus("PENDING");
-//        invoice.setVat(BigDecimal.valueOf(0.08));
-//        invoice.setPaymentMethod(invoiceRequestDto.paymentMethod());
-//
-////        process and set tickets
-//        Set<Ticket> tickets = new LinkedHashSet<>(processTickets(invoice, showtime, invoiceRequestDto.seatCheckouts()));
-//        invoice.setTickets(tickets);
-//
-////        process and set invoice detail
-//        Set<InvoiceDetail> invoiceDetails = new LinkedHashSet<>(processInvoiceDetail(invoice, invoiceRequestDto.invoiceDetails()));
-//        invoice.setInvoiceDetails(invoiceDetails);
-//
-////    calculate totalAmount
-//        BigDecimal totalAmount = tickets.stream().map(Ticket::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
-//        totalAmount = totalAmount.add(invoiceDetails.stream().map(InvoiceDetail::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
-//        invoice.setTotalAmount(totalAmount.add(totalAmount.multiply(invoice.getVat())));
-//
-//        Invoice savedInvoice = invoiceRepository.save(invoice);
-//
-//        return transformToDto(savedInvoice);
-//    }
-//    private List<Ticket> processTickets(Invoice invoice, Showtime showtime, List<SeatCheckoutRequestDto> seatCheckouts) {
-//        List<Ticket> tickets = new ArrayList<>();
-//        seatCheckouts.forEach(seatCheckout -> {
-//            AudienceType audienceType = audienceTypeRepository.findById(seatCheckout.audienceTypeId())
-//                    .orElseThrow(() -> new IllegalArgumentException("Audience type not found for ID: " + seatCheckout.audienceTypeId()));
-//
-//            seatCheckout.seatIds().forEach(seatId -> {
-//                Seat seat = seatRepository.findById(seatId)
-//                        .orElseThrow(() -> new IllegalArgumentException("Seat not found for ID: " + seatId));
-//
-//                if (!seat.getHall().getId().equals(showtime.getHall().getId())) {
-//                    throw new IllegalArgumentException("Seat ID: " + seatId + " does not belong to the hall of the showtime.");
-//                }
-//
-//                Ticket ticket = new Ticket();
-//                ticket.setShowtime(showtime);
-//                ticket.setInvoice(invoice);
-//                ticket.setAudienceType(audienceType);
-//                ticket.setSeat(seat);
-//                ticket.setPrice(priceListService.getSeatPrice(seatId, audienceType.getId(),
-//                        showtime.getDate()).price());
-//
-//                tickets.add(ticket);
-//
-////                change showtime-seat status to "SOLD"
-//                ShowtimeSeat showtimeSeat = showtimeSeatRepository.findByShowtimeIdAndSeatId(showtime.getId(), seat.getId());
-//                if (showtimeSeat != null) {
-//                    showtimeSeat.setStatus("SOLD");
-//                    showtimeSeatRepository.save(showtimeSeat);
-//                } else {
-//                    throw new RuntimeException("ShowtimeSeat not found for showtime ID: " + showtime.getId() + " and seat ID: " + seat.getId());
-//                }
-//            });
-//
-//
-//        });
-//
-//        return tickets;
-//    }
-//    private List<InvoiceDetail> processInvoiceDetail(Invoice invoice, List<InvoiceDetailRequestDto> invoiceDetailRequests) {
-//        List<InvoiceDetail> invoiceDetails = new ArrayList<>();
-//
-//        invoiceDetailRequests.forEach(invoiceDetailRequest -> {
-//            InvoiceDetailId id = new InvoiceDetailId(invoiceDetailRequest.productId(), invoice.getId());
-//
-//            Product product = productRepository.findById(invoiceDetailRequest.productId())
-//                    .orElseThrow(() -> new IllegalArgumentException("Product not found for ID: " + invoiceDetailRequest.productId()));
-//
-//            InvoiceDetail invoiceDetail = new InvoiceDetail();
-//            invoiceDetail.setId(id);
-//            invoiceDetail.setInvoice(invoice);
-//            invoiceDetail.setProduct(product);
-//            invoiceDetail.setQuantity(invoiceDetailRequest.quantity());
-//            invoiceDetail.setPrice(product.getPrice().multiply(BigDecimal.valueOf(invoiceDetailRequest.quantity())));
-//
-//            invoiceDetails.add(invoiceDetail);
-//
-//        });
-//        return invoiceDetails;
-//    }
 }
