@@ -189,6 +189,7 @@ public class InvoiceServiceImpl implements IInvoiceService {
             showtimeSeatService.confirmBooking(showtimeId, seatIds, invoice.getUser().getId());
 
             invoiceRepository.save(invoice);
+            log.info("Invoice {} marked as PAID successfully.", invoiceId);
         } else {
 
             if (invoice.getStatus().equals("PAID")) {
