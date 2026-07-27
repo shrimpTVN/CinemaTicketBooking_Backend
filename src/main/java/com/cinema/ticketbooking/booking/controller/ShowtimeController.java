@@ -9,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,7 +19,7 @@ public class ShowtimeController {
 
     private final IShowtimeService showtimeService;
 
-    @GetMapping({"","/"})
+    @GetMapping({"", "/"})
     public ResponseEntity<List<ShowtimeResponseDto>> getAllShowtimes() {
         List<ShowtimeResponseDto> showtimes = showtimeService.getAllShowtimes();
         return ResponseEntity.ok(showtimes);
@@ -30,10 +28,10 @@ public class ShowtimeController {
     @GetMapping("/filter")
     public ResponseEntity<List<ShowtimeResponseDto>> filterShowtimes(@RequestParam(required = false) Integer movieId,
                                                                      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-                                                                     @RequestParam(required =false) Integer hallId ) {
+                                                                     @RequestParam(required = false) Integer hallId) {
         System.out.println("Filtering showtimes with movieId: " + movieId + ", date: " + date + ", hallId: " + hallId);
         List<ShowtimeResponseDto> showtimes;
-        if (movieId != null && hallId != null && date!=null) {
+        if (movieId != null && hallId != null && date != null) {
             showtimes = showtimeService.filterShowtimes(movieId, date, hallId);
         } else if (movieId != null && date != null) {
             showtimes = showtimeService.filterShowtimes(movieId, date);
@@ -48,15 +46,14 @@ public class ShowtimeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShowtimeResponseDto> getShowTimeById(@PathVariable Integer id){
+    public ResponseEntity<ShowtimeResponseDto> getShowTimeById(@PathVariable Integer id) {
         ShowtimeResponseDto showtime = showtimeService.getShowtimeById(id);
         return ResponseEntity.ok(showtime);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping({"/",""})
-    public ResponseEntity<ShowtimeResponseDto> createShowtime(@RequestBody ShowtimeRequestDto showtimeRequestDto){
-        System.out.println(showtimeRequestDto);
+    @PostMapping({"/", ""})
+    public ResponseEntity<ShowtimeResponseDto> createShowtime(@RequestBody ShowtimeRequestDto showtimeRequestDto) {
         ShowtimeResponseDto newShowtime = showtimeService.createShowtime(showtimeRequestDto);
         return ResponseEntity.ok(newShowtime);
     }
@@ -64,7 +61,7 @@ public class ShowtimeController {
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     @PutMapping("/{id}")
-    public ResponseEntity<ShowtimeResponseDto> updateShowtime(@PathVariable Integer id, @RequestBody ShowtimeRequestDto showtimeRequestDto){
+    public ResponseEntity<ShowtimeResponseDto> updateShowtime(@PathVariable Integer id, @RequestBody ShowtimeRequestDto showtimeRequestDto) {
         ShowtimeResponseDto updatedShowtime = showtimeService.updateShowtime(id, showtimeRequestDto);
         return ResponseEntity.ok(updatedShowtime);
     }

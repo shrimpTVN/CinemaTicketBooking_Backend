@@ -38,19 +38,15 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserResponseDto getUserByEmail(String email) {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new ResourceNotFoundException("User not found with email: " + email);
-        }
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
         return transformToDto(user);
     }
 
     @Override
     public UserResponseDto Login(String email, String password) {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new ResourceNotFoundException("User not found with email: " + email);
-        }
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
 
         if (!passwordEncoder.matches(password, user.getPassword())){
             throw new IllegalArgumentException("Password is incorrect");
