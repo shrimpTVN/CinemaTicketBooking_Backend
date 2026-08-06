@@ -127,14 +127,17 @@ public class VnPayServiceImpl implements IVnPayService {
         String receivedHash = params.get("vnp_SecureHash");
         if (receivedHash == null || receivedHash.isBlank()) return false;
 
-        // Loại bỏ các field chữ ký trước khi tính lại
-        Map<String, String> filteredParams = new TreeMap<>(params);
-        filteredParams.remove("vnp_SecureHash");
-        filteredParams.remove("vnp_SecureHashType");
-
+        Map<String, String> filteredParams = new TreeMap<>();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            String key = entry.getKey();
+            if (key != null && key.startsWith("vnp_")
+                    && !"vnp_SecureHash".equals(key)
+                    && !"vnp_SecureHashType".equals(key)) {
+                filteredParams.put(key, entry.getValue());
+            }
+        }
         String signData = buildHashData(filteredParams);
         String expectedHash = hmacSHA512(hashSecret, signData);
-
         boolean valid = expectedHash.equalsIgnoreCase(receivedHash);
         if (!valid) {
             log.error("[VNPay] Signature mismatch! expected={}, received={}", expectedHash, receivedHash);

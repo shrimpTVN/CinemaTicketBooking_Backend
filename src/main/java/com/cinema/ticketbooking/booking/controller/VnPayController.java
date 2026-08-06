@@ -65,7 +65,6 @@ public class VnPayController {
      * Request body: { invoiceId, amount, clientIp (optional) }
      * Response:     { paymentUrl }
      */
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create-payment-url")
     public ResponseEntity<VnPayCreateUrlResponseDto> createPaymentUrl(
             @RequestBody VnPayCreateUrlRequestDto request,
