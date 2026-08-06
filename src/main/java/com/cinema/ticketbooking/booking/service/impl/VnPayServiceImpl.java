@@ -77,11 +77,17 @@ public class VnPayServiceImpl implements IVnPayService {
 
         String expireDate = LocalDateTime.now(VN_ZONE).plusMinutes(5).format(VNP_DATE_FMT);
 
-        // Sử dụng feOrigin động từ Frontend để làm URL redirect trực tiếp từ VNPay.
-        // Giúp trình duyệt quay về đúng IP ban đầu đã truy cập (localhost hoặc IP LAN).
-        String dynamicReturnUrl = (feOrigin != null && !feOrigin.isBlank())
-                ? feOrigin + "/booking"
-                : returnUrl;
+        // Force VNPay to ALWAYS return to the Backend's returnUrl first.
+        // We append fe_origin as a query parameter so the Backend controller
+        // can extract it and redirect the user properly afterward.
+        String backendReturnUrl = returnUrl;
+        if (feOrigin != null && !feOrigin.isBlank()) {
+            try {
+                backendReturnUrl = returnUrl + "?fe_origin=" + URLEncoder.encode(feOrigin, StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                log.error("Failed to encode feOrigin", e);
+            }
+        }
 
         // Tập hợp tham số VNPay (đã sort theo alphabet nhờ TreeMap)
         Map<String, String> params = new TreeMap<>();
@@ -95,8 +101,9 @@ public class VnPayServiceImpl implements IVnPayService {
         params.put("vnp_Locale",     "vn");
         params.put("vnp_OrderInfo",  "ThanhToanHoaDon_" + invoiceId);
         params.put("vnp_OrderType",  "other");
-        params.put("vnp_ReturnUrl",  dynamicReturnUrl);
+//        params.put("vnp_ReturnUrl",  dynamicReturnUrl);
         params.put("vnp_TxnRef",     String.valueOf(invoiceId));
+        params.put("vnp_ReturnUrl",  backendReturnUrl);
 
         // Bước 1: Chuỗi ký dùng URL-encoded values (chuẩn VNPay official Java SDK)
         // ⚠ QUAN TRỌNG: VNPay server tính hash với giá trị URL-encoded.
@@ -120,14 +127,17 @@ public class VnPayServiceImpl implements IVnPayService {
         String receivedHash = params.get("vnp_SecureHash");
         if (receivedHash == null || receivedHash.isBlank()) return false;
 
-        // Loại bỏ các field chữ ký trước khi tính lại
-        Map<String, String> filteredParams = new TreeMap<>(params);
-        filteredParams.remove("vnp_SecureHash");
-        filteredParams.remove("vnp_SecureHashType");
-
+        Map<String, String> filteredParams = new TreeMap<>();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            String key = entry.getKey();
+            if (key != null && key.startsWith("vnp_")
+                    && !"vnp_SecureHash".equals(key)
+                    && !"vnp_SecureHashType".equals(key)) {
+                filteredParams.put(key, entry.getValue());
+            }
+        }
         String signData = buildHashData(filteredParams);
         String expectedHash = hmacSHA512(hashSecret, signData);
-
         boolean valid = expectedHash.equalsIgnoreCase(receivedHash);
         if (!valid) {
             log.error("[VNPay] Signature mismatch! expected={}, received={}", expectedHash, receivedHash);
