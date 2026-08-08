@@ -45,10 +45,27 @@ public class InvoiceController {
         return ResponseEntity.ok(invoice);
     }
 
-//    @PostMapping("/change-status/{id}")
-//    public ResponseEntity<String> updateInvoiceStatus(@PathVariable Integer id, @RequestParam String status){
-//        invoiceService.updateInvoiceStatus(id, status);
-//        return ResponseEntity.ok("Invoice status updated successfully");
-//    }
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/change-status/{id}")
+    public ResponseEntity<String> updateInvoiceStatus(@PathVariable Integer id, @RequestParam String status){
+        try {
+            if ("PAID".equalsIgnoreCase(status)) {
+                invoiceService.markInvoicePaid(id);
+            } else if ("CANCELLED".equalsIgnoreCase(status)) {
+                invoiceService.markInvoiceCancelled(id);
+            } else {
+                return ResponseEntity.badRequest().body("Invalid status: " + status);
+            }
+            return ResponseEntity.ok("Invoice status updated to " + status + " successfully");
+        } catch (IllegalArgumentException e) {
+            // Already PAID or invoice not found
+            return ResponseEntity.status(409).body("Conflict: " + e.getMessage());
+        } catch (IllegalStateException e) {
+            // Invoice not in PENDING state
+            return ResponseEntity.status(409).body("Conflict: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
+    }
 
 }

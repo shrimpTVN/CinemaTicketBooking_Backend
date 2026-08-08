@@ -57,7 +57,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserResponseDto register(UserRequestDto userRequestDto, String registerBy) {
         User user = new User();
-        if (userRepository.findByEmail(userRequestDto.email()) != null) {
+        if (userRepository.existsUserByEmail(userRequestDto.email())) {
             throw new IllegalArgumentException("Email is already in use");
         }
 

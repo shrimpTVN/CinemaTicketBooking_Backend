@@ -53,7 +53,12 @@ public class InvoiceServiceImpl implements IInvoiceService {
     @Override
     public List<InvoiceResponseDto> getInvoicesByUserId(Integer userId) {
         List<Invoice> invoices = invoiceRepository.findByUserId(userId);
-        return invoices.stream().map(this::transformToDto).toList();
+        // Only return invoices that still have tickets (PAID invoices)
+        // CANCELLED invoices have their tickets cleared and will crash transformToDto
+        return invoices.stream()
+                .filter(inv -> inv.getTickets() != null && !inv.getTickets().isEmpty())
+                .map(this::transformToDto)
+                .toList();
     }
 
     @Override

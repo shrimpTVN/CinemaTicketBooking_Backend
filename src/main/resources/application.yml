@@ -4,7 +4,7 @@ spring:
       client:
         registration:
           google:
-            client-id: 930594519981-94g92j79lqsht3jkoborqjrp62i62i9n.apps.googleusercontent.com # Injected via environment variable
+            client-id: 266231457092-inec22rqqheedrrve9132n0j2sapno69.apps.googleusercontent.com # Updated with new Google OAuth Client ID
 
 cloudinary:
     cloud-name: depaiphq0
